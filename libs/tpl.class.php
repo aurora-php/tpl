@@ -14,6 +14,32 @@ namespace org\octris\core {
      */
 
     class tpl {
+        /****m* tpl/__construct
+         * SYNOPSIS
+         */
+        function __construct()
+        /*
+         * FUNCTION
+         *      constructor
+         ****
+         */
+        {
+        }
         
+        /****m* tpl/setValue
+         * SYNOPSIS
+         */
+        function setValue($name, $value)
+        /*
+         * FUNCTION
+         *      set template value
+         * INPUTS
+         *      * $name (string) -- name to set
+         *      * $value (mixed) -- value to set
+         ****
+         */
+        {
+            
+        }
     }
 }
