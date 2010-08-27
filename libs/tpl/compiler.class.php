@@ -81,6 +81,24 @@ namespace org\octris\core\tpl {
                 self::T_BRACE_OPEN  => array(
                     self::T_METHOD, self::T_CONSTANT, self::T_VARIABLE, self::T_STRING, self::T_NUMBER, self::T_BOOL, self::T_BRACE_CLOSE
                 )
+              , self::T_CONSTANT    => array(
+                    self::T_PSEPARATOR, self::T_BRACE_CLOSE
+                )
+              , self::T_STRING      => array(
+                    self::T_PSEPARATOR, self::T_BRACE_CLOSE
+                )
+              , self::T_NUMBER      => array(
+                    self::T_PSEPARATOR, self::T_BRACE_CLOSE
+                )
+              , self::T_BOOL        => array(
+                    self::T_PSEPARATOR, self::T_BRACE_CLOSE
+                )
+              , self::T_VARIABLE    => array(
+                    self::T_PSEPARATOR, self::T_BRACE_CLOSE
+                )
+              , self::T_PSEPARATOR  => array(
+                    self::T_METHOD, self::T_CONSTANT, self::T_VARIABLE, self::T_STRING, self::T_NUMBER, self::T_BOOL
+                )
               , self::T_BRACE_CLOSE => array(
                     self::T_BRACE_CLOSE, self::T_END
                 )
@@ -114,13 +132,23 @@ namespace org\octris\core\tpl {
                     self::T_PSEPARATOR, self::T_BRACE_CLOSE
                 )
               , self::T_PSEPARATOR  => array(
-                    self::T_CONSTANT, self::T_STRING, self::T_NUMBER, self::T_BOOL, self::T_BRACE_CLOSE
+                    self::T_CONSTANT, self::T_STRING, self::T_NUMBER, self::T_BOOL
                 )
               , self::T_BRACE_CLOSE => array(
                     self::T_END
                 )
             )
         );
+        
+        /****v* compiler/$tokennames
+         * SYNOPSIS
+         */
+        private static $tokennames = NULL;
+        /*
+         * FUNCTION
+         *      names of tokens to be filled by constructor
+         ****
+         */
         
         /****v* compiler/$filename
          * SYNOPSIS
@@ -131,6 +159,22 @@ namespace org\octris\core\tpl {
          *      name of file currently compiled
          ****
          */
+        
+        /****m* compiler/__construct
+         * SYNOPSIS
+         */
+        public function __construct()
+        /*
+         * FUNCTION
+         *      constructor
+         ****
+         */
+        {
+            if (is_null(self::$tokennames)) {
+                $class = new \ReflectionClass($this);
+                self::$tokennames = array_flip($class->getConstants());
+            }
+        }
         
         /****m* compiler/getConstant
          * SYNOPSIS
@@ -148,6 +192,25 @@ namespace org\octris\core\tpl {
         {
             // TODO
             return $name;
+        }
+        
+        /****m* compiler/getTokenName
+         * SYNOPSIS
+         */
+        protected function getTokenName($token)
+        /*
+         * FUNCTION
+         *      return name of token
+         * INPUTS
+         *      * $token (int) -- ID of token
+         * OUTPUTS
+         *      (string) -- name of token
+         ****
+         */
+        {
+            return (isset(self::$tokennames[$token])
+                    ? $tokennames[$token]
+                    : 'T_UNKNOWN');
         }
         
         /****m* compiler/tokenize
@@ -212,14 +275,23 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $analyze = function($rules, &$last_token) use (&$analyze, &$tokens) {
-                while ($token = array_shift($tokens)) {
+            $braces = 0;
+            $names  =& self::$tokennames;
+            
+            $analyze = function($rules, &$last_token) use (&$analyze, &$tokens, &$braces, $names) {
+                // while ($token = array_shift($tokens)) {
+                while (count($tokens) > 0) {
                     if (!isset($rules[$last_token])) {
                         // rule not in context
+                        print_r(array('last_token' => $last_token, 'rules' => $rules));
                         return false;
                     }
 
+                    $token = array_shift($tokens);
+
                     extract($token);
+
+                    printf("%s -> %s\n", $names[$last_token], $names[$token]);
 
                     $rule = $rules[$last_token];
 
@@ -236,7 +308,7 @@ namespace org\octris\core\tpl {
                             die('unexpected token!');
                         }
                         
-                        $analyze($rule[$token], $token);
+                        $analyze($rule, $token);
                     }
                 
                     $last_token = $token;
@@ -284,7 +356,7 @@ namespace org\octris\core\tpl {
                         $tmp = '} elseif (%s) {';
                         break;
                     default:
-                        $tmp = sprintf('$this->callFunc(%s, array(%%s));', $value);
+                        $tmp = sprintf('$this->callFunc("%s", array(%%s));', $value);
                         print "$tmp";
                         break;
                     }
@@ -304,6 +376,13 @@ namespace org\octris\core\tpl {
                     break;
                 case self::T_VARIABLE:
                     $tmp = sprintf('$this->get("%s")', substr($value, 1));
+                    break;
+                case self::T_KEYWORD:
+                case self::T_STRING:
+                    $tmp = $value;
+                    break;
+                case self::T_PSEPARATOR:
+                    $tmp = ', %s';
                     break;
                 case self::T_END:
                     break;
@@ -397,6 +476,10 @@ namespace org\octris\core\tpl {
 {{\$test}}
 
 {{func("test")}}
+
+{{foreach(\$test, \$item)}}
+{{end}}
+
 
 {{%constant}}
 TPL;
