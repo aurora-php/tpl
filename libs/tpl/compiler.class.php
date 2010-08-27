@@ -44,8 +44,8 @@ namespace org\octris\core\tpl {
             self::T_METHOD      => '[a-z_][a-z0-9_]+',
             self::T_GETTEXT     => '_',
             self::T_VARIABLE    => '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+',
-            self::T_CONSTANT    => "/%[_a-z][_a-z0-9]+/",
-            self::T_MACRO       => "/@[_a-z][_a-z0-9]+/",
+            self::T_CONSTANT    => "%[_a-z][_a-z0-9]+",
+            self::T_MACRO       => "@[_a-z][_a-z0-9]+",
         
             self::T_STRING      => "([\"']).*?(?!\\\\)\\2",
             self::T_NUMBER      => '[+-]?[0-9]+(\.[0-9]+|)',
@@ -63,6 +63,16 @@ namespace org\octris\core\tpl {
             
             // keywords : end/else
           , self::T_KEYWORD => array(
+                self::T_END
+            )
+            
+            // constant
+          , self::T_CONSTANT => array(
+                self::T_END
+            )
+
+            // variable 
+          , self::T_VARIABLE => array(
                 self::T_END
             )
             
@@ -121,6 +131,24 @@ namespace org\octris\core\tpl {
          *      name of file currently compiled
          ****
          */
+        
+        /****m* compiler/getConstant
+         * SYNOPSIS
+         */
+        protected function getConstant($name)
+        /*
+         * FUNCTION
+         *      lookup value of a template constant
+         * INPUTS
+         *      * $name (string) -- name of template constant to lookup
+         * OUTPUTS
+         *      (string) -- template constant
+         ****
+         */
+        {
+            // TODO
+            return $name;
+        }
         
         /****m* compiler/tokenize
          * SYNOPSIS
@@ -184,47 +212,49 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $analyze = function($rules, $last_token) use (&$analyze, &$tokens) {
+            $analyze = function($rules, &$last_token) use (&$analyze, &$tokens) {
                 while ($token = array_shift($tokens)) {
                     if (!isset($rules[$last_token])) {
                         // rule not in context
                         return false;
                     }
 
+                    extract($token);
+
                     $rule = $rules[$last_token];
 
                     if (array_values($rule) === $rule) {
-                        if (!in_array($token['token'], $rule)) {
-                            print_r($token);
+                        if (!in_array($token, $rule)) {
+                            print_r(array($token, $line));
                             print_r($rule);
                             die('unexpected token!');
                         }
                     } else {
-                        if (!isset($rule[$token['token']])) {
-                            print_r($token);
+                        if (!isset($rule[$token])) {
+                            print_r(array($token, $line));
+                            print_r($rule);
                             die('unexpected token!');
                         }
                         
-                        $analyze($rule[$token['token']], $token['token']);
+                        $analyze($rule[$token], $token);
                     }
                 
-                    $last_token = $token['token'];
+                    $last_token = $token;
                 }
                 
                 return true;
             };
             
-            $result = $analyze(self::$rules, self::T_START);
-            print (int)$result;
+            return $analyze(self::$rules, $token = self::T_START);
         }
 
         /****m* compiler/compile
          * SYNOPSIS
          */
-        protected function compile($tokens, $brace_level = 0)
+        protected function compile($tokens)
         /*
          * FUNCTION
-         *      syntactical analyze and compile tokens to php code
+         *      compile tokens to php code
          * INPUTS
          *      * $tokens (array) -- array of tokens to compile
          *      * $brace_level (int) -- number of open braces
@@ -233,250 +263,58 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            static $last_token = array(self::T_START);
-
-            if ($brace_level == 0) {
-                // initialisation for new compiler run
-                $last_token = array(self::T_START);
-            }
-
-            // initialize code constructors
-            $code = array();
-            $level_tokens = array();
-
-            $prefix  = '';
-            $postfix = '';
-
-            $gettext = false;
-
+            $code   = '%s';
+            $braces = 0;
+            
             while ($token = array_shift($tokens)) {
-                $expect = $this->getRules($last_token);
-                $tmp    = $token;
+                print_r($token);
 
                 extract($token);
-
-                $last_token[] = $token;
-
-                if (!in_array($token, $expect)) {
-                    $tmp_expect = '';
-
-                    for ($i = 0; $i < count($expect); $i++) {
-                        $tmp_expect .= ', ' . $this->getTokenName($expect[$i]);
-                    }
-
-                    $this->error(
-                        self::E_UNEXPECTED_TOKEN,
-                        array('got' => $this->getTokenName($token), 'expected' => substr($tmp_expect, 2)),
-                        $tmp['file'],
-                        $tmp['line']
-                    );
-                } elseif ($token != self::T_BRACE_CLOSE) {
-                    $level_tokens[] = $token;
-                }
-
+            
                 switch ($token) {
-                case self::T_ASSIGN:
-                    array_push($code, ' = ');
-                    break;
-                case self::T_BLOCK_OPEN:
-                    switch (strtoupper($value)) {
-                    case '#CACHE':
-                        $prefix = 'if (!$this->cache';
-                        $postfix = ') {';
+                case self::T_METHOD:
+                    switch ($value) {
+                    case 'foreach':
+                        $tmp = 'foreach (%s) {';
                         break;
-                    case '#COPY':
-                        $prefix = '$this->copy_start';
+                    case 'if':
+                        $tmp = 'if (%s) {';
                         break;
-                    case '#CRON':
-                        $prefix = 'if ($this->cron';
-                        $postfix = ') {';
-                        break;
-                    case '#CUT':
-                        $prefix = '$this->cut_start';
-                        break;
-                    case '#EACH':
-                        $prefix = 'while ($this->each';
-                        $postfix = ') {';
-                        break;
-                    case '#IF':
-                        $prefix = 'if ';
-                        $postfix = ' {';
-                        break;
-                    case '#IFNOT':
-                        $prefix = 'if (!';
-                        $postfix = ') {';
-                        break;
-                    case '#LOOP':
-                        $prefix = 'while ($this->loop';
-                        $postfix = ') {';
-                        break;
-                    case '#ONCHANGE':
-                        $prefix = 'if ($this->onchange';
-                        $postfix = ') {';
-                        break;
-                    case '#TRIGGER':
-                        $prefix = 'if ($this->trigger';
-                        $postfix = ') {';
+                    case 'elseif':
+                        $tmp = '} elseif (%s) {';
                         break;
                     default:
-                        print '<pre>** ERROR: unknown block type **'."\n";
-                        print '   block: ' . $value . "</pre>\n";
-                        die;
-                    }
-
-                    array_push($symbols, strtoupper($value));
-                    break;
-                case self::T_BLOCK_CLOSE:
-                    $smbl = array_pop($symbols);
-
-                    switch ($smbl) {
-                    case '#CACHE':
-                        array_push($code, '$this->cache_end(); ');
-                        array_push($code, '}');
-                        break;
-                    case '#COPY':
-                        array_push($code, '$this->copy_end(); ');
-                        break;
-                    case '#CUT':
-                        array_push($code, '$this->cut_end(); ');
-                        break;
-                    default:
-                        array_push($code, '}');
+                        $tmp = sprintf('$this->callFunc(%s, array(%%s));', $value);
+                        print "$tmp";
                         break;
                     }
-
                     break;
                 case self::T_BRACE_OPEN:
-                    if ($brace_level == 0 && count($code) <= 0 && $prefix == '') {
-                        array_push($code, 'print ');
-                    }
-
-                    $return = $this->compile($tokens, $brace_level + 1);
-
-                    if ($gettext) {
-                        $inline = $this->compileGettext($return);
-                    } else {
-                        $inline = '(' . join('', $return['code']) . ')';
-                    }
-
-                    array_push($code, $prefix . $inline . $postfix);
-
-                    if ($brace_level == 0) {
-                        $gettext = false;
-                    }
+                    ++$braces;
                     break;
                 case self::T_BRACE_CLOSE:
-                    return array('code' => $code, 'tokens' => $level_tokens);
+                    --$braces;
                     break;
-                case self::T_DECIMAL:
-                    array_push($code, $value);
+                case self::T_MACRO:
+                    // TODO: macro
+                    $tmp = $this->callMacro(substr($value, 1));
                     break;
-                case self::T_END:
-                    $lcnt = count($code);
-                    $lchar = ($lcnt > 0 ? substr($code[$lcnt - 1], -1) : '');
-
-                    array_push($code, ($lchar != '{' && $lchar != '}' ? ";\n" : "\n"));
-
-                    return join('', $code);
-                    break;
-                case self::T_FALSE:
-                    array_push($code, 'false');
-                    break;
-                case self::T_GETTEXT:
-                    if ($brace_level == 0 && count($code) <= 0) {
-                        array_push($code, 'print ');
-                    }
-
-                    $gettext = true;
-                    break;
-                case self::T_INCLUDE:
-                    array_push($code, '$this->includeSub');
-                    break;
-                case self::T_DUMP:
-                    array_push($code, 'print $this->dump');
-                    break;
-                case self::T_IMPORT:
-                    $value = 'importFile';
-                    /* fall thru */
-                case self::T_METHOD:
-                    if ($brace_level == 0 && count($code) <= 0) {
-                        array_push($code, 'print ');
-                    }
-
-                    if (in_array(strtolower($value), self::$forbidden)) {
-                        $this->error(
-                            self::E_FORBIDDEN_METHOD,
-                            array(
-                                'at'    => $this->getTokenName($token),
-                                'value' => $value,
-                                'trace' => $this->dump(array_reverse($last_token))
-                            ),
-                            $token['file'],
-                            $token['line']
-                        );
-                        die;
-                    } elseif (in_array(strtolower($value), self::$allowedphp)) {
-                        array_push($code, $value);
-                    } else {
-                        array_push($code, '$this->' . $value);
-                    }
-                    break;
-                case self::T_NULL:
-                    array_push($code, 'NULL');
-                    break;
-                case self::T_PSEPARATOR:
-                    array_push($code, ', ');
-                    break;
-                case self::T_CONCAT:
-                case self::T_MATH:
-                case self::T_STRING:
-                    array_push($code, $value);
-                    break;
-                case self::T_TRUE:
-                    array_push($code, 'true');
+                case self::T_CONSTANT:
+                    $tmp = $this->getConstant(substr($value, 1));
                     break;
                 case self::T_VARIABLE:
-                    if ($brace_level == 0 && count($code) == 0) {
-                        array_push($code, 'print ');
-                    }
-
-                    $value = substr($value, 1);
-
-    /*                array_push(
-                        $code,
-                        '$this->__data__' . implode('',
-                            preg_replace(
-                                '/^(.*)$/e',
-                                "(substr('\\1', 0, 1) == '$' ? '[\$this->__data__[\'' . substr('\\1', 1) . '\']]' : '[\'\\1\']')",
-                                explode(':', $value)
-                            )
-                        )
-                    ); */
-
-                    array_push($code, '$this->__data__[\'' . join('\'][\'', explode(':', $value)) . '\']');
+                    $tmp = sprintf('$this->get("%s")', substr($value, 1));
                     break;
-                case self::T_SYMBOL:
-                    array_push($code, $this->getValue($value));
+                case self::T_END:
                     break;
                 default:
-                    $this->error(
-                        self::E_UNDEFINED_TOKEN,
-                        array('at' => $this->getTokenName($token), 'trace' => $this->dump(array_reverse($last_token))),
-                        $token['file'],
-                        $token['line']
-                    );
-                    die;
-                    break;
+                    die('**unknwon token**');
                 }
+                
+                $code = sprintf($code, $tmp);
             }
-
-            $this->error(
-                self::E_UNEXPECTED_TOKEN,
-                array('at' => $this->getTokenName($token), 'trace' => $this->dump(array_reverse($last_token))),
-                $token['file'],
-                $token['line']
-            );
-            die;
+            
+            return $code;
         }
         
         /****m* compiler/process
@@ -497,13 +335,20 @@ namespace org\octris\core\tpl {
             $tokens = $this->tokenize($snippet, $line);
             $code   = '';
 
-            $this->analyze($tokens);
-
-            print_r($tokens);
-            die;
-
             if (count($tokens) > 0) {
-                $code = '<?php ' . trim($this->compile($tokens)) . ' ?>';
+                if ($this->analyze($tokens) !== false) {
+                    switch ($tokens[0]['token']) {
+                    case self::T_CONSTANT:
+                    case self::T_MACRO:
+                        $code = '%s';
+                        break;
+                    default:
+                        $code = '<?php %s ?>';
+                        break;
+                    }
+                    
+                    $code = sprintf($code, trim($this->compile($tokens)));
+                }
             }
 
             return $code;
@@ -542,16 +387,24 @@ namespace org\octris\core\tpl {
             if (count($this->blocks) > 0) {
                 die('missing T_BLOCK_END');
             }
+            
+            print "$tpl";
         }
     }
     
 
     $tpl = <<<TPL
 {{\$test}}
+
+{{func("test")}}
+
+{{%constant}}
 TPL;
 
     $test = new compiler();
     $test->parse($tpl);
+
+    die;
 
     $tpl = <<<TPL
     {{foreach($item, $array)}}
