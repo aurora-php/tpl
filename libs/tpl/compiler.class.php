@@ -584,12 +584,12 @@ namespace org\octris\core\tpl {
                 if (array_key_exists($token, $rule)) {
                     // valid token, because it's in current ruleset
                     if (is_array($rule[$token])) {
-                        // child ruleset
+                        // push rule on stack and get child rule
                         $stack[] = $rule;
                         $return  = $rule[$token];
                     } elseif (is_null($rule[$token])) {
                         // ruleset is null -> try to get it from parent rules
-                        while (($return = array_pop($stack)) && isset($return[$token]));
+                        while (($return = array_pop($stack)) && !isset($return[$token]));
                         
                         if (is_array($return)) {
                             $stack[] = $return;
