@@ -802,6 +802,16 @@ namespace org\octris\core\tpl {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
                     break 2;
+                case self::T_MACRO:
+                    // resolve macro
+                    $value = strtolower(substr($value, 1));
+                    $file  = substr($code[0], 1, -1);
+                    $code  = array(compiler\macro::getInstance()->execMacro($value, array($file), array('path' => dirname($this->filename))));
+
+                    if (($err = compiler\macro::getInstance()->getError()) != '') {
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                    }
+                    break 2;
                 case self::T_CONSTANT:
                     $tmp = $this->getConstant(substr($value, 1));
                 
@@ -827,64 +837,6 @@ namespace org\octris\core\tpl {
             return $code;
         }
         
-        /****m* compiler/preprocess
-         * SYNOPSIS
-         */
-        protected function preprocess($tokens)
-        /*
-         * FUNCTION
-         *      the preprocessor resolves macros
-         * INPUTS
-         *      * $tokens (array) -- tokens to preprocess
-         * OUTPUTS
-         *      (array) -- preprocessed tokens
-         ****
-         */
-        {
-            $return = array();
-            $braces = 0;
-            
-            $macro  = -1;
-            $params = array();
-            
-            foreach ($tokens as $current) {
-                extract($current);
-                
-                switch ($token) {
-                case self::T_BRACE_OPEN:
-                    ++$braces;
-                    break;
-                case self::T_BRACE_CLOSE:
-                    --$braces;
-                    if ($braces == $macro) {
-                        // all macro parameters collection -- execute macro
-                        $return[] = array_merge($current, array(
-                            'token' => self::T_STRING,
-                            'value' => $this->execMacro(array_shift($params), $params)
-                        ));
-                        
-                        $macro  = -1;
-                        $params = array();
-                    }
-                    break;
-                case self::T_MACRO:
-                    $macro    = $braces;
-                    $params[] = strtolower(substr($value, 1));
-                    break;
-                default:
-                    if ($macro >= 0) {
-                        // collect as macro parameter
-                        $params[] = $value;
-                    } else {
-                        // return for template compiler
-                        $return[] = $current;
-                    }
-                }
-            }
-            
-            return $return;
-        }
-        
         /****m* compiler/process
          * SYNOPSIS
          */
@@ -905,20 +857,8 @@ namespace org\octris\core\tpl {
 
             if (count($tokens) > 0) {
                 if ($this->analyze($tokens) !== false) {
-                    switch ($token = $tokens[0]['token']) {
-                    case self::T_CONSTANT:
-                    case self::T_MACRO:
-                        $code = '%s';
-                        break;
-                    default:
-                        $code = '<?php %s ?>';
-                        break;
-                    }
-                    
-                    $tokens = $this->preprocess($tokens);
                     $tokens = array_reverse($tokens);
-                    
-                    $code = sprintf($code, implode('', $this->compile($tokens)));
+                    $code   = implode('', $this->compile($tokens));
                 }
             }
 
