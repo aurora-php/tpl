@@ -1,6 +1,10 @@
 <?php
 
 namespace org\octris\core\tpl {
+    require_once('compiler/rewrite.class.php');
+
+    use \org\octris\core\tpl\compiler as compiler;
+    
     /****c* tpl/compiler
      * NAME
      *      compiler
