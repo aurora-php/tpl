@@ -386,6 +386,16 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****v* compiler/$last_tokens
+         * SYNOPSIS
+         */
+        protected $last_tokens = array();
+        /*
+         * FUNCTION
+         *      stores compiled tokens
+         ****
+         */
+        
         /****v* compiler/$blocks
          * SYNOPSIS
          */
@@ -657,6 +667,51 @@ namespace org\octris\core\tpl {
             return $valid;
         }
 
+        /****m* compiler/getNextToken
+         * SYNOPSIS
+         */
+        protected function getNextToken(&$tokens)
+        /*
+         * FUNCTION
+         *      return next token and store last token
+         * INPUTS
+         *      * $tokens (array) -- tokens to use
+         * OUTPUTS
+         *      (int) -- next token
+         ****
+         */
+        {
+            if (($current = array_shift($tokens))) {
+                $this->last_tokens[] = $current['token'];
+            }
+            
+            return $current;
+        }
+
+        /****m* compiler/getLastToken
+         * SYNOPSIS
+         */
+        public function getLastToken($tokens, $idx)
+        /*
+         * FUNCTION
+         *      return previously processed token
+         * INPUTS
+         *      * $tokens (array) -- tokens
+         *      * $idx (int) -- index to return token of, according to PHP array_slice
+         * OUTPUTS
+         *      (int) -- ID of token
+         ****
+         */
+        {
+            if (($return = array_slice($tokens, $idx, 1))) {
+                $return = array_pop($return);
+            } else {
+                $return = 0;
+            }
+            
+            return $return;
+        }
+
         /****m* compiler/compile
          * SYNOPSIS
          */
@@ -682,7 +737,7 @@ namespace org\octris\core\tpl {
                 return implode($chr, array_reverse($code));
             };
             
-            while ($current = array_shift($tokens)) {
+            while (($current = $this->getNextToken($tokens))) {
                 extract($current);
             
                 $tmp = '';
