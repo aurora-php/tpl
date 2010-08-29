@@ -877,16 +877,21 @@ namespace org\octris\core\tpl {
         /****m* compiler/parse
          * SYNOPSIS
          */
-        public function parse($tpl)
+        public function parse($file, $imported = false)
         /*
          * FUNCTION
          *      template parser -- find all enclosed template
          *      functionality
          * INPUTS
-         *      * $tpl (string) -- template to parse
+         *      * $filename (string) -- file containing template to parse
+         *      * $imported (bool) -- (optional) whether it's an imported template (default: false)
          ****
          */
         {
+            $this->filename = $file;
+            
+            $tpl = file_get_contents($file);
+            
             $this->data = array(
                 'analyzer'  => array(),
                 'compiler'  => array(
@@ -894,7 +899,8 @@ namespace org\octris\core\tpl {
                 )
             );
             
-            $this->blocks = array();
+            $this->imported = $imported;
+            $this->blocks   = array();
 
             $pattern = '/(\{\{(.*?)\}\})/s';
             $offset  = 0;
@@ -918,7 +924,7 @@ namespace org\octris\core\tpl {
                 ));
             }
             
-            print "$tpl";
+            return $tpl;
         }
     }
     
@@ -926,23 +932,23 @@ namespace org\octris\core\tpl {
     $tpl = <<<TPL
 {#{\$test}}
 
-{{concat("hallo", " ", "world", "!")}}
+{#{concat("hallo", " ", "world", "!")}}
 
-{{func("test")}}
+{#{func("test")}}
 
-{{mul(\$a, \$b)}}
+{{mul(add(\$a, \$b), 2)}}
 
-{{#foreach(\$test, \$item)}}
-{{#end}}
+{#{#foreach(\$test, \$item)}}
+{#{#end}}
 
-{{@macro()}}
+{{@include("test.html")}}
 
 
 {#{%constant}}
 TPL;
 
     $test = new compiler();
-    $test->parse($tpl);
+    print $test->parse(dirname(__FILE__) . '/../../tests/tpl/compiler/tpl1.html');
 
     die;
 
