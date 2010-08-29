@@ -286,7 +286,14 @@ namespace org\octris\core\tpl {
                     ),
                     self::T_BRACE_CLOSE => array(
                         self::T_BRACE_CLOSE => NULL, 
-                        self::T_PSEPARATOR  => NULL, 
+                        self::T_PSEPARATOR  => array(
+                            self::T_METHOD      => NULL,
+                            self::T_VARIABLE    => NULL,
+                            self::T_CONSTANT    => NULL, 
+                            self::T_STRING      => NULL, 
+                            self::T_NUMBER      => NULL,
+                            self::T_BOOL        => NULL,
+                        ), 
                         self::T_END         => NULL
                     )
                 )
