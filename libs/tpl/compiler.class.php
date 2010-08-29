@@ -703,8 +703,8 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            if (($return = array_slice($tokens, $idx, 1))) {
-                $return = array_pop($return);
+            if (($tmp = array_slice($tokens, $idx, 1))) {
+                $return = array_pop($tmp);
             } else {
                 $return = 0;
             }
