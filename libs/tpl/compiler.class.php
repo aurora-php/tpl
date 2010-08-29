@@ -478,12 +478,13 @@ namespace org\octris\core\tpl {
         /****m* compiler/error
          * SYNOPSIS
          */
-        protected function error($type, $line, $token, $payload = NULL)
+        protected function error($type, $cline, $line, $token, $payload = NULL)
         /*
          * FUNCTION
          *      trigger an error
          * INPUTS
          *      * $type (string) -- type of error to trigger
+         *      * $cline (int) -- error occurred in this line of compiler class
          *      * $line (int) -- error occurred in this line of the template
          *      * $token (int) -- ID of token, that triggered the error
          *      * $payload (mixed) -- (optional) additional information -- either an array of expected token IDs, or an additional 
@@ -491,7 +492,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            printf("\n** ERROR: %s **\n", $type);
+            printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
             printf("   file:     %s\n", $this->filename);
             printf("   token:    %s\n", $this->getTokenName($token));
