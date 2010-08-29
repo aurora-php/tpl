@@ -430,24 +430,6 @@ namespace org\octris\core\tpl {
             return $name;
         }
         
-        /****m* compiler/execMacro
-         * SYNOPSIS
-         */
-        protected function execMacro($name, $params)
-        /*
-         * FUNCTION
-         *      execute macro
-         * INPUTS
-         *      * $name (string) -- name of macro to execute
-         *      * $params (array) -- parameters of macro
-         * OUTPUTS
-         *      (string) -- result of macro
-         ****
-         */
-        {
-            print_r(array($name, $params));
-        }
-        
         /****m* compiler/getTokenName
          * SYNOPSIS
          */
