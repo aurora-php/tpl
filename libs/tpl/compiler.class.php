@@ -2,6 +2,7 @@
 
 namespace org\octris\core\tpl {
     require_once('compiler/rewrite.class.php');
+    require_once('compiler/macro.class.php');
 
     use \org\octris\core\tpl\compiler as compiler;
     
