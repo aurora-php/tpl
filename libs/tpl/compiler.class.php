@@ -763,6 +763,7 @@ namespace org\octris\core\tpl {
                     $code[] = sprintf('$this->get("%s")', strtolower(substr($value, 1)));
                     break;
                 case self::T_STRING:
+                case self::T_NUMBER:
                     $code[] = $value;
                     break;
                 case self::T_PSEPARATOR:
