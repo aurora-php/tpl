@@ -726,11 +726,6 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $braces = 0;
-            $code   = '%s';
-
-            $last_tokens = array();
-            
             $code = array();
             
             $flatten = function($code, $chr = ', ') {
@@ -740,8 +735,6 @@ namespace org\octris\core\tpl {
             while (($current = $this->getNextToken($tokens))) {
                 extract($current);
             
-                $tmp = '';
-
                 switch ($token) {
                 case self::T_BLOCK_OPEN:
                     switch ($value = strtolower(substr($value, 1))) {
