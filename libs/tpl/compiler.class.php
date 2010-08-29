@@ -826,6 +826,15 @@ namespace org\octris\core\tpl {
                     break;
                 case self::T_PSEPARATOR:
                     break;
+                case self::T_START:
+                    $last_token =  $this->getTokenName($this->getLastToken($this->last_tokens, -2));
+                    
+                    if ($this->imported || in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
+                        $code = array(implode('', $code));
+                    } else {
+                        $code = array('<?php ' . implode('', $code) . '; ?>');
+                    }
+                    break;
                 case self::T_END:
                     break;
                 default:
