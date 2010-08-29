@@ -746,15 +746,12 @@ namespace org\octris\core\tpl {
                     $code[] = compile($tokens);
                     break;
                 case self::T_METHOD:
-                    switch ($value = strtolower($value)) {
-                    case 'concat':
-                        $code = array($flatten($code, ' . '));
-                    case 'mul':
-                        $code = array($flatten($code, ' * '));
-                        break;
-                    default:
-                        $code = array(sprintf('$this->%s(%s)', strtolower($value), $flatten($code)));
-                        break;
+                    // replace/rewrite method call
+                    $value = strtolower($value);
+                    $code  = array(compiler\rewrite::$value(array_reverse($code)));
+                    
+                    if (($err = compiler\rewrite::getError()) != '') {
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
                     break 2;
                 case self::T_CONSTANT:
