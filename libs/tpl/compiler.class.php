@@ -771,7 +771,7 @@ namespace org\octris\core\tpl {
                         $this->data['compiler']['blocks'][] = '}';
                         break;
                     default:
-                        $this->error(__FUNCTION__, $line, $token, sprintf('unknown block type "%s"', $value));
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, sprintf('unknown block type "%s"', $value));
                         break;
                     }
 
@@ -838,7 +838,7 @@ namespace org\octris\core\tpl {
                 case self::T_END:
                     break;
                 default:
-                    $this->error(__FUNCTION__, $line, $token, 'unknown token');
+                    $this->error(__FUNCTION__, __LINE__, $line, $token, 'unknown token');
                     break;
                 }
             }
@@ -907,12 +907,12 @@ namespace org\octris\core\tpl {
                 $tpl = substr($tpl, 0, $m[1][1]) . $this->process(trim($m[2][0]), $line) . substr($tpl, $m[1][1] + strlen($m[1][0]));
 
                 if (($crc == crc32($tpl)) && $ofs == $offset) {
-                    $this->error(__FUNCTION__, $line, 0, 'endless loop detected');
+                    $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
                 }
             }
 
             if (count($this->blocks) > 0) {
-                $this->error(__FUNCTION__, $line, 0, sprintf('missing %s for %s',
+                $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
                     implode(', ', $this->getTokenNames(array_reverse($this->blocks)))
                 ));
