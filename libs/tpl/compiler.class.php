@@ -782,10 +782,10 @@ namespace org\octris\core\tpl {
                     $this->data['compiler']['blocks'][] = '}';
                     break;
                 case self::T_IF_ELSE:
-                    $tmp = '} else {';
+                    $code[] = '} else {';
                     break;
                 case self::T_BLOCK_CLOSE:
-                    $tmp = array_pop($this->data['compiler']['blocks']);
+                    $code[] = array_pop($this->data['compiler']['blocks']);
                     break;
                 case self::T_BRACE_OPEN:
                     continue;
