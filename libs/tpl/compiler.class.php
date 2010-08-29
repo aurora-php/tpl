@@ -376,6 +376,16 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****v* compiler/$imported
+         * SYNOPSIS
+         */
+        protected $imported = false;
+        /*
+         * FUNCTION
+         *      whether it's an imported template (using @import)
+         ****
+         */
+        
         /****v* compiler/$blocks
          * SYNOPSIS
          */
