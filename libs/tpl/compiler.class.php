@@ -33,7 +33,6 @@ namespace org\octris\core\tpl {
         const T_PSEPARATOR      = 12;
     
         const T_METHOD          = 20;
-        const T_GETTEXT         = 21;
         const T_VARIABLE        = 22;
         const T_CONSTANT        = 23;
         const T_MACRO           = 24;
