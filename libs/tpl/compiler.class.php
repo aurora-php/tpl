@@ -537,6 +537,12 @@ namespace org\octris\core\tpl {
             }
 
             if (count($out) > 0) {
+                array_unshift($out, array(
+                    'token' => self::T_START,
+                    'value' => '',
+                    'file'  => $this->filename,
+                    'line'  => $line
+                ));
                 array_push($out, array(
                     'token' => self::T_END,
                     'value' => '',
