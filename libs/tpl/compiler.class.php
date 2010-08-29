@@ -743,7 +743,7 @@ namespace org\octris\core\tpl {
                     continue;
                     break;
                 case self::T_BRACE_CLOSE:
-                    $code[] = compile($tokens);
+                    $code[] = $flatten($this->compile($tokens));
                     break;
                 case self::T_METHOD:
                     // replace/rewrite method call
