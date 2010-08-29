@@ -818,7 +818,10 @@ namespace org\octris\core\tpl {
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
                     break;
                 case self::T_VARIABLE:
-                    $code[] = sprintf('$this->get("%s")', strtolower(substr($value, 1)));
+                    $code[] = sprintf(
+                        '$this->data["%s"]', 
+                        implode('"]["', explode(':', strtolower(substr($value, 1))))
+                    );
                     break;
                 case self::T_STRING:
                 case self::T_NUMBER:
