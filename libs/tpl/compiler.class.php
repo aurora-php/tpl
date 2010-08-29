@@ -585,8 +585,8 @@ namespace org\octris\core\tpl {
                         $return  = $rule[$token];
                     } elseif (is_null($rule[$token])) {
                         // ruleset is null -> try to get it from parent rules
-                        while (($return = array_pop($stack)) && !array_key_exists($token, $return));
-                    
+                        while (($return = array_pop($stack)) && isset($return[$token]));
+                        
                         if (is_array($return)) {
                             $stack[] = $return;
                             $return  = $return[$token];
