@@ -613,14 +613,14 @@ namespace org\octris\core\tpl {
                 case self::T_BRACE_CLOSE:
                     // closing ')' brace -- only allowed, if a brace was opened previously
                     if ($braces == 0) {
-                        $this->error(__FUNCTION__, $line, $token);
+                        $this->error(__FUNCTION__, __LINE__, $line, $token);
                     } else {
                         --$braces;
                     }
                     break;
                 case self::T_PSEPARATOR:
                     // ',' is only allowed to separate arguments
-                    if ($braces == 0) $this->error(__FUNCTION__, $line, $token);
+                    if ($braces == 0) $this->error(__FUNCTION__, __LINE__, $line, $token);
                     break;
                 case self::T_IF_OPEN:
                     // opening if
@@ -633,13 +633,13 @@ namespace org\octris\core\tpl {
                 case self::T_BLOCK_CLOSE:
                     // closing block only allowed is a block is open
                     if (!($block = array_pop($this->blocks))) {
-                        $this->error(__FUNCTION__, $line, $token, 'there is no open block');
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, 'there is no open block');
                     }
                     break;
                 case self::T_IF_ELSE:
                     // else is only allowed within an 'if' block
                     if ((($cnt = count($this->blocks)) > 0 && $this->blocks[$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
-                        $this->error(__FUNCTION__, $line, $token, 'only allowed inside an "if" block');
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
                         $this->blocks[$cnt - 1]['token'] = self::T_IF_ELSE;
                     }
@@ -647,9 +647,8 @@ namespace org\octris\core\tpl {
                 }
                 
                 printf("%s(%d)->", $this->getTokenName($token), count($stack));
-                
                 if (!($tmp = $get_next_rule($rule, $token))) {
-                    $this->error(__FUNCTION__, $line, $token, $rule);
+                    $this->error(__FUNCTION__, __LINE__, $line, $token, $rule);
                 }
                 
                 $rule = $tmp;
