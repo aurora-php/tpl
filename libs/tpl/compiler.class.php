@@ -830,12 +830,14 @@ namespace org\octris\core\tpl {
                 case self::T_PSEPARATOR:
                     break;
                 case self::T_START:
-                    $last_token =  $this->getTokenName($this->getLastToken($this->last_tokens, -2));
+                    $last_token = $this->getLastToken($this->last_tokens, -2);
                     
-                    if ($this->imported || in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
+                    if (in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
                         $code = array(implode('', $code));
+                    } elseif (!in_array($last_token, array(self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE))) {
+                        $code = array('<?php $this->write(' . implode('', $code) . '); >');
                     } else {
-                        $code = array('<?php ' . implode('', $code) . '; ?>');
+                        $code = array('<?php ' . implode('', $code) . ' >');
                     }
                     break;
                 case self::T_END:
@@ -864,6 +866,8 @@ namespace org\octris\core\tpl {
          ****
          */
         {
+            $this->last_tokens = array();
+            
             $tokens = $this->tokenize($snippet, $line);
             $code   = '';
 
