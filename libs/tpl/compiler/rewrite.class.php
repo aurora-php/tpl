@@ -73,6 +73,19 @@ namespace org\octris\core\tpl\compiler {
          ****
          */
         
+        /****v* rewrite/$forbidden
+         * SYNOPSIS
+         */
+        protected static $forbidden = array(
+            'setvalue'
+        );
+        /*
+         * FUNCTION
+         *      forbidden function names
+         ****
+         */
+        
+        
         /****v* rewrite/$last_error
          * SYNOPSIS
          */
@@ -108,7 +121,9 @@ namespace org\octris\core\tpl\compiler {
             
             $args = $args[0];
             
-            if (($is_php = isset(self::$phpfunc[$name])) || isset(self::$inline[$name])) {
+            if (in_array($name, self::$forbidden)) {
+                self::setError($name, 'access denied');
+            } elseif (($is_php = isset(self::$phpfunc[$name])) || isset(self::$inline[$name])) {
                 // known method
                 $cnt = count($args);
                 
