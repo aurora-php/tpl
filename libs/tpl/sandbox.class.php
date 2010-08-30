@@ -1,6 +1,8 @@
 <?php
 
 namespace org\octris\core\tpl {
+    require_once('type/collection.class.php');
+    
     /****c* tpl/sandbox
      * NAME
      *      sandbox
