@@ -887,25 +887,6 @@ namespace org\octris\core\tpl {
             return $tpl;
         }
     }
-    
-
-    $tpl = <<<TPL
-{#{\$test}}
-
-{#{concat("hallo", " ", "world", "!")}}
-
-{#{func("test")}}
-
-{{mul(add(\$a, \$b), 2)}}
-
-{#{#foreach(\$test, \$item)}}
-{#{#end}}
-
-{{@include("test.html")}}
-
-
-{#{%constant}}
-TPL;
 
     $test = new compiler();
     $tpl  = $test->parse(dirname(__FILE__) . '/../../tests/tpl/compiler/tpl1.html');
@@ -927,33 +908,10 @@ TPL;
     $s = new test();
     $s->setValue('data', array('eins', 'zwei', 'drei'));
     $s->setValue('import', true);
+    
+    $s->setValue('rec', array(array(1,2,3),array(4,5,6),array(7,8,9)));
+    
     $s->run($file);
 
     unlink($file);
-
-    die;
-
-    $tpl = <<<TPL
-    {{#foreach($item, $array)}}
-    {{#end}}
-
-    {{#if(...)}}
-    {{#elseif(...)}}
-    {{#else}}
-    {{#end}}
-
-    {{#loop()}}
-    {{#end}}
-
-    {{#trigger()}}
-    {{#end}}
-
-    {{$item}}
-
-    {{@import("...")}}
-
-    {{%constant}}
-
-TPL;
-
 }
