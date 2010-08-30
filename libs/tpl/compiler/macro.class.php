@@ -5,7 +5,7 @@ namespace org\octris\core\tpl\compiler {
      * NAME
      *      macro
      * FUNCTION
-     *      Library for handling template macros.
+     *      Library for handling template macros. This is a static class.
      * COPYRIGHT
      *      copyright (c) 2010 by Harald Lapp
      * AUTHOR
@@ -14,20 +14,10 @@ namespace org\octris\core\tpl\compiler {
      */
 
     class macro {
-        /****v* macro/$instance
-         * SYNOPSIS
-         */
-        protected static $instance = NULL;
-        /*
-         * FUNCTION
-         *      instance of macro object
-         ****
-         */
-        
         /****v* macro/$registry
          * SYNOPSIS
          */
-        protected $registry = array();
+        protected static $registry = array();
         /*
          * FUNCTION
          *      macro registry
@@ -37,56 +27,23 @@ namespace org\octris\core\tpl\compiler {
         /****v* macro/$last_error
          * SYNOPSIS
          */
-        protected $last_error = '';
+        protected static $last_error = '';
         /*
          * FUNCTION
          *      last occured error
          ****
          */
-        
-        /****m* macro/__construct
-         * SYNOPSIS
-         */
-        protected function __construct()
-        /*
-         * FUNCTION
-         *      constructor
-         ****
-         */
-        {
-        }
 
-        // prevent from cloning
-        protected function __clone() {}
-        
-        /****m* macro/getInstance
-         * SYNOPSIS
-         */
-        public static function getInstance()
         /*
-         * FUNCTION
-         *      implements singleton for macro class
-         * OUTPUTS
-         *      (macro) -- instance of macro class
-         ****
+         * static class cannot be instantiated
          */
-        {
-            if (is_null(self::$instance)) {
-                self::$instance = new static();
-                self::$instance->registerMacro(
-                    'import', 
-                    array(self::$instance, 'import'),
-                    array('min' => 1, 'max' => 1)
-                );
-            }
-            
-            return self::$instance;
-        }
+        protected function __construct() {}
+        protected function __clone() {}
         
         /****m* macro/getError
          * SYNOPSIS
          */
-        public function getError()
+        public static function getError()
         /*
          * FUNCTION
          *      return last occured error
@@ -95,13 +52,13 @@ namespace org\octris\core\tpl\compiler {
          ****
          */
         {
-            return $this->last_error;
+            return self::$last_error;
         }
         
         /****m* macro/setError
          * SYNOPSIS
          */
-        protected function setError($name, $msg)
+        protected static function setError($name, $msg)
         /*
          * FUNCTION
          *      set error
@@ -111,13 +68,13 @@ namespace org\octris\core\tpl\compiler {
          ****
          */
         {
-            $this->last_error = sprintf('"%s" -- %s', $name, $msg);
+            self::$last_error = sprintf('"%s" -- %s', $name, $msg);
         }
         
         /****m* macro/registerMacro
          * SYNOPSIS
          */
-        public function registerMacro($name, $callback, array $args)
+        public static function registerMacro($name, $callback, array $args)
         /*
          * FUNCTION
          *      register a macro
@@ -128,7 +85,7 @@ namespace org\octris\core\tpl\compiler {
          ****
          */
         {
-            $this->registry[$name] = array(
+            self::$registry[$name] = array(
                 'callback' => $callback,
                 'args'     => array_merge(array('min' => 1, 'max' => 1), $args)
             );
@@ -137,7 +94,7 @@ namespace org\octris\core\tpl\compiler {
         /****m* macro/execMacro
          * SYNOPSIS
          */
-        public function execMacro($name, $args, array $options = array())
+        public static function execMacro($name, $args, array $options = array())
         /*
          * FUNCTION
          *      execute specified macro with specified arguments
@@ -150,39 +107,32 @@ namespace org\octris\core\tpl\compiler {
          ****
          */
         {
-            $this->last_error = '';
+            self::$last_error = '';
             
-            if (!isset($this->registry[$name])) {
-                $this->setError($name, 'unknown macro');
-            } elseif (!is_callable($this->registry[$name]['callback'])) {
-                $this->setError($name, 'unable to execute macro');
-            } elseif (count($args) < $this->registry[$name]['args']['min']) {
-                $this->setError($name, 'not enough arguments');
-            } elseif (count($args) > $this->registry[$name]['args']['max']) {
-                $this->setError($name, 'too many arguments');
+            if (!isset(self::$registry[$name])) {
+                self::setError($name, 'unknown macro');
+            } elseif (!is_callable(self::$registry[$name]['callback'])) {
+                self::setError($name, 'unable to execute macro');
+            } elseif (count($args) < self::$registry[$name]['args']['min']) {
+                self::setError($name, 'not enough arguments');
+            } elseif (count($args) > self::$registry[$name]['args']['max']) {
+                self::setError($name, 'too many arguments');
             } else {
-                return call_user_func_array($this->registry[$name]['callback'], array($args, $options));
+                return call_user_func_array(self::$registry[$name]['callback'], array($args, $options));
             }
         }
-        
-        /****m* macro/import
-         * SYNOPSIS
-         */
-        protected function import($args, $options)
-        /*
-         * FUNCTION
-         *      macro for importing subtemplates
-         * INPUTS
-         *      * $args (array) -- arguments
-         *      * $options (array) -- additional options coming from compiler
-         * OUTPUTS
-         *      (string) -- processed template
-         ****
-         */
-        {
+    }
+
+    /*
+     * register "import" macro
+     */
+    macro::registerMacro(
+        'import',
+        function($args, array $options = array()) {
             $tpl = new \org\octris\core\tpl\compiler();
             
             return $tpl->parse($options['path'] . '/' . $args[0]);
-        }
-    }
+        },
+        array('min' => 1, 'max' => 1)
+    );
 }
