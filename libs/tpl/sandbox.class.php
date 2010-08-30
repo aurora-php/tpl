@@ -69,41 +69,42 @@ namespace org\octris\core\tpl {
         /****m* sandbox/each
          * SYNOPSIS
          */
-        public function each($id, &$ctrl, $array, &$meta)
+        public function each($id, &$ctrl, $array)
         /*
          * FUNCTION
          *      handles '#foreach' block -- iterates over an array and repeats an enclosed template block
          * INPUTS
+         *      * $id (string) -- uniq identifier for loop
          *      * $ctrl (mixed) -- control variable is overwritten and used by this method
          *      * $array (array) -- array to use for iteration
-         *      * $meta (mixed)
          * OUTPUTS
          *      (bool) -- returns ~true~ as long is iterator is running and ~false~ if iterator reached his end
          ****
          */
         {
-            // static $each = array();
-            // 
-            // // $key = crc32(serialize($array));
-            // 
-            // print_r($array);
-            // 
-            // if (!isset($each[$key])) {
-            //     $each[$key] = new lima_tpl_sandbox_array((array)$array);
-            // }
-            // 
-            // if ($return = $each[$key]->valid()) {
-            //     $value = $each[$key]->current();
-            //     $each[$key]->next();
-            // } else {
-            //     $value = '';
-            //     $each[$key]->rewind();
-            // }
-            // 
-            // $this->__data__[$name] = $value;
-
-            return false;
+            $id = 'each:' . $id;
             
+            if (!isset($this->meta[$id])) {
+                $this->meta[$id] = array(
+                    'data' => $array->getIterator(),
+                    'pos'  => 0
+                );
+            }
+            
+            if ($return = $this->meta[$id]['data']->valid()) {
+                $value = $this->meta[$id]['data']->current();
+                
+                $this->meta[$id]['data']->next();
+                $this->meta[$id]['pos']++;
+            } else {
+                $value = '';
+                $this->meta[$id]['data']->rewind();
+                $this->meta[$id]['pos'] = 0;
+            }
+            
+            $ctrl = $value;
+
+            return $return;
         }
         
         /****m* sandbox/bufferStart
