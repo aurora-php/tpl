@@ -69,7 +69,7 @@ namespace org\octris\core\tpl {
         /****m* sandbox/each
          * SYNOPSIS
          */
-        public function each($id, &$ctrl, $array)
+        public function each($id, &$ctrl, $array, &$meta = NULL)
         /*
          * FUNCTION
          *      handles '#foreach' block -- iterates over an array and repeats an enclosed template block
@@ -77,6 +77,7 @@ namespace org\octris\core\tpl {
          *      * $id (string) -- uniq identifier for loop
          *      * $ctrl (mixed) -- control variable is overwritten and used by this method
          *      * $array (array) -- array to use for iteration
+         *      * $meta (array) -- (optional) control variable for meta information
          * OUTPUTS
          *      (bool) -- returns ~true~ as long is iterator is running and ~false~ if iterator reached his end
          ****
@@ -85,24 +86,27 @@ namespace org\octris\core\tpl {
             $id = 'each:' . $id;
             
             if (!isset($this->meta[$id])) {
-                $this->meta[$id] = array(
-                    'data' => $array->getIterator(),
-                    'pos'  => 0
-                );
+                $this->meta[$id] = $array->getIterator();
             }
             
-            if ($return = $this->meta[$id]['data']->valid()) {
-                $value = $this->meta[$id]['data']->current();
+            if (($return = $this->meta[$id]->valid())) {
+                $item = $this->meta[$id]->current();
                 
-                $this->meta[$id]['data']->next();
-                $this->meta[$id]['pos']++;
+                $this->meta[$id]->next();
             } else {
-                $value = '';
-                $this->meta[$id]['data']->rewind();
-                $this->meta[$id]['pos'] = 0;
+                // $value = '';
+                $this->meta[$id]->rewind();
+                $item = $this->meta[$id]->current();
             }
             
-            $ctrl = $value;
+            $ctrl = $item->item;
+            $meta = array(
+                'key'       => $item->key,
+                'pos'       => $item->pos,
+                'count'     => $item->count,
+                'is_first'  => $item->is_first,
+                'is_last'   => $item->is_last
+            );
 
             return $return;
         }
