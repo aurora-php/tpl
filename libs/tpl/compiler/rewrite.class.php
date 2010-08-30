@@ -189,6 +189,21 @@ namespace org\octris\core\tpl\compiler {
             self::$last_error = sprintf('"%s" -- %s', $func, $msg);
         }
 
+        /****m* rewrite/getUniqId
+         * SYNOPSIS
+         */
+        protected static function getUniqId()
+        /*
+         * FUNCTION
+         *      uniq identifier generator
+         * OUTPUTS
+         *      (string) -- uniq identifier
+         ****
+         */
+        {
+            return md5(uniqid());
+        }
+
         /*
          * inline block functions, that can be converted directly
          */
@@ -240,21 +255,21 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function __loop($args) {
             return array(
-                'while ($this->loop("' . md5(uniqid()) . '", ' . implode(', ', $args) . ')) {',
+                'while ($this->loop("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
 
         protected static function __onchange($args) {
             return array(
-                'if ($this->onchange("' . md5(uniqid()) . '", ' . implode(', ', $args) . ')) {',
+                'if ($this->onchange("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
         
         protected static function __trigger($args) {
             return array(
-                'if ($this->trigger("' . md5(uniqid()) . '", ' . implode(', ', $args) . ')) {',
+                'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
