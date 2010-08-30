@@ -185,6 +185,13 @@ namespace org\octris\core\tpl\compiler {
             );
         }
 
+        protected static function __foreach($args) {
+            return array(
+                'while ($this->each(' . implode(', ', $args) . ')) {', 
+                '}'
+            );
+        }
+        
         protected static function __cache($args) {
             return array(
                 'if ($this->cache(' . implode(', ', $args) . ')) {', 
