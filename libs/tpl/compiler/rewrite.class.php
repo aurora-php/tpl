@@ -380,7 +380,7 @@ namespace org\octris\core\tpl\compiler {
             return '(' . implode(' == ', $args) . ')';
         }
         
-        protected static function dump($args) {
+        protected static function _dump($args) {
             return 'var_export(' . implode('', $args) . ', true)';
         }
     }
