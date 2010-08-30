@@ -83,7 +83,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $id = 'each:' . $id;
+            $id = 'each:' . $id . ':' . crc32(serialize($array->getArrayCopy()));
             
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = $array->getIterator();
@@ -242,7 +242,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $id = 'loop:' . $id;
+            $id = 'loop:' . $id . ':' . crc32("$form:$to");
             
             if (!isset($this->meta[$id])) {
                 if ($from > $to) $step *= -1;
@@ -298,7 +298,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $id = 'trigger:' . $id;
+            $id = 'trigger:' . $id . ':' . crc32("$steps:$start");
 
             if (!isset($this->meta[$id]) || $this->meta[$id]['reset_value'] !== $reset) {
                 $this->meta[$id] = array(
