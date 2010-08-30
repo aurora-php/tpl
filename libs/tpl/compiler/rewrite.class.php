@@ -23,7 +23,7 @@ namespace org\octris\core\tpl\compiler {
         protected static $inline = array(
             // blocks
             '#if'       => array('min' => 1, 'max' => 1),
-            '#foreach'  => array('min' => 2, 'max' => 2),
+            '#foreach'  => array('min' => 2, 'max' => 3),
             '#cache'    => array('min' => 2, 'max' => 2),
             '#copy'     => array('min' => 1, 'max' => 1),
             '#cron'     => array('min' => 1, 'max' => 2),
