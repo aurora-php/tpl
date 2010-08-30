@@ -77,14 +77,13 @@ namespace org\octris\core\tpl\compiler {
          * SYNOPSIS
          */
         protected static $forbidden = array(
-            'setvalue'
+            'setvalue', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger'
         );
         /*
          * FUNCTION
          *      forbidden function names
          ****
          */
-        
         
         /****v* rewrite/$last_error
          * SYNOPSIS
