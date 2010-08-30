@@ -360,5 +360,28 @@ namespace org\octris\core\tpl {
         {
             print $val;
         }
+        
+        /****m* sandbox/dump
+         * SYNOPSIS
+         */
+        public function dump($var)
+        /*
+         * FUNCTION
+         *      dump contents of variable
+         * INPUTS
+         *      * $var (mixed) -- variable to dump
+         ****
+         */
+        {
+            return var_export(
+                ((is_object($var) && 
+                 ($var instanceof \org\octris\core\type\collection || 
+                  $var instanceof \org\octris\core\type\collection\Iterator || 
+                  $var instanceof \ArrayIterator)) 
+                ? $var->getArrayCopy() 
+                : $var), 
+                true
+            );
+        }
     }
 }
