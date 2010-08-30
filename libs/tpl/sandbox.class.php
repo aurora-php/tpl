@@ -14,21 +14,30 @@ namespace org\octris\core\tpl {
      */
 
     class sandbox {
+        /****v* sandbox/$data
+         * SYNOPSIS
+         */
+        public $data = array();
+        /*
+         * FUNCTION
+         *      template data
+         ****
+         */
+        
         /****m* sandbox/
          * SYNOPSIS
          */
-        public function ()
+        public function write($val, $auto_escape = true)
         /*
          * FUNCTION
-         *      
+         *      output a specified value
          * INPUTS
-         *      
-         * OUTPUTS
-         *      
+         *      * $val (string) -- value to output
+         *      * $auto_escape (bool) -- (optional) flag whether to auto-escape value
          ****
          */
         {
-            
+            print $val;
         }
     }
 }
