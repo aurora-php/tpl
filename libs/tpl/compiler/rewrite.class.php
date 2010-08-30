@@ -374,7 +374,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function dump($args) {
-            return 'var_dump(' . $args . ')';
+            return 'var_export(' . implode('', $args) . ', true)';
         }
     }
 }
