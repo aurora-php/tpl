@@ -787,9 +787,9 @@ namespace org\octris\core\tpl {
                     if (in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
                         $code = array(implode('', $code));
                     } elseif (!in_array($last_token, array(self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE))) {
-                        $code = array('<?php $this->write(' . implode('', $code) . '); >');
+                        $code = array('<?php $this->write(' . implode('', $code) . '); ?>');
                     } else {
-                        $code = array('<?php ' . implode('', $code) . ' >');
+                        $code = array('<?php ' . implode('', $code) . ' ?>');
                     }
                     break;
                 case self::T_PSEPARATOR:
