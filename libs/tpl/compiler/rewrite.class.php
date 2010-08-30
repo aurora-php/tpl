@@ -410,7 +410,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _dump($args) {
-            return 'var_export(' . implode('', $args) . ', true)';
+            return '$this->dump(' . implode('', $args) . ')';
         }
     }
 }
