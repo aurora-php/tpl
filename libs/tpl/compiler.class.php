@@ -531,9 +531,11 @@ namespace org\octris\core\tpl {
                         }
 
                         $in = substr($in, strlen($m[1]));
-                        break;
+                        continue 2;
                     }
                 }
+                
+                $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('parse error at "%s"', $in));
             }
 
             if (count($out) > 0) {
