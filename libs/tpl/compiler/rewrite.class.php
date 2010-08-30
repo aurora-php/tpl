@@ -8,7 +8,7 @@ namespace org\octris\core\tpl\compiler {
      *      Rewrite template code. Rewrite inline function calls, and rewrite
      *      function calls according to if they are allowed php function calls
      *      or calls to functions that have to be registered to sandbox on
-     *      template rendering.
+     *      template rendering. This is a static class.
      * COPYRIGHT
      *      copyright (c) 2010 by Harald Lapp
      * AUTHOR
@@ -68,6 +68,12 @@ namespace org\octris\core\tpl\compiler {
          *      last error message
          ****
          */
+        
+        /*
+         * static class cannot be instantiated
+         */
+        protected function __construct() {}
+        protected function __clone() {}
         
         /****m* rewrite/__callStatic
          * SYNOPSIS
