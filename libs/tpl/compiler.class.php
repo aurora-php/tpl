@@ -718,10 +718,6 @@ namespace org\octris\core\tpl {
         {
             $code = array();
             
-            $flatten = function($code, $chr = ', ') {
-                return implode($chr, array_reverse($code));
-            };
-            
             while (($current = $this->getNextToken($tokens))) {
                 extract($current);
             
@@ -746,11 +742,8 @@ namespace org\octris\core\tpl {
                 case self::T_BLOCK_CLOSE:
                     $code[] = array_pop($this->data['compiler']['blocks']);
                     break;
-                case self::T_BRACE_OPEN:
-                    continue;
-                    break;
                 case self::T_BRACE_CLOSE:
-                    $code[] = $flatten($this->compile($tokens));
+                    $code[] = implode(', ', ($this->compile($tokens)));
                     break;
                 case self::T_METHOD:
                     // replace/rewrite method call
@@ -786,8 +779,6 @@ namespace org\octris\core\tpl {
                 case self::T_NUMBER:
                     $code[] = $value;
                     break;
-                case self::T_PSEPARATOR:
-                    break;
                 case self::T_START:
                     $last_token = $this->getLastToken($this->last_tokens, -2);
                     
@@ -799,7 +790,10 @@ namespace org\octris\core\tpl {
                         $code = array('<?php ' . implode('', $code) . ' >');
                     }
                     break;
+                case self::T_PSEPARATOR:
+                case self::T_BRACE_OPEN:
                 case self::T_END:
+                    // nothing to do for these tokens
                     break;
                 default:
                     $this->error(__FUNCTION__, __LINE__, $line, $token, 'unknown token');
