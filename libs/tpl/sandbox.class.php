@@ -26,6 +26,16 @@ namespace org\octris\core\tpl {
          ****
          */
 
+        /****v* sandbox/$meta
+         * SYNOPSIS
+         */
+        protected $meta = array();
+        /*
+         * FUNCTION
+         *      various meta data for block functions
+         ****
+         */
+
         /****v* sandbox/$pastebin
          * SYNOPSIS
          */
@@ -33,36 +43,6 @@ namespace org\octris\core\tpl {
         /*
          * FUNCTION
          *      pastebin for cut/copied buffers
-         ****
-         */
-        
-        /****v* sandbox/$loops
-         * SYNOPSIS
-         */
-        protected $loops = array();
-        /*
-         * FUNCTION
-         *      storage for meta-data of loops
-         ****
-         */
-        
-        /****v* sandbox/$triggers
-         * SYNOPSIS
-         */
-        protected $triggers = array();
-        /*
-         * FUNCTION
-         *      storage for meta-data of triggers
-         ****
-         */
-        
-        /****v* sandbox/$onchange
-         * SYNOPSIS
-         */
-        protected $onchange = array();
-        /*
-         * FUNCTION
-         *      storage for onchange events
          ****
          */
         
@@ -89,13 +69,14 @@ namespace org\octris\core\tpl {
         /****m* sandbox/each
          * SYNOPSIS
          */
-        public function each(&$ctrl, $array)
+        public function each($id, &$ctrl, $array, &$meta)
         /*
          * FUNCTION
          *      handles '#foreach' block -- iterates over an array and repeats an enclosed template block
          * INPUTS
          *      * $ctrl (mixed) -- control variable is overwritten and used by this method
          *      * $array (array) -- array to use for iteration
+         *      * $meta (mixed)
          * OUTPUTS
          *      (bool) -- returns ~true~ as long is iterator is running and ~false~ if iterator reached his end
          ****
@@ -256,14 +237,16 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            if (!isset($this->loops[$id])) {
+            $id = 'loop:' . $id;
+            
+            if (!isset($this->meta[$id])) {
                 $step = abs($step);
 
                 if ($from > $to) {
                     $step *= -1;
                 }
 
-                $this->loops[$name] = array(
+                $this->meta[$name] = array(
                     'name'  => $name,
                     'from'  => $from,
                     'to'    => $to,
@@ -271,20 +254,20 @@ namespace org\octris\core\tpl {
                     'step'  => $from
                 );
             } else {
-                $this->loops[$name]['step'] += $this->loops[$name]['incr'];
+                $this->meta[$name]['step'] += $this->meta[$name]['incr'];
             }
 
             if ($from > $to) {
-                $ret = ($this->loops[$name]['step'] > $to);
+                $ret = ($this->meta[$name]['step'] > $to);
             } else {
-                $ret = ($this->loops[$name]['step'] < $to);
+                $ret = ($this->meta[$name]['step'] < $to);
             }
 
             if (!$ret) {
                 $this->data[$name]['step'] = $to;
-                $this->loops[$name]['step'] = $this->loops[$name]['from'];
+                $this->meta[$name]['step'] = $this->meta[$name]['from'];
             } else {
-                $this->data[$name]['step'] = $this->loops[$name]['step'];
+                $this->data[$name]['step'] = $this->meta[$name]['step'];
             }
 
             $this->data[$name]['__is_first__'] = ($this->data[$name]['step'] == $from);
@@ -311,21 +294,23 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            if (!isset($this->triggers[$id]) || $this->triggers[$id]['reset_value'] !== $reset) {
-                $this->triggers[$id] = array(
+            $id = 'trigger:' . $id;
+
+            if (!isset($this->meta[$id]) || $this->meta[$id]['reset_value'] !== $reset) {
+                $this->meta[$id] = array(
                     'current_step'  => $start,
                     'total_steps'   => $steps,
                     'reset_value'   => $reset
                 );
             } else {
-                $this->triggers[$id]['current_step']++;
+                $this->meta[$id]['current_step']++;
             }
 
-            $ret = ($this->triggers[$id]['current_step'] % $this->triggers[$id]['total_steps']);
+            $ret = ($this->meta[$id]['current_step'] % $this->meta[$id]['total_steps']);
 
             $this->data[$id]['step'] = $ret;
 
-            return ($ret == ($this->triggers[$id]['total_steps'] - 1));
+            return ($ret == ($this->meta[$id]['total_steps'] - 1));
         }
 
         /****m* sandbox/onchange
@@ -343,13 +328,15 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            if (!isset($this->onhange[$id])) {
-                $this->onchange[$id] = NULL;
+            $id = 'onchange:' . $id;
+            
+            if (!isset($this->meta[$id])) {
+                $this->meta[$id] = NULL;
             }
 
-            $return = ($this->onchange[$id] !== $value);
+            $return = ($this->meta[$id] !== $value);
 
-            $this->onchange[$id] = $value;
+            $this->meta[$id] = $value;
 
             return $return;
         }
