@@ -209,7 +209,7 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static function __if($args) {
             return array(
-                'if (' . implode(', ', $args) . ') {',
+                'if (' . implode('', $args) . ') {',
                 '}'
             );
         }
@@ -230,8 +230,8 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function __copy($args) {
             return array(
-                '$this->bufferStart(' . implode(', ', $args) . ', false)', 
-                '$this->bufferEnd(' . implode(', ', $args) . ')'
+                '$this->bufferStart(' . implode(', ', $args) . ', false);', 
+                '$this->bufferEnd(' . implode(', ', $args) . ');'
             );
         }
         
@@ -244,8 +244,8 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function __cut($args) {
             return array(
-                '$this->bufferStart(' . implode(', ', $args) . ', true)', 
-                '$this->bufferEnd(' . implode(', ', $args) . ')'
+                '$this->bufferStart(' . implode(', ', $args) . ', true);', 
+                '$this->bufferEnd(' . implode(', ', $args) . ');'
             );
         }
         
