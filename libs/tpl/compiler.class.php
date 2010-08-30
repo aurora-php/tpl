@@ -726,50 +726,19 @@ namespace org\octris\core\tpl {
                 extract($current);
             
                 switch ($token) {
-                case self::T_BLOCK_OPEN:
-                    switch ($value = strtolower(substr($value, 1))) {
-                    case 'foreach':
-                        $tmp = 'while ($this->each(%s)) {';
-                        $this->data['compiler']['blocks'][] = '}';
-                        break;
-                    case 'cache':
-                        $tmp = 'if ($this->cache(%s)) {';
-                        $this->data['compiler']['blocks'][] = '}';
-                        break;
-                    case 'copy':
-                        $tmp = '$this->bufferCopyStart(%s);';
-                        $this->data['compiler']['blocks'][] = '$this->bufferCopyEnd(%s);';
-                        break;
-                    case 'cron':
-                        $tmp = 'if ($this->cron(%s)) {';
-                        $this->data['compiler']['blocks'][] = '}';
-                        break;
-                    case 'cut':
-                        $tmp = '$this->bufferCutStart(%s);';
-                        $this->data['compiler']['blocks'][] = '$this->bufferCutEnd(%s);';
-                        break;
-                    case 'loop':
-                        $tmp = 'while ($this->loop(%s)) {';
-                        $this->data['compiler']['blocks'][] = '}';
-                        break;
-                    case 'onchange':
-                        $tmp = 'if ($this->onchange(%s)) {';
-                        $this->data['compiler']['blocks'][] = '}';
-                        break;
-                    case 'trigger':
-                        $tmp = 'if ($this->trigger(%s)) {';
-                        $this->data['compiler']['blocks'][] = '}';
-                        break;
-                    default:
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, sprintf('unknown block type "%s"', $value));
-                        break;
-                    }
-
-                    $code = array(sprintf($tmp, $flatten($code)));
-                    break;
                 case self::T_IF_OPEN:
-                    $code = array(sprintf('if (%s) {', $flatten($code)));
-                    $this->data['compiler']['blocks'][] = '}';
+                case self::T_BLOCK_OPEN:
+                    // replace/rewrite block call
+                    $value = strtolower($value);
+                    
+                    list($_start, $_end) = compiler\rewrite::$value(array_reverse($code));
+
+                    $code = array($_start);
+                    $this->data['compiler']['blocks'][] = $_end;
+                
+                    if (($err = compiler\rewrite::getError()) != '') {
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                    }
                     break;
                 case self::T_IF_ELSE:
                     $code[] = '} else {';

@@ -21,6 +21,18 @@ namespace org\octris\core\tpl\compiler {
          * SYNOPSIS
          */
         protected static $inline = array(
+            // blocks
+            '#if'       => array('min' => 1, 'max' => 1),
+            '#foreach'  => array('min' => 2, 'max' => 2),
+            '#cache'    => array('min' => 2, 'max' => 2),
+            '#copy'     => array('min' => 1, 'max' => 1),
+            '#cron'     => array('min' => 1, 'max' => 2),
+            '#cut'      => array('min' => 1, 'max' => 1),
+            '#loop'     => array('min' => 3, 'max' => 4),
+            '#onchange' => array('min' => 2, 'max' => 2),
+            '#trigger'  => array('min' => 1, 'max' => 4),
+            
+            // functions
             '_'     => array('min' => 1),               // gettext
             'if'    => array('min' => 2, 'max' => 3),   // (... ? ... : ...)
             'mul'   => array('min' => 2),               // ... * ...
@@ -40,6 +52,8 @@ namespace org\octris\core\tpl\compiler {
             'le'    => array('min' => 2, 'max' => 2),   // ... <= ...
             'ge'    => array('min' => 2, 'max' => 2),   // ... >= ...
             'ne'    => array('min' => 2, 'max' => 2),   // ... != ...
+            
+            'dump'  => array('min' => 1, 'max' => 1)
         );
         /*
          * FUNCTION
@@ -114,10 +128,13 @@ namespace org\octris\core\tpl\compiler {
                     return $name . '(' . implode(', ', $args) . ')';
                 } else {
                     // inline function rewrite
-                    $name = "_$name";
+                    $name = '_' . str_replace('#', '_', $name);
 
                     return self::$name($args);
                 }
+            } elseif (substr($name, 0, 1) == '#') {
+                // unknown block function
+                self::setError($name, 'unknown block type');
             } else {
                 return sprintf(
                     '$this->%s(%s)',
@@ -159,7 +176,66 @@ namespace org\octris\core\tpl\compiler {
         }
 
         /*
-         * next: inline functions, that can be converted directly
+         * inline block functions, that can be converted directly
+         */
+        protected static function __if($args) {
+            return array(
+                'if (' . implode(', ', $args) . ') {',
+                '}'
+            );
+        }
+
+        protected static function __cache($args) {
+            return array(
+                'if ($this->cache(' . implode(', ', $args) . ')) {', 
+                '}'
+            );
+        }
+        
+        protected static function __copy($args) {
+            return array(
+                '$this->bufferStart(' . implode(', ', $args) . ', false)', 
+                '$this->bufferEnd(' . implode(', ', $args) . ')'
+            );
+        }
+        
+        protected static function __cron($args) {
+            return array(
+                'if ($this->cron(' . implode(', ', $args) . ')) {',
+                '}'
+            );
+        }
+        
+        protected static function __cut($args) {
+            return array(
+                '$this->bufferStart(' . implode(', ', $args) . ', true)', 
+                '$this->bufferEnd(' . implode(', ', $args) . ')'
+            );
+        }
+        
+        protected static function __loop($args) {
+            return array(
+                'while ($this->loop(' . implode(', ', $args) . ')) {',
+                '}'
+            );
+        }
+
+        protected static function __onchange($args) {
+            return array(
+                'if ($this->onchange(' . implode(', ', $args) . ')) {',
+                '}'
+            );
+        }
+        
+        protected static function __trigger($args) {
+            return array(
+                'if ($this->trigger(' . implode(', ', $args) . ')) {',
+                '}'
+            );
+        }
+
+        /*
+         * inline functions, that can be converted directly
          */
         protected static function __($args) {
             if (preg_match('/^(["\'])(.*)\1$/', $args[0], $match)) {
@@ -295,6 +371,10 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _ne($args) {
             return '(' . implode(' == ', $args) . ')';
+        }
+        
+        protected static function dump($args) {
+            return 'var_dump(' . $args . ')';
         }
     }
 }
