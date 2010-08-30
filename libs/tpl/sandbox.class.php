@@ -25,6 +25,57 @@ namespace org\octris\core\tpl {
          *      template data
          ****
          */
+
+        /****v* sandbox/$pastebin
+         * SYNOPSIS
+         */
+        protected $pastebin = array();
+        /*
+         * FUNCTION
+         *      pastebin for cut/copied buffers
+         ****
+         */
+        
+        /****m* sandbox/bufferStart
+         * SYNOPSIS
+         */
+        public function bufferStart(&$ctrl, $cut = true)
+        /*
+         * FUNCTION
+         *      start output buffer
+         * INPUTS
+         *      * $ctrl (mixed) -- control variable to store buffer data in
+         *      * $cut (bool) -- (optional) whether to cut or to copy to buffer
+         ****
+         */
+        {
+            array_push($this->pastebin, array(
+                'buffer' => &$ctrl,
+                'cut'    => $cut
+            ));
+
+            ob_start();
+        }
+
+        /****m* sandbox/bufferEnd
+         * SYNOPSIS
+         */
+        public function bufferEnd()
+        /*
+         * FUNCTION
+         *      stop output buffer
+         ****
+         */
+        {
+            $buffer = array_pop($this->pastebin);
+            $buffer['buffer'] = ob_get_contents();
+            
+            if ($buffer['cut']) {
+                ob_end_clean();
+            } else {
+                ob_end_flush();
+            }
+        }
         
         /****m* sandbox/
          * SYNOPSIS
