@@ -182,7 +182,7 @@ namespace org\octris\core\tpl\compiler {
         {
             $tpl = new \org\octris\core\tpl\compiler();
             
-            return $tpl->parse($options['path'] . '/' . $args[0], true);
+            return $tpl->parse($options['path'] . '/' . $args[0]);
         }
     }
 }

@@ -376,16 +376,6 @@ namespace org\octris\core\tpl {
          ****
          */
         
-        /****v* compiler/$imported
-         * SYNOPSIS
-         */
-        protected $imported = false;
-        /*
-         * FUNCTION
-         *      whether it's an imported template (using @import)
-         ****
-         */
-        
         /****v* compiler/$last_tokens
          * SYNOPSIS
          */
@@ -884,14 +874,13 @@ namespace org\octris\core\tpl {
         /****m* compiler/parse
          * SYNOPSIS
          */
-        public function parse($file, $imported = false)
+        public function parse($file)
         /*
          * FUNCTION
          *      template parser -- find all enclosed template
          *      functionality
          * INPUTS
          *      * $filename (string) -- file containing template to parse
-         *      * $imported (bool) -- (optional) whether it's an imported template (default: false)
          ****
          */
         {
@@ -906,8 +895,7 @@ namespace org\octris\core\tpl {
                 )
             );
             
-            $this->imported = $imported;
-            $this->blocks   = array();
+            $this->blocks = array();
 
             $pattern = '/(\{\{(.*?)\}\})/s';
             $offset  = 0;
