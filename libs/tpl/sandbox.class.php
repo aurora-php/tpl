@@ -227,7 +227,7 @@ namespace org\octris\core\tpl {
         /****m* sandbox/loop
          * SYNOPSIS
          */
-        public function loop($id, &$ctrl, $from, $to, $step = 1) 
+        public function loop($id, &$ctrl, $from, $to, &$meta = NULL)
         /*
          * FUNCTION
          *      handles #loop block -- creates something like a for loop
@@ -236,7 +236,7 @@ namespace org\octris\core\tpl {
          *      * $ctrl (mixed) -- control variable for loop
          *      * $from (int) -- value to start loop at
          *      * $to (int) -- value to end loop at
-         *      * $stept (int) -- (optional) step to increase/decrease value for each cycle
+         *      * $meta (array) -- (optional) control variable for meta information
          * OUTPUTS
          *      (bool) -- returns true as long as loop did not reach the end
          ****
@@ -245,38 +245,37 @@ namespace org\octris\core\tpl {
             $id = 'loop:' . $id;
             
             if (!isset($this->meta[$id])) {
-                $step = abs($step);
+                if ($from > $to) $step *= -1;
 
-                if ($from > $to) {
-                    $step *= -1;
-                }
-
-                $this->meta[$name] = array(
-                    'name'  => $name,
+                $this->meta[$id] = array(
                     'from'  => $from,
                     'to'    => $to,
-                    'incr'  => $step,
-                    'step'  => $from
+                    'step'  => $from,
+                    'incr'  => ($from > $to ? -1 : 1)
                 );
             } else {
-                $this->meta[$name]['step'] += $this->meta[$name]['incr'];
+                $this->meta[$id]['step'] += $this->meta[$id]['incr'];
             }
 
             if ($from > $to) {
-                $ret = ($this->meta[$name]['step'] > $to);
+                $ret = ($this->meta[$id]['step'] > $to);
             } else {
-                $ret = ($this->meta[$name]['step'] < $to);
+                $ret = ($this->meta[$id]['step'] < $to);
             }
 
             if (!$ret) {
-                $this->data[$name]['step'] = $to;
-                $this->meta[$name]['step'] = $this->meta[$name]['from'];
+                $ctrl = $to;
+                $this->meta[$id]['step'] = $this->meta[$id]['from'];
             } else {
-                $this->data[$name]['step'] = $this->meta[$name]['step'];
+                $ctrl = $this->meta[$id]['step'];
             }
 
-            $this->data[$name]['__is_first__'] = ($this->data[$name]['step'] == $from);
-            $this->data[$name]['__is_last__'] = ($this->data[$name]['step'] == $to);
+            $meta = array(
+                'key'      => $this->meta[$id]['step'],
+                'pos'      => $this->meta[$id]['step'],
+                'is_first' => ($this->meta[$id]['step'] == $this->meta[$id]['from']),
+                'is_last'  => ($this->meta[$id]['step'] == $this->meta[$id]['to'])
+            );
 
             return $ret;
         }
