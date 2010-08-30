@@ -36,6 +36,26 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****m* sandbox/setValue
+         * SYNOPSIS
+         */
+        public function setValue($name, $value)
+        /*
+         * FUNCTION
+         *      set value for sandbox
+         * INPUTS
+         *      * $name (string) -- name of variable to set
+         *      * $value (mixed) -- value of variable
+         ****
+         */
+        {
+            if (is_scalar($value)) {
+                $this->data[$name] = $value;
+            } else {
+                $this->data[$name] = new type\collection($value);
+            }
+        }
+        
         /****m* sandbox/bufferStart
          * SYNOPSIS
          */
