@@ -29,8 +29,8 @@ namespace org\octris\core\tpl\compiler {
             '#cron'     => array('min' => 1, 'max' => 2),
             '#cut'      => array('min' => 1, 'max' => 1),
             '#loop'     => array('min' => 3, 'max' => 4),
-            '#onchange' => array('min' => 2, 'max' => 2),
-            '#trigger'  => array('min' => 1, 'max' => 4),
+            '#onchange' => array('min' => 1, 'max' => 1),
+            '#trigger'  => array('min' => 0, 'max' => 3),
             
             // functions
             '_'     => array('min' => 1),               // gettext
@@ -201,9 +201,13 @@ namespace org\octris\core\tpl\compiler {
 
         protected static function __foreach($args) {
             return array(
-                'while ($this->each(' . implode(', ', $args) . ')) {', 
+                'foreach (' . $args[1] . ' as ' . $args[0] . ') {', 
                 '}'
             );
+            // return array(
+            //     'while ($this->each(' . implode(', ', $args) . ')) {', 
+            //     '}'
+            // );
         }
         
         protected static function __cache($args) {
@@ -236,21 +240,21 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function __loop($args) {
             return array(
-                'while ($this->loop(' . implode(', ', $args) . ')) {',
+                'while ($this->loop("' . md5(uniqid()) . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
 
         protected static function __onchange($args) {
             return array(
-                'if ($this->onchange(' . implode(', ', $args) . ')) {',
+                'if ($this->onchange("' . md5(uniqid()) . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
         
         protected static function __trigger($args) {
             return array(
-                'if ($this->trigger(' . implode(', ', $args) . ')) {',
+                'if ($this->trigger("' . md5(uniqid()) . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
