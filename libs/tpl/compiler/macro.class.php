@@ -109,6 +109,8 @@ namespace org\octris\core\tpl\compiler {
         {
             self::$last_error = '';
             
+            $name = strtolower($name);
+            
             if (!isset(self::$registry[$name])) {
                 self::setError($name, 'unknown macro');
             } elseif (!is_callable(self::$registry[$name]['callback'])) {
