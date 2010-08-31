@@ -377,16 +377,6 @@ namespace org\octris\core\tpl {
          ****
          */
         
-        /****v* compiler/$last_tokens
-         * SYNOPSIS
-         */
-        protected $last_tokens = array();
-        /*
-         * FUNCTION
-         *      stores compiled tokens
-         ****
-         */
-        
         /****v* compiler/$blocks
          * SYNOPSIS
          */
@@ -661,51 +651,6 @@ namespace org\octris\core\tpl {
             return $valid;
         }
 
-        /****m* compiler/getNextToken
-         * SYNOPSIS
-         */
-        protected function getNextToken(&$tokens)
-        /*
-         * FUNCTION
-         *      return next token and store last token
-         * INPUTS
-         *      * $tokens (array) -- tokens to use
-         * OUTPUTS
-         *      (int) -- next token
-         ****
-         */
-        {
-            if (($current = array_shift($tokens))) {
-                $this->last_tokens[] = $current['token'];
-            }
-            
-            return $current;
-        }
-
-        /****m* compiler/getLastToken
-         * SYNOPSIS
-         */
-        public function getLastToken($tokens, $idx)
-        /*
-         * FUNCTION
-         *      return previously processed token
-         * INPUTS
-         *      * $tokens (array) -- tokens
-         *      * $idx (int) -- index to return token of, according to PHP array_slice
-         * OUTPUTS
-         *      (int) -- ID of token
-         ****
-         */
-        {
-            if (($tmp = array_slice($tokens, $idx, 1))) {
-                $return = array_pop($tmp);
-            } else {
-                $return = 0;
-            }
-            
-            return $return;
-        }
-
         /****m* compiler/compile
          * SYNOPSIS
          */
@@ -723,7 +668,26 @@ namespace org\octris\core\tpl {
             $stack = array();
             $code  = array();
             
-            while (($current = $this->getNextToken($tokens))) {
+            $last_tokens = array();
+            
+            $getNextToken = function(&$tokens) use (&$last_tokens) {
+                if (($current = array_shift($tokens))) {
+                    $last_tokens[] = $current['token'];
+                }
+
+                return $current;
+            };
+            $getLastToken = function($tokens, $idx) {
+                if (($tmp = array_slice($tokens, $idx, 1))) {
+                    $return = array_pop($tmp);
+                } else {
+                    $return = 0;
+                }
+
+                return $return;
+            };
+
+            while (($current = $getNextToken($tokens))) {
                 extract($current);
             
                 switch ($token) {
@@ -794,7 +758,7 @@ namespace org\octris\core\tpl {
                     $code[] = $value;
                     break;
                 case self::T_START:
-                    $last_token = $this->getLastToken($this->last_tokens, -2);
+                    $last_token = $getLastToken($last_tokens, -2);
                     
                     if (in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
                         $code = array(implode('', $code));
@@ -833,8 +797,6 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $this->last_tokens = array();
-            
             $tokens = $this->tokenize($snippet, $line);
             $code   = '';
 
