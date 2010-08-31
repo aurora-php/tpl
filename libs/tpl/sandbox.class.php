@@ -46,6 +46,114 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****v* sandbox/$registry
+         * SYNOPSIS
+         */
+        protected $registry = array();
+        /*
+         * FUNCTION
+         *      function registry
+         ****
+         */
+        
+        /****m* sandbox/__construct
+         * SYNOPSIS
+         */
+        public function __construct()
+        /*
+         * FUNCTION
+         *      constructor
+         ****
+         */
+        {
+        }
+        
+        /****m* sandbox/__call
+         * SYNOPSIS
+         */
+        public function __call($name, $args)
+        /*
+         * FUNCTION
+         *      magic caller for registered template functions
+         * INPUTS
+         *      * $name (string) -- name of function to call
+         *      * $args (mixed) -- function arguments
+         * OUTPUTS
+         *      (mixed) -- output of the registered function
+         ****
+         */
+        {
+            if (!isset($this->registry[$name])) {
+                $this->error(sprintf('"%s" -- unknown macro', $name));
+            } elseif (!is_callable($this->registry[$name]['callback'])) {
+                $this->error(sprintf('"%s" -- unable to call function', $name));
+            } elseif (count($args) < $this->registry[$name]['args']['min']) {
+                $this->error(sprintf('"%s" -- not enough arguments', $name));
+            } elseif (count($args) > $this->registry[$name]['args']['max']) {
+                $this->error(sprintf('"%s" -- too many arguments', $name));
+            } else {
+                return call_user_func_array($this->registry[$name]['callback'], $args);
+            }
+        }
+        
+        /****m* macro/error
+         * SYNOPSIS
+         */
+        protected static function error($msg)
+        /*
+         * FUNCTION
+         *      trigger an error and stop processing template
+         * INPUTS
+         *      * $msg (string) -- additional error message
+         ****
+         */
+        {
+            $trace = debug_backtrace();
+            print_r($trace);
+            
+            printf("\n** ERROR: sandbox**\n");
+            printf("   line :    %d\n", 0);
+            printf("   file:     %s\n", '--');
+            printf("   message:  %s\n", $msg);
+            
+            die();
+        }
+        
+        /****m* sandbox/registerMethod
+         * SYNOPSIS
+         */
+        public function registerMethod($name, $callback, array $args)
+        /*
+         * FUNCTION
+         *      register a custom template method
+         * INPUTS
+         *      * $name (string) -- name of macro to register
+         *      * $callback (mixed) -- callback to call when macro is executed
+         *      * $args (array) -- for testing arguments
+         ****
+         */
+        {
+            $this->registry[strtolower($name)] = array(
+                'callback' => $callback,
+                'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
+            );
+        }
+        
+        /****m* tpl/setValues
+         * SYNOPSIS
+         */
+        public function setValues($array)
+        /*
+         * FUNCTION
+         *      set values wort multiple variables
+         * INPUTS
+         *      * $array (array) -- key/value array with values
+         ****
+         */
+        {
+            foreach ($array as $k => $v) $this->setValue($k, $v);
+        }
+        
         /****m* sandbox/setValue
          * SYNOPSIS
          */
@@ -382,6 +490,21 @@ namespace org\octris\core\tpl {
                 : $var), 
                 true
             );
+        }
+    
+        /****m* sandbox/render
+         * SYNOPSIS
+         */
+        public function render($filename) 
+        /*
+         * FUNCTION
+         *      render a template
+         * INPUTS
+         *      * $filename (string) -- filename of template to render
+         ****
+         */
+        {
+            require($filename);
         }
     }
 }
