@@ -85,9 +85,9 @@ namespace org\octris\core\tpl\compiler {
          ****
          */
         {
-            self::$registry[$name] = array(
+            self::$registry[strtolower($name)] = array(
                 'callback' => $callback,
-                'args'     => array_merge(array('min' => 1, 'max' => 1), $args)
+                'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
             );
         }
         
