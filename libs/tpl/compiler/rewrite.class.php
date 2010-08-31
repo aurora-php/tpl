@@ -119,7 +119,8 @@ namespace org\octris\core\tpl\compiler {
          */
         {
             self::$last_error = '';
-            
+           
+            $name = strtolower($name);
             $args = $args[0];
             
             if (in_array($name, self::$forbidden)) {
