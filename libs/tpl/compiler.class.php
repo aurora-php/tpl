@@ -3,6 +3,7 @@
 namespace org\octris\core\tpl {
     require_once('compiler/rewrite.class.php');
     require_once('compiler/macro.class.php');
+    require_once('compiler/constant.class.php');
 
     use \org\octris\core\tpl\compiler as compiler;
     
@@ -749,7 +750,12 @@ namespace org\octris\core\tpl {
                     }
                     break 2;
                 case self::T_CONSTANT:
-                    $tmp = $this->getConstant(substr($value, 1));
+                    $value = strtolower(substr($value, 1));
+                    $tmp   = comiler\constant::getConstant($value);
+                
+                    if (($err = compiler\constant::getError()) != '') {
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                    }
                 
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
                     break;
