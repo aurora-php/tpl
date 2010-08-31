@@ -242,7 +242,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $id = 'loop:' . $id . ':' . crc32("$form:$to");
+            $id = 'loop:' . $id . ':' . crc32("$from:$to");
             
             if (!isset($this->meta[$id])) {
                 if ($from > $to) $step *= -1;
