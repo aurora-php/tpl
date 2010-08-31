@@ -136,6 +136,7 @@ namespace org\octris\core {
             tpl\compiler\constant::setConstants($this->constants);
 
             $c   = new tpl\compiler();
+            $c->setCompressLevel(1);
             $tpl = $c->parse($filename);
             
             $c   = new tpl\compiler\compress();
