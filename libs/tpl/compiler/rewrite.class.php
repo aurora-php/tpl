@@ -77,7 +77,8 @@ namespace org\octris\core\tpl\compiler {
          * SYNOPSIS
          */
         protected static $forbidden = array(
-            'setvalue', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger'
+            'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
+            '__construct', '__call', 'registermethod', 'render'
         );
         /*
          * FUNCTION
