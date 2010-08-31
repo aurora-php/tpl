@@ -701,7 +701,8 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $code = array();
+            $stack = array();
+            $code  = array();
             
             while (($current = $this->getNextToken($tokens))) {
                 extract($current);
@@ -728,7 +729,7 @@ namespace org\octris\core\tpl {
                     $code[] = array_pop($this->data['compiler']['blocks']);
                     break;
                 case self::T_BRACE_CLOSE:
-                    $code[] = implode(', ', ($this->compile($tokens)));
+                    array_push($stack, $code);
                     break;
                 case self::T_METHOD:
                     // replace/rewrite method call
@@ -738,7 +739,9 @@ namespace org\octris\core\tpl {
                     if (($err = compiler\rewrite::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
-                    break 2;
+                    
+                    $code[] = implode(', ', array_pop($stack));
+                    break;
                 case self::T_MACRO:
                     // resolve macro
                     $value = strtolower(substr($value, 1));
@@ -748,7 +751,9 @@ namespace org\octris\core\tpl {
                     if (($err = compiler\macro::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
-                    break 2;
+                    
+                    $code[] = implode(', ', array_pop($stack));
+                    break;
                 case self::T_CONSTANT:
                     $value = strtolower(substr($value, 1));
                     $tmp   = comiler\constant::getConstant($value);
