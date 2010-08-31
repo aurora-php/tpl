@@ -412,24 +412,6 @@ namespace org\octris\core\tpl {
             }
         }
         
-        /****m* compiler/getConstant
-         * SYNOPSIS
-         */
-        protected function getConstant($name)
-        /*
-         * FUNCTION
-         *      lookup value of a template constant
-         * INPUTS
-         *      * $name (string) -- name of template constant to lookup
-         * OUTPUTS
-         *      (string) -- template constant
-         ****
-         */
-        {
-            // TODO
-            return $name;
-        }
-        
         /****m* compiler/getTokenName
          * SYNOPSIS
          */
@@ -863,16 +845,13 @@ namespace org\octris\core\tpl {
             $this->blocks = array();
 
             $pattern = '/(\{\{(.*?)\}\})/s';
-            $offset  = 0;
 
-            while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE, $offset)) {
-                $crc = crc32($tpl);
-                $ofs = $offset;
-
+            while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
+                $crc  = crc32($tpl);
                 $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
-                $tpl = substr($tpl, 0, $m[1][1]) . $this->process(trim($m[2][0]), $line) . substr($tpl, $m[1][1] + strlen($m[1][0]));
+                $tpl  = substr_replace($tpl, $this->process(trim($m[2][0]), $line), $m[1][1], strlen($m[1][0]));
 
-                if (($crc == crc32($tpl)) && $ofs == $offset) {
+                if ($crc == crc32($tpl)) {
                     $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
                 }
             }
