@@ -563,7 +563,6 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $valid   = true;            // code is valid
             $braces  = 0;               // brace level
             $current = null;            // current token
             
@@ -576,7 +575,7 @@ namespace org\octris\core\tpl {
             $get_next_rule = function($rule, $token) use (&$stack) {
                 $return = false;
                 
-                if (array_key_exists($token, $rule)) {
+                if (is_array($rule) && array_key_exists($token, $rule)) {
                     // valid token, because it's in current ruleset
                     if (is_array($rule[$token])) {
                         // push rule on stack and get child rule
@@ -640,15 +639,15 @@ namespace org\octris\core\tpl {
                     break;
                 }
                 
-                printf("%s(%d)->", $this->getTokenName($token), count($stack));
-                if (!($tmp = $get_next_rule($rule, $token))) {
+                // printf("%s(%d)->", $this->getTokenName($token), count($stack));
+                if (!($tmp = $get_next_rule($rule, $token, $stack))) {
                     $this->error(__FUNCTION__, __LINE__, $line, $token, $rule);
                 }
                 
                 $rule = $tmp;
             }
-            
-            return $valid;
+
+            return true;
         }
 
         /****m* compiler/compile
@@ -782,18 +781,18 @@ namespace org\octris\core\tpl {
             return $code;
         }
         
-        /****m* compiler/process
+        /****m* compiler/toolchain
          * SYNOPSIS
          */
-        protected function process($snippet, $line)
+        protected function toolchain($snippet, $line)
         /*
          * FUNCTION
-         *      process template snippet - starts tokenizer and than compiler
+         *      execute compiler toolchain for a template snippet
          * INPUTS
-         *      * $snippet (string) -- template snippet to compile
-         *      * $line (int) -- line in template the snippet occured
+         *      * $snippet (string) -- template snippet to process
+         *      * $line (int) -- line template to process
          * OUTPUTS
-         *      (string) -- generated php code
+         *      (string) -- processed / compiled snippet
          ****
          */
         {
@@ -806,42 +805,40 @@ namespace org\octris\core\tpl {
                     $code   = implode('', $this->compile($tokens));
                 }
             }
-
+            
             return $code;
         }
         
         /****m* compiler/parse
          * SYNOPSIS
          */
-        public function parse($file)
+        protected function parse($filename)
         /*
          * FUNCTION
-         *      template parser -- find all enclosed template
-         *      functionality
+         *      parse template and extract all template functionality to compile
          * INPUTS
-         *      * $filename (string) -- file containing template to parse
+         *      * $filename (string) -- name of file to process
+         * OUTPUTS
+         *      (string) -- processed template
          ****
          */
         {
-            $this->filename = $file;
-            
-            $tpl = file_get_contents($file);
-            
-            $this->data = array(
+            $this->blocks = array();
+            $this->data  = array(
                 'analyzer'  => array(),
                 'compiler'  => array(
                     'blocks'    => array()
                 )
             );
-            
-            $this->blocks = array();
+
+            $tpl = file_get_contents($filename);
 
             $pattern = '/(\{\{(.*?)\}\})/s';
 
             while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
                 $crc  = crc32($tpl);
                 $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
-                $tpl  = substr_replace($tpl, $this->process(trim($m[2][0]), $line), $m[1][1], strlen($m[1][0]));
+                $tpl  = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line), $m[1][1], strlen($m[1][0]));
 
                 if ($crc == crc32($tpl)) {
                     $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
@@ -851,16 +848,37 @@ namespace org\octris\core\tpl {
             if (count($this->blocks) > 0) {
                 $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
-                    implode(', ', $this->getTokenNames(array_reverse($this->blocks)))
+                    implode(', ', array_map(function($v) {
+                        return $v['value'];
+                    }, array_reverse($this->blocks)))
                 ));
             }
             
             return $tpl;
         }
+        
+        /****m* compiler/process
+         * SYNOPSIS
+         */
+        public function process($filename)
+        /*
+         * FUNCTION
+         *      start compiler
+         * INPUTS
+         *      * $filename (string) -- name of file to process
+         * OUTPUTS
+         *      (string) -- compiled template
+         ****
+         */
+        {
+            $this->filename = $filename;
+
+            return $this->parse($filename);
+        }
     }
 
     $test = new compiler();
-    $tpl  = $test->parse(dirname(__FILE__) . '/../../tests/tpl/compiler/tpl1.html');
+    $tpl  = $test->process(dirname(__FILE__) . '/../../tests/tpl/compiler/tpl1.html');
 
     print "\n\n$tpl\n\n";
 
