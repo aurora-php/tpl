@@ -29,6 +29,30 @@ namespace org\octris\core {
          ****
          */
         
+        /****v* tpl/$use_cache
+         * SYNOPSIS
+         */
+        protected $use_cache = false;
+        /*
+         * FUNCTION
+         *      whether to fetch compiled template from cache
+         ****
+         */
+        
+        /****v* tpl/$path
+         * SYNOPSIS
+         */
+        protected $path = array(
+            'tpl'   => '/tmp',      // output path for compiled templates
+            'js'    => '/tmp',      // output path for compressed javascript
+            'css'   => '/tmp'       // output path for compressed css
+        );
+        /*
+         * FUNCTION
+         *      output path for various file types
+         ****
+         */
+        
         /****m* tpl/__construct
          * SYNOPSIS
          */
@@ -103,6 +127,24 @@ namespace org\octris\core {
          */
         {
             compiler\searchpath::addPath($this->path);
+        }
+        
+        /****m* tpl/setPath
+         * SYNOPSIS
+         */
+        public function setPath($type, $path)
+        /*
+         * FUNCTION
+         *      set path for css output
+         * INPUTS
+         *      * $type (string) -- type of path to set
+         *      * $path (string) -- name of path
+         ****
+         */
+        {
+            if (array_key_exists($type, $this->path) && is_writable($path)) {
+                $this->path[$type] = $path;
+            }
         }
         
         /****m* tpl/compile
