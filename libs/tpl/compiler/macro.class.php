@@ -1,6 +1,8 @@
 <?php
 
 namespace org\octris\core\tpl\compiler {
+    require_once('searchpath.class.php');
+    
     /****c* compiler/macro
      * NAME
      *      macro
@@ -120,7 +122,13 @@ namespace org\octris\core\tpl\compiler {
             } elseif (count($args) > self::$registry[$name]['args']['max']) {
                 self::setError($name, 'too many arguments');
             } else {
-                return call_user_func_array(self::$registry[$name]['callback'], array($args, $options));
+                list($ret, $err) = call_user_func_array(self::$registry[$name]['callback'], array($args, $options));
+                
+                if ($err) {
+                    self::setError($name, $err);
+                }
+                
+                return $ret
             }
         }
     }
