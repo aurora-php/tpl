@@ -108,28 +108,34 @@ namespace org\octris\core {
         /****m* tpl/compile
          * SYNOPSIS
          */
-        public function compile($filename) 
+        protected function compile($inp, $out)
         /*
          * FUNCTION
-         *      executes template compiler with specified parameters
+         *      executes template compiler and css/javascript compressor
          * INPUTS
-         *      * $params (mixed) -- parameters for compiler
+         *      * $inp (string) -- input filename
+         *      * $out (string) -- output filename
          ****
          */
         {
             require_once('tpl/compiler.class.php');
             require_once('tpl/compiler/compress.class.php');
             
-            tpl\compiler::registerPath($this->path);
-            
-            tpl\compiler\constant::setConstants($this->constants);
+            // tpl\compiler\constant::setConstants($this->constants);
 
-            $c   = new tpl\compiler();
-            $c->setCompressLevel(1);
-            $tpl = $c->parse($filename);
+            if (($filename = compiler\searchpath::findFile($inp)) !== false) {
+                $c   = new tpl\compiler();
+                $c->setCompressLevel(1);
+                $tpl = $c->parse($filename);
             
-            $c   = new tpl\compiler\compress();
-            $tpl = $c->process($tpl);
+                $c   = new tpl\compress();
+                $tpl = $c->process($tpl);
+                
+                // TODO: output
+                // file_put_contents($out, $tpl);
+            } else {
+                die('unable to locate file!');
+            }
         }
         
         /****m* tpl/render
@@ -144,42 +150,15 @@ namespace org\octris\core {
          ****
          */
         {
-            $filename = preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\/', '/', $filename));
-            $filename = ltrim($filename, '/');
+            $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\/', '/', $filename)), '/');
+            $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
-            if ()
-
-            if (!$this->getCacheUsage()) {
-                // use template compiler to compile template, if no cache path was set
-                require_once('base/libs/lima_tpl/lima_tpl_compiler.class.php');
-
-                if ($this->lookfirst < 0 || !file_exists($this->path[$this->lookfirst] . $filename)) {
-                    $this->lookfirst = -1;
-
-                    for ($i = 0; $i < count($this->path); $i++) {
-                        if (file_exists($this->path[$i] . $filename)) {
-                            $this->lookfirst = $i;
-                        }
-                    }           
-                }
-
-                if ($this->lookfirst < 0) {
-                    throw new Exception(sprintf(
-                        'template not found "%s" in directories "%s"!',
-                        $filename,
-                        implode(':', $this->path)
-                    ));
-                }
-
-                $c = new lima_tpl_compiler($this);
-                $out = $c->execute(array('pathname'  => $this->path[$this->lookfirst],
-                                         'filename'  => $filename,
-                                         'locale'    => $locale));
-            } else {
-                $out = $filename;
+            if (!$this->use_cache) {
+                // do not use cache -- first compile template
+                $this->compile($inp, $out);
             }
 
-            $this->sandbox->render($out, $locale);
+            $this->sandbox->render($out, tpl\sandbox::T_CONTEXT_HTML);
         }
         
         /****m* tpl/fetch
