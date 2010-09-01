@@ -126,7 +126,7 @@ namespace org\octris\core {
          ****
          */
         {
-            compiler\searchpath::addPath($this->path);
+            compiler\searchpath::addPath($pathname);
         }
         
         /****m* tpl/setPath
