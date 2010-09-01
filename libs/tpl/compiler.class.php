@@ -403,25 +403,6 @@ namespace org\octris\core\tpl {
             }
         }
         
-        /****m* compiler/setCompressLevel
-         * SYNOPSIS
-         */
-        public function setCompressLevel($level)
-        /*
-         * FUNCTION
-         *      set level for CSS/javascript compression:
-         *
-         *      * 0 -- no compacting/compression
-         *      * 1 -- compact javascript and css files
-         *      * 2 -- compact and compress javascript and css files
-         * INPUTS
-         *      * $level (int) -- level to set
-         ****
-         */
-        {
-            
-        }
-        
         /****m* compiler/getTokenName
          * SYNOPSIS
          */
