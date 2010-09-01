@@ -171,6 +171,8 @@ namespace org\octris\core {
                 $tpl = $c->parse($filename);
             
                 $c   = new tpl\compress();
+                $c->setPath('css', $this->path['css']);
+                $c->setPath('js',  $this->path['js']);
                 $tpl = $c->process($tpl);
                 
                 // TODO: output
