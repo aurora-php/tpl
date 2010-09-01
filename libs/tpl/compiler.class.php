@@ -470,7 +470,7 @@ namespace org\octris\core\tpl {
             } elseif (isset($payload)) {
                 printf("   message:  %s\n", $payload);
             }
-            
+         
             die();
         }
         
@@ -497,10 +497,12 @@ namespace org\octris\core\tpl {
                     if (preg_match('/^(' . $regexp . ')/i', $in, $m)) {
                         if ($token != self::T_WHITESPACE) {
                             // spaces between tokens are ignored
-                            $out[] = array( 'token' => $token,
-                                            'value' => $m[1],
-                                            'file'  => $this->filename,
-                                            'line'  => $line);
+                            $out[] = array(
+                                'token' => $token,
+                                'value' => $m[1],
+                                'file'  => $this->filename,
+                                'line'  => $line
+                            );
                         }
 
                         $in = substr($in, strlen($m[1]));
