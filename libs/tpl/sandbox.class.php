@@ -16,6 +16,19 @@ namespace org\octris\core\tpl {
      */
 
     class sandbox {
+        /****d* sandbox/T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
+         * SYNOPSIS
+         */
+        const T_CONTEXT_HTML       = 1; 
+        const T_CONTEXT_JAVASCRIPT = 2; 
+        const T_CONTEXT_TEXT       = 3;
+        const T_CONTEXT_XML        = 4;
+        /*
+         * FUNCTION
+         *      contexts
+         ****
+         */
+        
         /****v* sandbox/$data
          * SYNOPSIS
          */
@@ -56,6 +69,26 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****v* sandbox/$context
+         * SYNOPSIS
+         */
+        protected $context;
+        /*
+         * FUNCTION
+         *      context to use for autoescaping
+         ****
+         */
+        
+        /****v* sandbox/$filename
+         * SYNOPSIS
+         */
+        protected $filename = '';
+        /*
+         * FUNCTION
+         *      name of file that rendered through the sandbox
+         ****
+         */
+        
         /****m* sandbox/__construct
          * SYNOPSIS
          */
@@ -84,36 +117,35 @@ namespace org\octris\core\tpl {
          */
         {
             if (!isset($this->registry[$name])) {
-                $this->error(sprintf('"%s" -- unknown macro', $name));
+                $this->error(sprintf('"%s" -- unknown macro', $name), 0, __LINE__);
             } elseif (!is_callable($this->registry[$name]['callback'])) {
-                $this->error(sprintf('"%s" -- unable to call function', $name));
+                $this->error(sprintf('"%s" -- unable to call function', $name), 0, __LINE__);
             } elseif (count($args) < $this->registry[$name]['args']['min']) {
-                $this->error(sprintf('"%s" -- not enough arguments', $name));
+                $this->error(sprintf('"%s" -- not enough arguments', $name), 0, __LINE__);
             } elseif (count($args) > $this->registry[$name]['args']['max']) {
-                $this->error(sprintf('"%s" -- too many arguments', $name));
+                $this->error(sprintf('"%s" -- too many arguments', $name), 0, __LINE__);
             } else {
                 return call_user_func_array($this->registry[$name]['callback'], $args);
             }
         }
         
-        /****m* macro/error
+        /****m* sandbox/error
          * SYNOPSIS
          */
-        protected static function error($msg)
+        public function error($msg, $line = 0, $cline = __LINE__)
         /*
          * FUNCTION
          *      trigger an error and stop processing template
          * INPUTS
          *      * $msg (string) -- additional error message
+         *      * $line (int) -- line in template the error occured (0, if it's in the class lib)
+         *      * $cline (int) -- line in the class that triggered the error
          ****
          */
         {
-            $trace = debug_backtrace();
-            print_r($trace);
-            
-            printf("\n** ERROR: sandbox**\n");
-            printf("   line :    %d\n", 0);
-            printf("   file:     %s\n", '--');
+            printf("\n** ERROR: sandbox(%d)**\n", $cline);
+            printf("   line :    %d\n", $line);
+            printf("   file:     %s\n", $this->filename);
             printf("   message:  %s\n", $msg);
             
             die();
@@ -466,6 +498,19 @@ namespace org\octris\core\tpl {
          ****
          */
         {
+            if ($auto_escape) {
+                switch($this->context) {
+                case self::T_CONTEXT_HTML:
+                    $val = htmlspecialchars($val);
+                    break;
+                case self::T_CONTEXT_JAVASCRIPT:
+                    break;
+                case self::T_CONTEXT_TEXT:
+                default:
+                    break;
+                }
+            }
+            
             print $val;
         }
         
@@ -495,15 +540,19 @@ namespace org\octris\core\tpl {
         /****m* sandbox/render
          * SYNOPSIS
          */
-        public function render($filename) 
+        public function render($filename, $context)
         /*
          * FUNCTION
          *      render a template
          * INPUTS
          *      * $filename (string) -- filename of template to render
+         *      * $context (string) -- context of files, required for auto-escaping
          ****
          */
         {
+            $this->filename = $filename;
+            $this->context  = $context;
+            
             require($filename);
         }
     }
