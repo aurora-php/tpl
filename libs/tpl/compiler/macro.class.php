@@ -131,9 +131,21 @@ namespace org\octris\core\tpl\compiler {
     macro::registerMacro(
         'import',
         function($args, array $options = array()) {
-            $tpl = new \org\octris\core\tpl\compiler();
+            $ret = '';
+            $err = '';
             
-            return $tpl->parse($options['path'] . '/' . $args[0]);
+            if (($file = \org\octris\core\tpl\compiler\searchpath::findFile($args[0])) !== false) {
+                $c   = new \org\octris\core\tpl\compiler();
+                $ret = $c->process($file);
+            } else {
+                $err = sprintf(
+                    'unable to locate file "%s" in "%s"', 
+                    $args[0],
+                    implode(':', \org\octris\core\tpl\compiler\searchpath::getPath())
+                );
+            }
+            
+            return array($ret, $err);
         },
         array('min' => 1, 'max' => 1)
     );
