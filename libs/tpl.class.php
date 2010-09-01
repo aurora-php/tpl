@@ -2,6 +2,9 @@
 
 namespace org\octris\core {
     require_once('tpl/sandbox.class.php');
+    require_once('tpl/compiler/searchpath.class.php');
+    
+    use \org\octris\core\tpl\compiler as compiler;
     
     /****c* core/tpl
      * NAME
@@ -23,16 +26,6 @@ namespace org\octris\core {
         /*
          * FUNCTION
          *      sandbox for executing template in
-         ****
-         */
-        
-        /****v* tpl/$path
-         * SYNOPSIS
-         */
-        protected $path = array();
-        /*
-         * FUNCTION
-         *      registered path'
          ****
          */
         
@@ -109,11 +102,7 @@ namespace org\octris\core {
          ****
          */
         {
-            if (!is_array($pathname)) $pathname = array($pathname);
-            
-            foreach ($pathname as $p) $t
-                $this->path[] = rtrim($pathname, '/') . '/';
-            }
+            compiler\searchpath::addPath($this->path);
         }
         
         /****m* tpl/compile
