@@ -417,7 +417,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _error($args) {
-            return '$this->error(' . implode(', ', $args) . ')';
+            return '$this->error(' . implode(', ', $args) . ', __LINE__)';
         }
     }
 }
