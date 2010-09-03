@@ -53,7 +53,7 @@ namespace org\octris\core\tpl\compiler {
             'ge'    => array('min' => 2, 'max' => 2),   // ... >= ...
             'ne'    => array('min' => 2, 'max' => 2),   // ... != ...
 
-            'let'   => array('min' => 1, 'max' => 1),
+            'let'   => array('min' => 2, 'max' => 2),
             'dump'  => array('min' => 1, 'max' => 1),
             'error' => array('min' => 1, 'max' => 1)
         );
