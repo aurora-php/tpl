@@ -401,7 +401,7 @@ namespace org\octris\core\tpl {
 
             if (!$ret) {
                 $ctrl = $to;
-                $this->meta[$id]['step'] = $this->meta[$id]['from'];
+                $this->meta[$id]['step'] = $this->meta[$id]['from'] - $this->meta[$id]['incr'];
             } else {
                 $ctrl = $this->meta[$id]['step'];
             }
