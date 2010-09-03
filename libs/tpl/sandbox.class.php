@@ -383,8 +383,6 @@ namespace org\octris\core\tpl {
             $id = 'loop:' . $id . ':' . crc32("$from:$to");
             
             if (!isset($this->meta[$id])) {
-                if ($from > $to) $step *= -1;
-
                 $this->meta[$id] = array(
                     'from'  => $from,
                     'to'    => $to,
