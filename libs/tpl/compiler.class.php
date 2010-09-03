@@ -745,6 +745,26 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****v* compiler/$searchpath
+         * SYNOPSIS
+         */
+        protected $searchpath = array();
+        /*
+         * FUNCTION
+         *      path to look in for loading templates
+         ****
+         */
+        
+        /****v* compiler/$blocks
+         * SYNOPSIS
+         */
+        protected $blocks = array();
+        /*
+         * FUNCTION
+         *      data for analyzer
+         ****
+         */
+        
         /****v* compiler/$blocks
          * SYNOPSIS
          */
