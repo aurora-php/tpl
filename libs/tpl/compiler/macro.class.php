@@ -126,7 +126,7 @@ namespace org\octris\core\tpl\compiler {
                     self::setError($name, $err);
                 }
                 
-                return $ret
+                return $ret;
             }
         }
     }
