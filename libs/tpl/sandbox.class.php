@@ -115,7 +115,7 @@ namespace org\octris\core\tpl {
          */
         {
             if (!isset($this->registry[$name])) {
-                $this->error(sprintf('"%s" -- unknown macro', $name), 0, __LINE__);
+                $this->error(sprintf('"%s" -- unknown function', $name), 0, __LINE__);
             } elseif (!is_callable($this->registry[$name]['callback'])) {
                 $this->error(sprintf('"%s" -- unable to call function', $name), 0, __LINE__);
             } elseif (count($args) < $this->registry[$name]['args']['min']) {
