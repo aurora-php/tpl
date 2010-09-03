@@ -791,6 +791,56 @@ namespace org\octris\core\tpl {
             }
         }
         
+        /****m* compiler/addSearchPath
+         * SYNOPSIS
+         */
+        public function addSearchPath($path)
+        /*
+         * FUNCTION
+         *      add path to lookup templates in
+         * INPUTS
+         *      * $path (mixed) -- path to add, string or array of strings
+         ****
+         */
+        {
+            if (!is_array($path)) $path = array($path);
+            
+            $this->searchpath = array_unique(array_merge($this->searchpath, $path));
+        }
+        
+        /****m* compiler/findFile
+         * SYNOPSIS
+         */
+        public function findFile($filename)
+        /*
+         * FUNCTION
+         *      lookup a file in the searchpath 
+         * INPUTS
+         *      * $filename (string) -- name of file to lookup
+         * OUTPUTS
+         *      (mixed) -- returns full path of file or false, if file could not be located
+         ****
+         */
+        {
+            $return = false;
+            
+            foreach ($this->searchpath as $path) {
+                $test = $path . '/' . $filename;
+                
+                if (file_exists($test) && is_readable($test)) {
+                    if (($dir = dirname($filename)) !== '') {
+                        // add complete path of file for future relativ path lookups
+                        $this->addSearchPath($path . '/' . $dir);
+                    }
+                    
+                    $return = $test;
+                    break;
+                }
+            }
+            
+            return $return;
+        }
+
         /****m* compiler/getTokenName
          * SYNOPSIS
          */

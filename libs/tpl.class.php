@@ -39,6 +39,16 @@ namespace org\octris\core {
          ****
          */
         
+        /****v* tpl/$searchpath
+         * SYNOPSIS
+         */
+        protected $searchpath = array();
+        /*
+         * FUNCTION
+         *      path to look in for loading templates
+         ****
+         */
+        
         /****v* tpl/$path
          * SYNOPSIS
          */
@@ -114,10 +124,10 @@ namespace org\octris\core {
             $this->sandbox->registerMethod($name, $callback, $args);
         }
         
-        /****m* tpl/registerPath
+        /****m* tpl/addSearchPath
          * SYNOPSIS
          */
-        public function registerPath($pathname) 
+        public function addSearchPath($pathname) 
         /*
          * FUNCTION
          *      register pathname to look for templates in
@@ -126,19 +136,23 @@ namespace org\octris\core {
          ****
          */
         {
-            compiler\searchpath::addPath($pathname);
+            if (!in_array($path, $this->searchpath)) {
+                $this->searchpath[] = $path;
+            }
         }
         
-        /****m* tpl/setPath
+        /****m* tpl/setOutputPath
          * SYNOPSIS
          */
-        public function setPath($type, $path)
+        public function setOutputPath($ext, $pathname)
         /*
          * FUNCTION
-         *      set path for css output
+         *      set output path for compiled templates / compressed files
          * INPUTS
-         *      * $type (string) -- type of path to set
-         *      * $path (string) -- name of path
+         *      * $ext (string) -- extension of file (filetype)
+         *      * $pathname (string) -- pathname to set for extension
+         * OUTPUTS
+         *      
          ****
          */
         {
@@ -165,15 +179,14 @@ namespace org\octris\core {
             
             // tpl\compiler\constant::setConstants($this->constants);
 
-            if (($filename = compiler\searchpath::findFile($inp)) !== false) {
-                $c   = new tpl\compiler();
-                $c->setCompressLevel(1);
-                $tpl = $c->parse($filename);
+            $c = new tpl\compiler();
+            $c->addSearchPath($this->searchpath);
+
+            if (($filename = $c->findFile($inp)) !== false) {
+                $out = $c->process($filename);
             
-                $c   = new tpl\compress();
-                $c->setPath('css', $this->path['css']);
-                $c->setPath('js',  $this->path['js']);
-                $tpl = $c->process($tpl);
+                $c = new tpl\compress();
+                $out = $c->process($out, $this->path['js'], $this->path['css']);
                 
                 // TODO: output
                 // file_put_contents($out, $tpl);

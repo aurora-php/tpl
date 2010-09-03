@@ -140,8 +140,10 @@ namespace org\octris\core\tpl\compiler {
             $ret = '';
             $err = '';
             
-            if (($file = \org\octris\core\tpl\compiler\searchpath::findFile($args[0])) !== false) {
-                $c   = new \org\octris\core\tpl\compiler();
+            $c = new \org\octris\core\tpl\compiler();
+            $c->addSearchPath($options['searchpath']);
+                
+            if (($file = $c->findFile($args[0])) !== false) {
                 $ret = $c->process($file);
             } else {
                 $err = sprintf(
