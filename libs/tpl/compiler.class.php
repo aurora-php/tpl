@@ -702,7 +702,7 @@ namespace org\octris\core\tpl {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
                     
-                    $code[] = implode(', ', array_pop($stack));
+                    if (($tmp = array_pop($stack))) $code[] = $tmp;
                     break;
                 case self::T_MACRO:
                     // resolve macro
