@@ -761,17 +761,7 @@ namespace org\octris\core\tpl {
         protected $blocks = array();
         /*
          * FUNCTION
-         *      data for analyzer
-         ****
-         */
-        
-        /****v* compiler/$blocks
-         * SYNOPSIS
-         */
-        protected $data;
-        /*
-         * FUNCTION
-         *      common storage for data needed during compile time
+         *      block stack for analyzer and compiler
          ****
          */
         
@@ -1042,20 +1032,20 @@ namespace org\octris\core\tpl {
                     /** FALL THRU **/
                 case self::T_BLOCK_OPEN:
                     // opening block
-                    $this->blocks[] = $current;
+                    $this->blocks['analyzer'][] = $current;
                     break;
                 case self::T_BLOCK_CLOSE:
                     // closing block only allowed is a block is open
-                    if (!($block = array_pop($this->blocks))) {
+                    if (!($block = array_pop($this->blocks['analyzer']))) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'there is no open block');
                     }
                     break;
                 case self::T_IF_ELSE:
                     // else is only allowed within an 'if' block
-                    if ((($cnt = count($this->blocks)) > 0 && $this->blocks[$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
+                    if ((($cnt = count($this->blocks['analyzer'])) > 0 && $this->blocks['analyzer'][$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
-                        $this->blocks[$cnt - 1]['token'] = self::T_IF_ELSE;
+                        $this->blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
                     }
                     break;
                 }
@@ -1118,7 +1108,7 @@ namespace org\octris\core\tpl {
                     list($_start, $_end) = compiler\rewrite::$value(array_reverse($code));
 
                     $code = array($_start);
-                    $this->data['compiler']['blocks'][] = $_end;
+                    $this->blocks['analyzer']['compiler'][] = $_end;
                 
                     if (($err = compiler\rewrite::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
@@ -1128,7 +1118,7 @@ namespace org\octris\core\tpl {
                     $code[] = '} else {';
                     break;
                 case self::T_BLOCK_CLOSE:
-                    $code[] = array_pop($this->data['compiler']['blocks']);
+                    $code[] = array_pop($this->blocks['analyzer']['compiler']);
                     break;
                 case self::T_BRACE_CLOSE:
                     array_push($stack, $code);
@@ -1247,13 +1237,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $this->blocks = array();
-            $this->data  = array(
-                'analyzer'  => array(),
-                'compiler'  => array(
-                    'blocks'    => array()
-                )
-            );
+            $this->blocks = array('analyzer' => array(), 'compiler' => array());
 
             $tpl = file_get_contents($filename);
 
@@ -1269,12 +1253,12 @@ namespace org\octris\core\tpl {
                 }
             }
 
-            if (count($this->blocks) > 0) {
+            if (count($this->blocks['analyzer']) > 0) {
                 $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
                         return $v['value'];
-                    }, array_reverse($this->blocks)))
+                    }, array_reverse($this->blocks['analyzer'])))
                 ));
             }
             
