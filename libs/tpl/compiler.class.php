@@ -855,31 +855,4 @@ namespace org\octris\core\tpl {
             return $this->parse($filename);
         }
     }
-
-    $test = new compiler();
-    $tpl  = $test->process(dirname(__FILE__) . '/../../tests/tpl/compiler/tpl1.html');
-
-    print "\n\n$tpl\n\n";
-
-    // TEST
-    require_once('sandbox.class.php');
-    
-    class test extends sandbox {
-        function run($file) {
-            require_once($file);
-        }
-    }
-
-    $file = tempnam('/tmp', 'php');
-    file_put_contents($file, $tpl);
-
-    $s = new test();
-    $s->setValue('data', array('eins', 'zwei', 'drei', '<vier>', '</vier>'));
-    $s->setValue('import', true);
-    
-    $s->setValue('rec', array(array(1,2,3),array(4,5,6),array(7,8,9)));
-    
-    $s->run($file);
-
-    unlink($file);
 }
