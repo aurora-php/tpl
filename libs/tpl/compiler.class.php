@@ -1150,7 +1150,7 @@ namespace org\octris\core\tpl {
                     // resolve macro
                     $value = strtolower(substr($value, 1));
                     $file  = substr($code[0], 1, -1);
-                    $code  = array(compiler\macro::execMacro($value, array($file), array('path' => dirname($this->filename))));
+                    $code  = array(compiler\macro::execMacro($value, array($file), array('searchpath' => $this->searchpath)));
 
                     if (($err = compiler\macro::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
