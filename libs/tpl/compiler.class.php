@@ -35,7 +35,7 @@ namespace org\octris\core\tpl {
         const T_VARIABLE        = 22;
         const T_CONSTANT        = 23;
         const T_MACRO           = 24;
-        const T_KEYWORD         = 25;
+        const T_GETTEXT         = 25;
     
         const T_STRING          = 30;
         const T_NUMBER          = 31;
@@ -64,6 +64,7 @@ namespace org\octris\core\tpl {
             self::T_PSEPARATOR  => '\,',
 
             self::T_LET         => 'let',
+            self::T_GETTEXT     => '_',
             self::T_METHOD      => '[a-z_][a-z0-9_]*',
             self::T_VARIABLE    => '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+',
             self::T_CONSTANT    => "%[_a-z][_a-z0-9]*",
@@ -441,6 +442,237 @@ namespace org\octris\core\tpl {
                     )
                 ),
         
+                // gettext : _([$... | "..." | %...], ...)
+                self::T_GETTEXT  => array(
+                    self::T_BRACE_OPEN  => array(
+                        self::T_VARIABLE    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_LET         => NULL,
+                                self::T_METHOD      => NULL,
+                                self::T_VARIABLE    => NULL,
+                                self::T_CONSTANT    => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_STRING      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_NUMBER      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_BOOL        => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                            ), 
+                            self::T_BRACE_CLOSE => NULL
+                        ), 
+                        self::T_CONSTANT    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_LET         => NULL,
+                                self::T_METHOD      => NULL,
+                                self::T_VARIABLE    => NULL,
+                                self::T_CONSTANT    => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_STRING      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_NUMBER      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_BOOL        => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                            ), 
+                            self::T_BRACE_CLOSE => NULL
+                        ), 
+                        self::T_STRING    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_LET         => NULL,
+                                self::T_METHOD      => NULL,
+                                self::T_VARIABLE    => NULL,
+                                self::T_CONSTANT    => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_STRING      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_NUMBER      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_BOOL        => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                            ), 
+                            self::T_BRACE_CLOSE => NULL
+                        ), 
+                        self::T_BRACE_CLOSE => array(
+                            self::T_BRACE_CLOSE => NULL, 
+                            self::T_PSEPARATOR  => array(
+                                self::T_LET         => NULL,
+                                self::T_METHOD      => NULL,
+                                self::T_VARIABLE    => NULL,
+                                self::T_CONSTANT    => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_STRING      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_NUMBER      => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                                self::T_BOOL        => array(
+                                    self::T_PSEPARATOR  => array(
+                                        self::T_LET         => NULL,
+                                        self::T_METHOD      => NULL,
+                                        self::T_VARIABLE    => NULL,
+                                        self::T_CONSTANT    => NULL, 
+                                        self::T_STRING      => NULL, 
+                                        self::T_NUMBER      => NULL,
+                                        self::T_BOOL        => NULL,
+                                    ), 
+                                    self::T_BRACE_CLOSE => NULL
+                                ),
+                            ), 
+                            self::T_END         => NULL
+                        )
+                    )
+                ),
+
                 // macro : @macro(... [, ...])
                 self::T_MACRO   => array(
                     self::T_BRACE_OPEN  => array(
@@ -452,7 +684,7 @@ namespace org\octris\core\tpl {
                                 self::T_BOOL     => NULL
                             ), 
                             self::T_BRACE_CLOSE => NULL
-                        ), 
+                        ),
                         self::T_STRING      => array(
                             self::T_PSEPARATOR  => array(
                                 self::T_CONSTANT => NULL, 
@@ -832,6 +1064,7 @@ namespace org\octris\core\tpl {
                     array_push($stack, $code);
                     break;
                 case self::T_LET:
+                case self::T_GETTEXT:
                 case self::T_METHOD:
                     // replace/rewrite method call
                     $value = strtolower($value);
