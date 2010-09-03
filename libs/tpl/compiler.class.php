@@ -617,9 +617,10 @@ namespace org\octris\core\tpl {
                     }
                     break;
                 }
-                
+
                 // printf("%s(%d)->", $this->getTokenName($token), count($stack));
-                if (!($tmp = $get_next_rule($rule, $token, $stack))) {
+    
+                if (!($tmp = $get_next_rule($rule, $current))) {
                     $this->error(__FUNCTION__, __LINE__, $line, $token, $rule);
                 }
                 
