@@ -133,8 +133,8 @@ namespace org\octris\core {
          ****
          */
         {
-            if (!in_array($path, $this->searchpath)) {
-                $this->searchpath[] = $path;
+            if (!in_array($pathname, $this->searchpath)) {
+                $this->searchpath[] = $pathname;
             }
         }
         
