@@ -177,16 +177,21 @@ namespace org\octris\core {
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
-                $out = $c->process($filename);
+                $tpl = $c->process($filename);
             
                 $c = new tpl\compress();
-                $out = $c->process($out, $this->path['js'], $this->path['css']);
+                $tpl = $c->process($tpl, $this->path['js'], $this->path['css']);
                 
-                // TODO: output
-                // file_put_contents($out, $tpl);
+                file_put_contents($out, $tpl);
             } else {
-                die('unable to locate file!');
+                die(sprintf(
+                    'unable to locate file "%s" in "%s"', 
+                    $inp,
+                    implode(':', $this->searchpath)
+                ));
             }
+            
+            return $out;
         }
         
         /****m* tpl/render
@@ -201,12 +206,12 @@ namespace org\octris\core {
          ****
          */
         {
-            $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\/', '/', $filename)), '/');
+            $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
             if (!$this->use_cache) {
                 // do not use cache -- first compile template
-                $this->compile($inp, $out);
+                $out = $this->compile($inp, $out);
             }
 
             $this->sandbox->render($out, tpl\sandbox::T_CONTEXT_HTML);
