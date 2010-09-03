@@ -52,7 +52,8 @@ namespace org\octris\core\tpl\compiler {
             'le'    => array('min' => 2, 'max' => 2),   // ... <= ...
             'ge'    => array('min' => 2, 'max' => 2),   // ... >= ...
             'ne'    => array('min' => 2, 'max' => 2),   // ... != ...
-            
+
+            'let'   => array('min' => 1, 'max' => 1),
             'dump'  => array('min' => 1, 'max' => 1),
             'error' => array('min' => 1, 'max' => 1)
         );
@@ -410,6 +411,10 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _ne($args) {
             return '(' . implode(' == ', $args) . ')';
+        }
+        
+        protected static function _let($args) {
+            return '(' . implode(' = ', $args) . ')';
         }
         
         protected static function _dump($args) {
