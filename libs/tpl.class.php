@@ -1,9 +1,6 @@
 <?php
 
 namespace org\octris\core {
-    require_once('tpl/sandbox.class.php');
-    require_once('tpl/compiler/searchpath.class.php');
-    
     use \org\octris\core\tpl\compiler as compiler;
     
     /****c* core/tpl
@@ -174,9 +171,6 @@ namespace org\octris\core {
          ****
          */
         {
-            require_once('tpl/compiler.class.php');
-            require_once('tpl/compiler/compress.class.php');
-            
             // tpl\compiler\constant::setConstants($this->constants);
 
             $c = new tpl\compiler();
