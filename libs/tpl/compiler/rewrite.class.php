@@ -290,11 +290,11 @@ namespace org\octris\core\tpl\compiler {
                 if (count($args) > 0) {
                     $replace = array();
                     $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/sie';
-
+            
                     if (preg_match_all($pattern, $txt, $match, PREG_SET_ORDER)) {
                         foreach ($match as $m) {
                             $str = $m[0];
-
+            
                             if (!isset($m[2])) {
                                 $cmd = '';
                             } else {
@@ -302,33 +302,35 @@ namespace org\octris\core\tpl\compiler {
                                 unset($m[2]);
                             }
                             $par = array_pop($m);
-
+            
                             $params = array();
                             $arr    = preg_split('/(?<!\\\),/', $par);
-
+            
                             foreach ($arr as $a) {
                                 $a = trim($a);
-
+            
                                 if (preg_match('/^_(\d+)$/', $a, $tmp)) {
                                     $params[] = $args[($tmp[1] - 1)];
                                 } else {
                                     $params[] = '\'' . $a . '\'';
                                 }
                             }
-
-                            if (($cmd)&&(!method_exists($l10n, $cmd))) {
+            
+                            if ($cmd && !method_exists($l10n, $cmd)) {
                                 die('unknown method ' . $cmd);
                             } elseif ($cmd) {
                                 $code = $chr . ' . $this->' . $cmd . '(' . join(',', $params) . ') . ' . $chr;
                             } else {
-                                $code = array_shift($params);
+                                $code = $chr . ' . ' . array_shift($params) . ' . ' . $chr;
                             }
-
+            
                             $txt = str_replace($str, $code, $txt);
                         }
                     }
                     
                 }
+                
+                $return = $txt;
             } else {
                 $return = '$this->_(' . implode('', $args) . ')';
             }
