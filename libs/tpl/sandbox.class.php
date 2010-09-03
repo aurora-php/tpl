@@ -484,12 +484,12 @@ namespace org\octris\core\tpl {
         /****m* sandbox/write
          * SYNOPSIS
          */
-        public function write($val, $auto_escape = true)
+        public function write($val = '', $auto_escape = true)
         /*
          * FUNCTION
          *      output a specified value
          * INPUTS
-         *      * $val (string) -- value to output
+         *      * $val (string) -- (optional) value to output
          *      * $auto_escape (bool) -- (optional) flag whether to auto-escape value
          ****
          */
