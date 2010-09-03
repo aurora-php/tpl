@@ -1,8 +1,6 @@
 <?php
 
 namespace org\octris\core\tpl\compiler {
-    require_once('searchpath.class.php');
-    
     /****c* compiler/macro
      * NAME
      *      macro
