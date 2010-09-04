@@ -53,9 +53,11 @@ namespace org\octris\core\tpl\compiler {
             'ge'    => array('min' => 2, 'max' => 2),   // ... >= ...
             'ne'    => array('min' => 2, 'max' => 2),   // ... != ...
 
-            'let'   => array('min' => 2, 'max' => 2),
-            'dump'  => array('min' => 1, 'max' => 1),
-            'error' => array('min' => 1, 'max' => 1)
+            'now'       => array('min' => 0, 'max' => 0),
+            'uniqid'    => array('min' => 0, 'max' => 0),
+            'let'       => array('min' => 2, 'max' => 2),
+            'dump'      => array('min' => 1, 'max' => 1),
+            'error'     => array('min' => 1, 'max' => 1)
         );
         /*
          * FUNCTION
@@ -413,6 +415,14 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _ne($args) {
             return '(' . implode(' == ', $args) . ')';
+        }
+        
+        protected static function _now() {
+            return '(time())';
+        }
+        
+        protected static function _uniqid() {
+            return '(uniqid(mt_rand()))';
         }
         
         protected static function _let($args) {
