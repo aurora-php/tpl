@@ -132,7 +132,7 @@ namespace org\octris\core\tpl\compiler {
     }
 
     /*
-     * register "import" macro
+     * register "import", "uniqid" macro
      */
     macro::registerMacro(
         'import',
@@ -157,4 +157,11 @@ namespace org\octris\core\tpl\compiler {
         },
         array('min' => 1, 'max' => 1)
     );
+    macro::registerMacro(
+        'uniqid',
+        function($args, array $options = array()) {
+            return uniqid(mt_rand());
+        },
+        array('min' => 0, 'max' => 0)
+    )
 }
