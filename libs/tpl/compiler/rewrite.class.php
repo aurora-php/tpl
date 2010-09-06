@@ -42,6 +42,7 @@ namespace org\octris\core\tpl\compiler {
             'sub'   => array('min' => 2),               // ... - ...
             'incr'  => array('min' => 1, 'max' => 2),   // ++ / +=
             'decr'  => array('min' => 1, 'max' => 2),   // -- / -=
+            'neg'   => array('min' => 1, 'max' => 1),   // -...
             'and'   => array('min' => 2),               // ... && ...
             'or'    => array('min' => 2),               // ... || ...
             'xor'   => array('min' => 2, 'max' => 2),   // ... xor ...
@@ -52,6 +53,11 @@ namespace org\octris\core\tpl\compiler {
             'le'    => array('min' => 2, 'max' => 2),   // ... <= ...
             'ge'    => array('min' => 2, 'max' => 2),   // ... >= ...
             'ne'    => array('min' => 2, 'max' => 2),   // ... != ...
+
+            'bool'   => array('min' => 1, 'max' => 1),  // (bool)...
+            'int'    => array('min' => 1, 'max' => 1),  // (int)...
+            'float'  => array('min' => 1, 'max' => 1),  // (float)...
+            'string' => array('min' => 1, 'max' => 1),  // (string)...
 
             'now'       => array('min' => 0, 'max' => 0),
             'uniqid'    => array('min' => 0, 'max' => 0),
@@ -349,6 +355,10 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
+        protected static function _neg($args) {
+            return '(-' . $args[0] . ')';
+        }
+        
         protected static function _mul($args) {
             return '(' . implode(' * ', $args) . ')';
         }
@@ -415,6 +425,22 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _ne($args) {
             return '(' . implode(' == ', $args) . ')';
+        }
+        
+        protected static function _bool($args) {
+            return '((bool)' . $args[0] . ')';
+        }
+        
+        protected static function _int($args) {
+            return '((int)' . $args[0] . ')';
+        }
+        
+        protected static function _float($args) {
+            return '((float)' . $args[0] . ')';
+        }
+        
+        protected static function _string($args) {
+            return '((string)' . $args[0] . ')';
         }
         
         protected static function _now() {
