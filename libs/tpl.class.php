@@ -158,10 +158,10 @@ namespace org\octris\core {
             }
         }
         
-        /****m* tpl/compile
+        /****m* tpl/process
          * SYNOPSIS
          */
-        protected function compile($inp, $out)
+        protected function process($inp, $out)
         /*
          * FUNCTION
          *      executes template compiler and css/javascript compressor
@@ -210,8 +210,9 @@ namespace org\octris\core {
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
             if (!$this->use_cache) {
-                // do not use cache -- first compile template
-                $out = $this->compile($inp, $out);
+                // do not use cache -- first process template using
+                // template compiler and javascript/css compressor
+                $out = $this->process($inp, $out);
             }
 
             $this->sandbox->render($out, tpl\sandbox::T_CONTEXT_HTML);
