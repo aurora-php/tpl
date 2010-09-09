@@ -172,8 +172,12 @@ namespace org\octris\core {
          */
         {
             // tpl\compiler\constant::setConstants($this->constants);
+            $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
+            $c->setGettextCallback(function($msg) use ($sandbox) {
+                return $sandbox->gettext($msg);
+            });
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
