@@ -163,7 +163,13 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $this->registry[strtolower($name)] = array(
+            $name = strtolower($name);
+            
+            if ($name == 'gettext') {
+                $args = array('min' => 1, 'max' => 1);
+            }
+            
+            $this->registry[$name] = array(
                 'callback' => $callback,
                 'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
             );
@@ -202,6 +208,27 @@ namespace org\octris\core\tpl {
             } else {
                 $this->data[$name] = new type\collection($value);
             }
+        }
+        
+        /****m* sandbox/gettext
+         * SYNOPSIS
+         */
+        public function gettext($msg)
+        /*
+         * FUNCTION
+         *      gettext
+         * INPUTS
+         *      * $msg (string) -- message to translate
+         * OUTPUTS
+         *      (string) -- translated message
+         ****
+         */
+        {
+            if (isset($this->registry['gettext'])) {
+                $msg = $this->registry['gettext']['callback']($msg);
+            }
+            
+            return $msg;
         }
         
         /****m* sandbox/each
