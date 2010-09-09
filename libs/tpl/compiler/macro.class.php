@@ -162,5 +162,5 @@ namespace org\octris\core\tpl\compiler {
             return uniqid(mt_rand());
         },
         array('min' => 0, 'max' => 0)
-    )
+    );
 }
