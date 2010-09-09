@@ -194,6 +194,44 @@ namespace org\octris\core {
             return $out;
         }
         
+        /****m* tpl/compile
+         * SYNOPSIS
+         */
+        public function compile($filename)
+        /*
+         * FUNCTION
+         *      compile template and return compiled template
+         * INPUTS
+         *      * filename (string) -- name of template file to compile
+         * OUTPUTS
+         *      (string) -- compiled template
+         ****
+         */
+        {
+            $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
+            $tpl = '';
+            
+            $sandbox = $this->sandbox;
+
+            $c = new tpl\compiler();
+            $c->setGettextCallback(function($msg) use ($sandbox) {
+                return $sandbox->gettext($msg);
+            });
+            $c->addSearchPath($this->searchpath);
+
+            if (($filename = $c->findFile($inp)) !== false) {
+                $tpl = $c->process($filename);
+            } else {
+                die(sprintf(
+                    'unable to locate file "%s" in "%s"', 
+                    $inp,
+                    implode(':', $this->searchpath)
+                ));
+            }
+            
+            return $tpl;
+        }
+        
         /****m* tpl/render
          * SYNOPSIS
          */
