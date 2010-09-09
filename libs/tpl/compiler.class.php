@@ -1239,7 +1239,7 @@ namespace org\octris\core\tpl {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
                     
-                    if (($tmp = array_pop($stack))) $code[] = $tmp;
+                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
                     break;
                 case self::T_MACRO:
                     // resolve macro
