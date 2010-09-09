@@ -140,8 +140,7 @@ namespace org\octris\core\tpl\compiler {
             $ret = '';
             $err = '';
             
-            $c = new \org\octris\core\tpl\compiler();
-            $c->addSearchPath($options['searchpath']);
+            $c = clone($options['compiler']);
                 
             if (($file = $c->findFile($args[0])) !== false) {
                 $ret = $c->process($file);
