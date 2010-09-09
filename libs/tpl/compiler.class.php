@@ -754,6 +754,17 @@ namespace org\octris\core\tpl {
          *      path to look in for loading templates
          ****
          */
+
+        /****v* compiler/$gettext_callback
+         * SYNOPSIS
+         */
+        protected $gettext_callback;
+        /*
+         * FUNCTION
+         *      callback for looking up gettext message. may be overwritten with
+         *      the method ~setGettextCallback~.
+         ****
+         */
         
         /****m* compiler/__construct
          * SYNOPSIS
@@ -769,6 +780,29 @@ namespace org\octris\core\tpl {
                 $class = new \ReflectionClass($this);
                 self::$tokennames = array_flip($class->getConstants());
             }
+            
+            $this->gettext_callback = function($msg) {
+                return $msg;
+            };
+        }
+        
+        /****m* compiler/setGettextCallback
+         * SYNOPSIS
+         */
+        public function setGettextCallback($cb)
+        /*
+         * FUNCTION
+         *      set callback for resolving gettext messages
+         * INPUTS
+         *      * $cb (callback) -- callback to call for messages to translate
+         ****
+         */
+        {
+            if (!is_callable($cb)) {
+                throw new \Exception('no callback method specified');
+            }
+            
+            $this->gettext_callback = $cb;
         }
         
         /****m* compiler/addSearchPath
@@ -1051,6 +1085,81 @@ namespace org\octris\core\tpl {
             return true;
         }
 
+        /****m* compiler/gettext
+         * SYNOPSIS
+         */
+        protected function gettext($args)
+        /*
+         * FUNCTION
+         *      gettext compiler
+         * INPUTS
+         *      * $args (array) -- arguments for gettext
+         * OUTPUTS
+         *      (string) -- compiled code for gettext
+         ****
+         */
+        {
+            if (preg_match('/^(["\'])(.*?)\1$/', $args[0], $match)) {
+                // string
+                $cb  = $this->gettext_callback;
+                
+                $chr = $match[1];       // quotation character
+                $txt = $cb($match[2]);  // text to translate
+                
+                $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
+                
+                array_shift($args);
+                
+                if (count($args) > 0) {
+                    $replace = array();
+                    $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/sie';
+            
+                    if (preg_match_all($pattern, $txt, $match, PREG_SET_ORDER)) {
+                        foreach ($match as $m) {
+                            $str = $m[0];
+                            $cmd = '';
+            
+                            if (isset($m[2])) {
+                                $cmd = $m[2];
+                                unset($m[2]);
+                            }
+                            $par = array_pop($m);
+            
+                            $params = array();
+                            $arr    = preg_split('/(?<!\\\),/', $par);
+            
+                            foreach ($arr as $a) {
+                                $a = trim($a);
+            
+                                if (preg_match('/^_(\d+)$/', $a, $tmp)) {
+                                    $params[] = $args[($tmp[1] - 1)];
+                                } else {
+                                    $params[] = '\'' . $a . '\'';
+                                }
+                            }
+            
+                            if ($cmd && !method_exists($l10n, $cmd)) {
+                                die('unknown method ' . $cmd);
+                            } elseif ($cmd) {
+                                $code = $chr . ' . $this->' . $cmd . '(' . join(',', $params) . ') . ' . $chr;
+                            } else {
+                                $code = $chr . ' . ' . array_shift($params) . ' . ' . $chr;
+                            }
+            
+                            $txt = str_replace($str, $code, $txt);
+                        }
+                    }
+                    
+                }
+                
+                $return = $txt;
+            } else {
+                $return = '$this->_(' . implode('', $args) . ')';
+            }
+            
+            return $return;
+        }
+        
         /****m* compiler/compile
          * SYNOPSIS
          */
@@ -1117,8 +1226,8 @@ namespace org\octris\core\tpl {
                     break;
                 case self::T_GETTEXT:
                     // gettext handling
-                    // $code = $this->gettext(array_reverse($code));
-                    // break;
+                    $code = array($this->gettext(array_reverse($code)));
+                    break;
                 case self::T_LET:
                 case self::T_METHOD:
                     // replace/rewrite method call
