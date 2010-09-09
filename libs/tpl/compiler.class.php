@@ -755,16 +755,6 @@ namespace org\octris\core\tpl {
          ****
          */
         
-        /****v* compiler/$blocks
-         * SYNOPSIS
-         */
-        protected $blocks = array();
-        /*
-         * FUNCTION
-         *      block stack for analyzer and compiler
-         ****
-         */
-        
         /****m* compiler/__construct
          * SYNOPSIS
          */
@@ -962,13 +952,14 @@ namespace org\octris\core\tpl {
         /****m* compiler/analyze
          * SYNOPSIS
          */
-        protected function analyze(array $tokens)
+        protected function analyze(array $tokens, array &$blocks)
         /*
          * FUNCTION
          *      token analyzer -- applies rulesets to tokens and check if the
          *      rules are fulfilled
          * INPUTS
          *      * $tokens (array) -- tokens to analyz
+         *      * $blocks (array) -- block information required by analyzer / compiler
          * OUTPUTS
          *      (array) -- errors
          ****
@@ -1032,20 +1023,20 @@ namespace org\octris\core\tpl {
                     /** FALL THRU **/
                 case self::T_BLOCK_OPEN:
                     // opening block
-                    $this->blocks['analyzer'][] = $current;
+                    $blocks['analyzer'][] = $current;
                     break;
                 case self::T_BLOCK_CLOSE:
                     // closing block only allowed is a block is open
-                    if (!($block = array_pop($this->blocks['analyzer']))) {
+                    if (!($block = array_pop($blocks['analyzer']))) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'there is no open block');
                     }
                     break;
                 case self::T_IF_ELSE:
                     // else is only allowed within an 'if' block
-                    if ((($cnt = count($this->blocks['analyzer'])) > 0 && $this->blocks['analyzer'][$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
+                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
-                        $this->blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
+                        $blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
                     }
                     break;
                 }
@@ -1063,12 +1054,13 @@ namespace org\octris\core\tpl {
         /****m* compiler/compile
          * SYNOPSIS
          */
-        protected function compile(&$tokens)
+        protected function compile(&$tokens, &$blocks)
         /*
          * FUNCTION
          *      compile tokens to php code
          * INPUTS
          *      * $tokens (array) -- array of tokens to compile
+         *      * $blocks (array) -- block information required by analyzer / compiler
          * OUTPUTS
          *      (string) -- generated php code
          ****
@@ -1108,7 +1100,7 @@ namespace org\octris\core\tpl {
                     list($_start, $_end) = compiler\rewrite::$value(array_reverse($code));
 
                     $code = array($_start);
-                    $this->blocks['analyzer']['compiler'][] = $_end;
+                    $blocks['compiler'][] = $_end;
                 
                     if (($err = compiler\rewrite::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
@@ -1118,13 +1110,16 @@ namespace org\octris\core\tpl {
                     $code[] = '} else {';
                     break;
                 case self::T_BLOCK_CLOSE:
-                    $code[] = array_pop($this->blocks['analyzer']['compiler']);
+                    $code[] = array_pop($blocks['compiler']);
                     break;
                 case self::T_BRACE_CLOSE:
                     array_push($stack, $code);
                     break;
-                case self::T_LET:
                 case self::T_GETTEXT:
+                    // gettext handling
+                    // $code = $this->gettext(array_reverse($code));
+                    // break;
+                case self::T_LET:
                 case self::T_METHOD:
                     // replace/rewrite method call
                     $value = strtolower($value);
@@ -1198,13 +1193,14 @@ namespace org\octris\core\tpl {
         /****m* compiler/toolchain
          * SYNOPSIS
          */
-        protected function toolchain($snippet, $line)
+        protected function toolchain($snippet, $line, array &$blocks)
         /*
          * FUNCTION
          *      execute compiler toolchain for a template snippet
          * INPUTS
          *      * $snippet (string) -- template snippet to process
          *      * $line (int) -- line template to process
+         *      * $blocks (array) -- block information required by analyzer / compiler
          * OUTPUTS
          *      (string) -- processed / compiled snippet
          ****
@@ -1214,9 +1210,9 @@ namespace org\octris\core\tpl {
             $code   = '';
 
             if (count($tokens) > 0) {
-                if ($this->analyze($tokens) !== false) {
+                if ($this->analyze($tokens, $blocks) !== false) {
                     $tokens = array_reverse($tokens);
-                    $code   = implode('', $this->compile($tokens));
+                    $code   = implode('', $this->compile($tokens, $blocks));
                 }
             }
             
@@ -1237,7 +1233,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            $this->blocks = array('analyzer' => array(), 'compiler' => array());
+            $blocks = array('analyzer' => array(), 'compiler' => array());
 
             $tpl = file_get_contents($filename);
 
@@ -1246,19 +1242,19 @@ namespace org\octris\core\tpl {
             while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
                 $crc  = crc32($tpl);
                 $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
-                $tpl  = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line), $m[1][1], strlen($m[1][0]));
+                $tpl  = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line, $blocks), $m[1][1], strlen($m[1][0]));
 
                 if ($crc == crc32($tpl)) {
                     $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
                 }
             }
 
-            if (count($this->blocks['analyzer']) > 0) {
+            if (count($blocks['analyzer']) > 0) {
                 $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
                         return $v['value'];
-                    }, array_reverse($this->blocks['analyzer'])))
+                    }, array_reverse($blocks['analyzer'])))
                 ));
             }
             
