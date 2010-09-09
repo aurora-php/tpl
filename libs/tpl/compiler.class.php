@@ -1223,6 +1223,7 @@ namespace org\octris\core\tpl {
                     break;
                 case self::T_BRACE_CLOSE:
                     array_push($stack, $code);
+                    $code = array();
                     break;
                 case self::T_GETTEXT:
                     // gettext handling
