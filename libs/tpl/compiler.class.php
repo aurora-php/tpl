@@ -1111,7 +1111,6 @@ namespace org\octris\core\tpl {
                 array_shift($args);
                 
                 if (count($args) > 0) {
-                    $replace = array();
                     $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/sie';
             
                     if (preg_match_all($pattern, $txt, $match, PREG_SET_ORDER)) {
