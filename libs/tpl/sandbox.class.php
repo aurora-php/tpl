@@ -87,6 +87,16 @@ namespace org\octris\core\tpl {
          ****
          */
         
+        /****v* sandbox/$l10n
+         * SYNOPSIS
+         */
+        protected $l10n;
+        /*
+         * FUNCTION
+         *      l10n dependency
+         ****
+         */
+        
         /****m* sandbox/__construct
          * SYNOPSIS
          */
@@ -97,6 +107,21 @@ namespace org\octris\core\tpl {
          ****
          */
         {
+        }
+        
+        /****m* sandbox/setL10n
+         * SYNOPSIS
+         */
+        public function setL10n($l10n)
+        /*
+         * FUNCTION
+         *      set l10n dependency
+         * INPUTS
+         *      * $l10n (l10n) -- l10n instance to set as dependency
+         ****
+         */
+        {
+            $this->l10n = $l10n;
         }
         
         /****m* sandbox/__call
@@ -165,10 +190,6 @@ namespace org\octris\core\tpl {
         {
             $name = strtolower($name);
             
-            if ($name == 'gettext') {
-                $args = array('min' => 1, 'max' => 1);
-            }
-            
             $this->registry[$name] = array(
                 'callback' => $callback,
                 'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
@@ -224,11 +245,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            if (isset($this->registry['gettext'])) {
-                $msg = $this->registry['gettext']['callback']($msg);
-            }
-            
-            return $msg;
+            return $this->l10n->_($msg);
         }
         
         /****m* sandbox/each
