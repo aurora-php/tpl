@@ -755,17 +755,16 @@ namespace org\octris\core\tpl {
          ****
          */
 
-        /****v* compiler/$gettext_callback
+        /****v* compiler/$l10n
          * SYNOPSIS
          */
-        protected $gettext_callback;
+        protected $l10n;
         /*
          * FUNCTION
-         *      callback for looking up gettext message. may be overwritten with
-         *      the method ~setGettextCallback~.
+         *      instance of l10n
          ****
          */
-        
+
         /****m* compiler/__construct
          * SYNOPSIS
          */
@@ -780,29 +779,21 @@ namespace org\octris\core\tpl {
                 $class = new \ReflectionClass($this);
                 self::$tokennames = array_flip($class->getConstants());
             }
-            
-            $this->gettext_callback = function($msg) {
-                return $msg;
-            };
         }
         
-        /****m* compiler/setGettextCallback
+        /****m* compiler/setL10n
          * SYNOPSIS
          */
-        public function setGettextCallback($cb)
+        public function setL10n($l10n)
         /*
          * FUNCTION
-         *      set callback for resolving gettext messages
+         *      set l10n dependency
          * INPUTS
-         *      * $cb (callback) -- callback to call for messages to translate
+         *      * $l10n (l10n) -- instance of l10n class
          ****
          */
         {
-            if (!is_callable($cb)) {
-                throw new \Exception('no callback method specified');
-            }
-            
-            $this->gettext_callback = $cb;
+            $this->l10n = $l10n;
         }
         
         /****m* compiler/addSearchPath
@@ -1100,11 +1091,10 @@ namespace org\octris\core\tpl {
          */
         {
             if (preg_match('/^(["\'])(.*?)\1$/', $args[0], $match)) {
-                // string
-                $cb  = $this->gettext_callback;
-                
-                $chr = $match[1];       // quotation character
-                $txt = $cb($match[2]);  // text to translate
+                $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/s';
+
+                $chr = $match[1];                           // quotation character
+                $txt = $this->l10n->lookup($match[2]);      // get translated text
                 
                 $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
                 
@@ -1121,8 +1111,13 @@ namespace org\octris\core\tpl {
                                         ? $args[($m[1] - 1)]
                                         : '\'' . $t . '\'');
                         }
-                    }
-                    
+
+                        $code = ($cmd != '' 
+                                 ? $chr . ' . $this->' . $cmd . '(' . implode(',', $par) . ') . ' . $chr
+                                 : $chr . ' . ' . array_shift($par) . ' . ' . $chr);
+
+                        return $code;
+                    }, $txt, -1, $cnt = 0);
                 }
                 
                 $return = $txt;
