@@ -245,7 +245,7 @@ namespace org\octris\core\tpl {
          ****
          */
         {
-            return $this->l10n->_($msg);
+            return $this->l10n->gettext($msg);
         }
         
         /****m* sandbox/each
