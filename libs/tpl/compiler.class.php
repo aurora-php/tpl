@@ -1111,41 +1111,15 @@ namespace org\octris\core\tpl {
                 array_shift($args);
                 
                 if (count($args) > 0) {
-                    $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/sie';
-            
-                    if (preg_match_all($pattern, $txt, $match, PREG_SET_ORDER)) {
-                        foreach ($match as $m) {
-                            $str = $m[0];
-                            $cmd = '';
-            
-                            if (isset($m[2])) {
-                                $cmd = $m[2];
-                                unset($m[2]);
-                            }
-                            $par = array_pop($m);
-            
-                            $params = array();
-                            $arr    = preg_split('/(?<!\\\),/', $par);
-            
-                            foreach ($arr as $a) {
-                                $a = trim($a);
-            
-                                if (preg_match('/^_(\d+)$/', $a, $tmp)) {
-                                    $params[] = $args[($tmp[1] - 1)];
-                                } else {
-                                    $params[] = '\'' . $a . '\'';
-                                }
-                            }
-            
-                            if ($cmd && !method_exists($l10n, $cmd)) {
-                                die('unknown method ' . $cmd);
-                            } elseif ($cmd) {
-                                $code = $chr . ' . $this->' . $cmd . '(' . join(',', $params) . ') . ' . $chr;
-                            } else {
-                                $code = $chr . ' . ' . array_shift($params) . ' . ' . $chr;
-                            }
-            
-                            $txt = str_replace($str, $code, $txt);
+                    $txt = preg_replace_callback($pattern, function($m) use ($args, $chr) {
+                        $cmd = (isset($m[2]) ? $m[2] : '');
+                        $tmp = preg_split('/(?<!\\\),/', array_pop($m));
+                        $par = array();
+
+                        foreach ($tmp as $t) {
+                            $par[] = (($t = trim($t)) && preg_match('/^_(\d+)$/', $t, $m)
+                                        ? $args[($m[1] - 1)]
+                                        : '\'' . $t . '\'');
                         }
                     }
                     
