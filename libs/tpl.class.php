@@ -46,6 +46,16 @@ namespace org\octris\core {
          ****
          */
         
+        /****v* tpl/$l10n
+         * SYNOPSIS
+         */
+        protected $l10n;
+        /*
+         * FUNCTION
+         *      instance of l10n
+         ****
+         */
+        
         /****v* tpl/$path
          * SYNOPSIS
          */
@@ -71,6 +81,22 @@ namespace org\octris\core {
          */
         {
             $this->sandbox = new tpl\sandbox();
+        }
+        
+        /****m* tpl/setL10n
+         * SYNOPSIS
+         */
+        public function setL10n($l10n)
+        /*
+         * FUNCTION
+         *      set l10n dependency
+         * INPUTS
+         *      * $l10n (l10n) -- instance of l10n class
+         ****
+         */
+        {
+            $this->sandbox->setL10n($l10n);
+            $this->l10n = $l10n;
         }
         
         /****m* tpl/setValues
@@ -175,9 +201,7 @@ namespace org\octris\core {
             $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
-            $c->setGettextCallback(function($msg) use ($sandbox) {
-                return $sandbox->gettext($msg);
-            });
+            $c->setL10n($this->l10n);
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
@@ -218,9 +242,7 @@ namespace org\octris\core {
             $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
-            $c->setGettextCallback(function($msg) use ($sandbox) {
-                return $sandbox->gettext($msg);
-            });
+            $c->setL10n($this->l10n);
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
