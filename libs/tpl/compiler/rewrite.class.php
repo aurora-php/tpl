@@ -66,7 +66,9 @@ namespace org\octris\core\tpl\compiler {
             'uniqid'    => array('min' => 0, 'max' => 0),
             'let'       => array('min' => 2, 'max' => 2),
             'dump'      => array('min' => 1, 'max' => 1),
-            'error'     => array('min' => 1, 'max' => 1)
+            'error'     => array('min' => 1, 'max' => 1),
+            
+            'include'   => array('min' => 1, 'max' => 1)
         );
         /*
          * FUNCTION
@@ -400,6 +402,10 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _error($args) {
             return '$this->error(' . implode(', ', $args) . ', __LINE__)';
+        }
+        
+        protected static function _include($args) {
+            return '$this->include(' . implode('', $args) . ')';
         }
     }
 }
