@@ -577,6 +577,23 @@ namespace org\octris\core\tpl {
             );
         }
     
+        /****m* sandbox/include
+         * SYNOPSIS
+         */
+        public function include($file)
+        /*
+         * FUNCTION
+         *      include and output file
+         * INPUTS
+         *      * $file (string) -- file to include
+         ****
+         */
+        {
+            if (is_readable($file)) {
+                readfile($file);
+            }
+        }
+    
         /****m* sandbox/render
          * SYNOPSIS
          */
