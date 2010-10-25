@@ -583,15 +583,17 @@ namespace org\octris\core\tpl {
         public function include($file)
         /*
          * FUNCTION
-         *      include and output file
+         *      read a file and return it as string
          * INPUTS
          *      * $file (string) -- file to include
+         * OUTPUTS
+         *      (string) -- file contents
          ****
          */
         {
-            if (is_readable($file)) {
-                readfile($file);
-            }
+            return (is_readable($file)
+                    ? file_get_contents($file)
+                    : '');
         }
     
         /****m* sandbox/render
