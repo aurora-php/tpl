@@ -180,7 +180,7 @@ namespace org\octris\core {
          */
         {
             if (array_key_exists($type, $this->path) && is_writable($path)) {
-                $this->path[$type] = $path;
+                $this->path[$type] = rtrim($path, '/');
             }
         }
         
@@ -209,6 +209,7 @@ namespace org\octris\core {
             
                 $c = new tpl\compress();
                 $tpl = $c->process($tpl, $this->path['js'], $this->path['css']);
+                $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
                 
                 file_put_contents($out, $tpl);
             } else {
@@ -261,15 +262,18 @@ namespace org\octris\core {
         /****m* tpl/render
          * SYNOPSIS
          */
-        public function render($filename)
+        public function render($filename, $context = null)
         /*
          * FUNCTION
          *      render a template and send output to stdout
          * INPUTS
          *      * $filename (string) -- filename of template to render
+         *      * $context (int) -- rendering context
          ****
          */
         {
+            $context = (is_null($context) ? tpl\sandbox::T_CONTEXT_HTML : $context);
+            
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
@@ -278,19 +282,20 @@ namespace org\octris\core {
                 // template compiler and javascript/css compressor
                 $out = $this->process($inp, $out);
             }
-
-            $this->sandbox->render($out, tpl\sandbox::T_CONTEXT_HTML);
+            
+            $this->sandbox->render($out);
         }
         
         /****m* tpl/fetch
          * SYNOPSIS
          */
-        public function fetch($filename) 
+        public function fetch($filename, $context = null) 
         /*
          * FUNCTION
          *      render a template and return it as string
          * INPUTS
          *      * $filename (string) -- filename of template to render
+         *      * $context (int) -- (optional) rendering context
          * OUTPUTS
          *      (string) -- rendered template
          ****
@@ -298,7 +303,7 @@ namespace org\octris\core {
         {
             ob_start();
 
-            $this->render($filename);
+            $this->render($filename, $context);
 
             $return = ob_get_contents();
             ob_end_clean();
