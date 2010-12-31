@@ -1058,7 +1058,7 @@ namespace org\octris\core\tpl {
                     break;
                 case self::T_IF_ELSE:
                     // else is only allowed within an 'if' block
-                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
+                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != self::T_IF_OPEN)) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
                         $blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
