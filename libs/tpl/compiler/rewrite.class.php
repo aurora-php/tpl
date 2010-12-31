@@ -405,7 +405,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _include($args) {
-            return '$this->include(' . implode('', $args) . ')';
+            return '$this->includetpl(' . implode('', $args) . ')';
         }
     }
 }
