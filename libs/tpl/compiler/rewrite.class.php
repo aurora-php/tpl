@@ -68,7 +68,11 @@ namespace org\octris\core\tpl\compiler {
             'dump'      => array('min' => 1, 'max' => 1),
             'error'     => array('min' => 1, 'max' => 1),
             
-            'include'   => array('min' => 1, 'max' => 1)
+            'include'   => array('min' => 1, 'max' => 1),
+            
+            // string functions
+            'explode'   => array('min' => 2, 'max' => 2),
+            'concat'    => array('min' => 2),
         );
         /*
          * FUNCTION
@@ -407,6 +411,15 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _include($args) {
             return '$this->includetpl(' . implode('', $args) . ')';
+        }
+        
+        // string functions
+        protected static function _explode($args) {
+            return 'new \\org\\octris\\core\\tpl\\type\\collection(explode(' . implode(', ', $args) . '))';
+        }
+        
+        protected static function _concat($args) {
+            return '(' . implode(' . ', $args) . ')';
         }
     }
 }
