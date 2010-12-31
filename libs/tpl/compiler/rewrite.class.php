@@ -80,7 +80,8 @@ namespace org\octris\core\tpl\compiler {
          * SYNOPSIS
          */
         protected static $phpfunc = array(
-            'substr'    => array('min' => 2, 'max' => 3)
+            'substr'    => array('min' => 2, 'max' => 3),
+            'sprintf'   => array('min' => 1),
         );
         /*
          * FUNCTION
