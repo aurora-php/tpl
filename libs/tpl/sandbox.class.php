@@ -577,10 +577,10 @@ namespace org\octris\core\tpl {
             );
         }
     
-        /****m* sandbox/include
+        /****m* sandbox/includetpl
          * SYNOPSIS
          */
-        public function include($file)
+        public function includetpl($file)
         /*
          * FUNCTION
          *      read a file and return it as string
