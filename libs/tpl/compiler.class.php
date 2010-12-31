@@ -1332,13 +1332,21 @@ namespace org\octris\core\tpl {
                 $offset = $m[1][1] + $len;
             }
             
+            // process template snippets
             $pattern = '/(\{\{(.*?)\}\})/s';
 
             while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
                 $crc  = crc32($tpl);
                 $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
-                $tpl  = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line, $blocks), $m[1][1], strlen($m[1][0]));
 
+                // not sure why 'nl' is required, but \n and \r are removed,
+                // when template snippet is at the end of a line -- so we
+                // have to add the newline again.
+                $nl = substr($tpl, $m[1][1] + strlen($m[1][0]), 1);
+                $nl = ($nl == "\n" || $nl == "\r" ? $nl : '');
+
+                $tpl = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line, $blocks) . $nl, $m[1][1], strlen($m[1][0]));
+                
                 if ($crc == crc32($tpl)) {
                     $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
                 }
