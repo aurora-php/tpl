@@ -1315,6 +1315,23 @@ namespace org\octris\core\tpl {
 
             $tpl = file_get_contents($filename);
 
+            // rewrite php open-/close-tags
+            $pattern = '/(\{\{(.*?)\}\}|<\?php|\?>)/s';
+            $offset  = 0;
+
+            while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE, $offset)) {
+                if ($m[1][0] == '<?php' || $m[1][0] == '?>') {
+                    // de-activate php code by replacing tags with template snippets
+                    $rpl = '{{string("' . $m[1][0] . '")}}';
+                    $tpl = substr_replace($tpl, $rpl, $m[1][1], strlen($m[1][0]));
+                    $len = strlen($rpl);
+                } else {
+                    $len = strlen($m[1][0]);
+                }
+                
+                $offset = $m[1][1] + $len;
+            }
+            
             $pattern = '/(\{\{(.*?)\}\})/s';
 
             while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
