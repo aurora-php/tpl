@@ -96,8 +96,8 @@ namespace org\octris\core\tpl\compiler {
             'replace'    => array('min' => 3, 'max' => 3, 'map' => 'str_replace'),
             'rtrim'      => array('min' => 1, 'max' => 2),
             'sprintf'    => array('min' => 1),
-            'strtolower' => array('min' => 2, 'max' => 2),
-            'strtoupper' => array('min' => 2, 'max' => 2),
+            'tolower'    => array('min' => 2, 'max' => 2, 'map' => 'strtolower'),
+            'toupper'    => array('min' => 2, 'max' => 2, 'map' => 'strtoupper'),
             'substr'     => array('min' => 2, 'max' => 3),
             'trim'       => array('min' => 1, 'max' => 2),
             'vsprintf'   => array('min' => 2, 'max' => 2)
