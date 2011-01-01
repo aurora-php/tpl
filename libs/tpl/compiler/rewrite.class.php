@@ -76,7 +76,6 @@ namespace org\octris\core\tpl\compiler {
             'implode'   => array('min' => 2, 'max' => 2),
             'lpad'      => array('min' => 2, 'max' => 3),
             'rpad'      => array('min' => 2, 'max' => 3),
-            'chunk'     => array('min' => 3, 'max' => 3),
             'concat'    => array('min' => 2),
         );
         /*
@@ -90,12 +89,22 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $phpfunc = array(
             // string functions
-            'ltrim'     => array('min' => 1, 'max' => 2),
-            'rtrim'     => array('min' => 1, 'max' => 2),
-            'sprintf'   => array('min' => 1),
-            'substr'    => array('min' => 2, 'max' => 3),
-            'trim'      => array('min' => 1, 'max' => 2),
-            'vsprintf'  => array('min' => 2, 'max' => 2)
+            'chunk'      => array('min' => 3, 'max' => 3, 'map' => 'chunk_split'),
+            'count'      => array('min' => 1, 'max' => 1),
+            'ltrim'      => array('min' => 1, 'max' => 2),
+            'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
+            'replace'    => array('min' => 3, 'max' => 3, 'map' => 'str_replace'),
+            'rtrim'      => array('min' => 1, 'max' => 2),
+            'sprintf'    => array('min' => 1),
+            'strtolower' => array('min' => 2, 'max' => 2),
+            'strtoupper' => array('min' => 2, 'max' => 2),
+            'substr'     => array('min' => 2, 'max' => 3),
+            'trim'       => array('min' => 1, 'max' => 2),
+            'vsprintf'   => array('min' => 2, 'max' => 2)
+            
+            // numeric functions
+            'round'      => array('min' => 1, 'max' => 2),
+            'ceil'       => array('min' => 1, 'max' => 1),
         );
         /*
          * FUNCTION
@@ -154,8 +163,29 @@ namespace org\octris\core\tpl\compiler {
             
             if (in_array($name, self::$forbidden)) {
                 self::setError($name, 'access denied');
-            } elseif (($is_php = isset(self::$phpfunc[$name])) || isset(self::$inline[$name])) {
-                // known method
+            } elseif (isset(self::$phpfunc[$name])) {
+                // call to allowed PHP function
+                $cnt = count($args);
+                
+                if (isset(self::$phpfunc[$name]['min'])) {
+                    if ($cnt < self::$phpfunc[$name]['min']) {
+                        self::setError($name, 'not enough arguments');
+                    }
+                }
+                if (isset(self::$phpfunc[$name]['max'])) {
+                    if ($cnt > self::$phpfunc[$name]['max']) {
+                        self::setError($name, 'to many arguments');
+                    }
+                }
+                
+                if (isset(self::$phpfunc[$name]['map'])) {
+                    // resolve 'real' PHP method name
+                    $name = self::$phpfunc[$name]['map'];
+                }
+                
+                return $name . '(' . implode(', ', $args) . ')';
+            } elseif (isset(self::$inline[$name])) {
+                // inline function rewrite
                 $cnt = count($args);
                 
                 if (isset(self::$inline[$name]['min'])) {
@@ -169,15 +199,9 @@ namespace org\octris\core\tpl\compiler {
                     }
                 }
                 
-                if ($is_php) {
-                    // call to allowed PHP function
-                    return $name . '(' . implode(', ', $args) . ')';
-                } else {
-                    // inline function rewrite
-                    $name = '_' . str_replace('#', '_', $name);
+                $name = '_' . str_replace('#', '_', $name);
 
-                    return self::$name($args);
-                }
+                return self::$name($args);
             } elseif (substr($name, 0, 1) == '#') {
                 // unknown block function
                 self::setError($name, 'unknown block type');
@@ -448,10 +472,6 @@ namespace org\octris\core\tpl\compiler {
             return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
         }
         
-        protected static function _chunk($args) {
-            return '(chunk_split(' . implode(' . ', $args) . '))';
-        }
-
         protected static function _concat($args) {
             return '(' . implode(' . ', $args) . ')';
         }
