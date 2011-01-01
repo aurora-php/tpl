@@ -89,8 +89,13 @@ namespace org\octris\core\tpl\compiler {
          * SYNOPSIS
          */
         protected static $phpfunc = array(
-            'substr'    => array('min' => 2, 'max' => 3),
+            // string functions
+            'ltrim'     => array('min' => 1, 'max' => 2),
+            'rtrim'     => array('min' => 1, 'max' => 2),
             'sprintf'   => array('min' => 1),
+            'substr'    => array('min' => 2, 'max' => 3),
+            'trim'      => array('min' => 1, 'max' => 2),
+            'vsprintf'  => array('min' => 2, 'max' => 2)
         );
         /*
          * FUNCTION
