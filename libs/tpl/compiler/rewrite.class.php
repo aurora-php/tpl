@@ -73,6 +73,10 @@ namespace org\octris\core\tpl\compiler {
             
             // string functions
             'explode'   => array('min' => 2, 'max' => 2),
+            'implode'   => array('min' => 2, 'max' => 2),
+            'lpad'      => array('min' => 2, 'max' => 3),
+            'rpad'      => array('min' => 2, 'max' => 3),
+            'chunk'     => array('min' => 3, 'max' => 3),
             'concat'    => array('min' => 2),
         );
         /*
@@ -423,6 +427,26 @@ namespace org\octris\core\tpl\compiler {
             return 'new \\org\\octris\\core\\tpl\\type\\collection(explode(' . implode(', ', $args) . '))';
         }
         
+        protected static function _implode($args) {
+            return '(implode(' . $args[0] . ', $this->settype(' . $args[1] . ', "array")))';
+        }
+        
+        protected static function _lpad($args) {
+            $args = $args + array(null, null, ' ');
+            
+            return '(str_pad(' . implode(', ', $args) . ', STR_PAD_LEFT))';
+        }
+        
+        protected static function _rpad($args) {
+            $args = $args + array(null, null, ' ');
+            
+            return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
+        }
+        
+        protected static function _chunk($args) {
+            return '(chunk_split(' . implode(' . ', $args) . '))';
+        }
+
         protected static function _concat($args) {
             return '(' . implode(' . ', $args) . ')';
         }
