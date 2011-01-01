@@ -577,6 +577,46 @@ namespace org\octris\core\tpl {
             );
         }
     
+        /****m* sandbox/settype
+         * SYNOPSIS
+         */
+        public function settype($val, $type)
+        /*
+         * FUNCTION
+         *      cast input to type
+         * INPUTS
+         *      * $val (mixed) -- value to cast
+         *      * $type (string) -- type to cast to
+         * OUTPUTS
+         *      (mixed) -- converted value
+         ****
+         */
+        {
+            $type = strtolower($type);
+            
+            if ($type == 'array' || $type == 'object') {
+                if (is_object($val)) {
+                    if (($val instanceof collection) || ($val instanceof collection\Iterator) || ($val instanceof \ArrayIterator)) {
+                        $val = $val->getArrayCopy();
+                    } else {
+                        $val = (array)$val;
+                    }
+                } elseif (!is_array($val)) {
+                    $val = array($val);
+                }
+                
+                if ($type == 'object') {
+                    $val = (object)$val;
+                }
+            } elseif ($type == 'collection') {
+                $val = new \org\octris\core\tpl\type\collection($val);
+            } else {
+                \settype($val, $type);
+            }
+            
+            return $val;
+        }
+    
         /****m* sandbox/includetpl
          * SYNOPSIS
          */
