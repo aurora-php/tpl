@@ -100,7 +100,7 @@ namespace org\octris\core\tpl\compiler {
             'toupper'    => array('min' => 2, 'max' => 2, 'map' => 'strtoupper'),
             'substr'     => array('min' => 2, 'max' => 3),
             'trim'       => array('min' => 1, 'max' => 2),
-            'vsprintf'   => array('min' => 2, 'max' => 2)
+            'vsprintf'   => array('min' => 2, 'max' => 2),
             
             // numeric functions
             'round'      => array('min' => 1, 'max' => 2),
