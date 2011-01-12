@@ -3,21 +3,20 @@
 namespace org\octris\core\tpl {
     use \org\octris\core\tpl\compiler as compiler;
     
-    /****c* tpl/compiler
-     * NAME
-     *      compiler
-     * FUNCTION
-     *      template compiler
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
+    /**
+     * Implementation of template compiler.
+     *
+     * @octdoc      c:tpl/compiler
+     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
      */
-
-    class compiler {
-        /****d* compiler/T_...
-         * SYNOPSIS
+    class compiler
+    /**/
+    {
+        /**
+         * Parser tokens.
+         * 
+         * @octdoc  d:compiler/T_...
          */
         const T_START           = 1;
         const T_END             = 2;
@@ -43,14 +42,13 @@ namespace org\octris\core\tpl {
         
         const T_WHITESPACE      = 40;
         const T_NEWLINE         = 41;
-        /*
-         * FUNCTION
-         *      tokens
-         ****
-         */
+        /**/
 
-        /****v* compiler/$tokens
-         * SYNOPSIS
+        /**
+         * Regular expression patterns for parser tokens.
+         *
+         * @octdoc  v:compiler/$tokens
+         * @var     array
          */
         private static $tokens = array(
             self::T_IF_OPEN     => '#if',
@@ -77,14 +75,14 @@ namespace org\octris\core\tpl {
             self::T_WHITESPACE  => '\s+',
             self::T_NEWLINE     => '\n+',
         );
-        /*
-         * FUNCTION
-         *      token patterns for tokenizer
-         ****
-         */
+        /**/
 
-        /****v* compiler/$rules
-         * SYNOPSIS
+        /**
+         * Template analyzer rules.
+         *
+         * @octdoc  v:compiler/$rules
+         * @octdoc  private static $rules = array(...);
+         * @var     array
          */
         private static $rules = array(
             self::T_START   => array(
@@ -719,113 +717,92 @@ namespace org\octris\core\tpl {
                 )
             )
         );
-        /*
-         * FUNCTION
-         *      analyzer rules
-         ****
-         */
+        /**/
         
-        /****v* compiler/$tokennames
-         * SYNOPSIS
+        /**
+         * Names of tokens. This array gets build the first time the constructor is called.
+         *
+         * @octdoc  v:compiler/$tokennames
+         * @var     array
          */
         private static $tokennames = NULL;
-        /*
-         * FUNCTION
-         *      names of tokens to be filled by constructor
-         ****
-         */
-        
-        /****v* compiler/$filename
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Name of file currently compiled.
+         *
+         * @octdoc  v:compiler/$filename
+         * @var     string
          */
         protected $filename = '';
-        /*
-         * FUNCTION
-         *      name of file currently compiled
-         ****
-         */
-        
-        /****v* compiler/$searchpath
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Stores pathes to look into when searching for template to load.
+         *
+         * @octdoc  v:compiler/$searchpath
+         * @var     array
          */
         protected $searchpath = array();
-        /*
-         * FUNCTION
-         *      path to look in for loading templates
-         ****
-         */
+        /**/
 
-        /****v* compiler/$l10n
-         * SYNOPSIS
+        /**
+         * Instance of locale class.
+         *
+         * @octdoc  v:compiler/$l10n
+         * @var     \org\octris\core\l10n
          */
         protected $l10n;
-        /*
-         * FUNCTION
-         *      instance of l10n
-         ****
-         */
+        /**/
 
-        /****m* compiler/__construct
-         * SYNOPSIS
+        /**
+         * Constructor.
+         *
+         * @octdoc  m:compiler/__construct
          */
         public function __construct()
-        /*
-         * FUNCTION
-         *      constructor
-         ****
-         */
+        /**/
         {
             if (is_null(self::$tokennames)) {
                 $class = new \ReflectionClass($this);
                 self::$tokennames = array_flip($class->getConstants());
             }
         }
-        
-        /****m* compiler/setL10n
-         * SYNOPSIS
+
+        /**
+         * Set l10n dependency.
+         *
+         * @octdoc  m:compiler/setL10n
+         * @param   \org\octris\core\l10n       $l10n       Instance of l10n class.
          */
-        public function setL10n($l10n)
-        /*
-         * FUNCTION
-         *      set l10n dependency
-         * INPUTS
-         *      * $l10n (l10n) -- instance of l10n class
-         ****
-         */
+        public function setL10n(\org\octris\core\l10n $l10n)
+        /**/
         {
             $this->l10n = $l10n;
         }
-        
-        /****m* compiler/addSearchPath
-         * SYNOPSIS
+
+        /**
+         * Register pathname for looking up templates in.
+         *
+         * @octdoc  m:compiler/addSearchPath
+         * @param   mixed       $pathname       Name of path to register.
          */
-        public function addSearchPath($path)
-        /*
-         * FUNCTION
-         *      add path to lookup templates in
-         * INPUTS
-         *      * $path (mixed) -- path to add, string or array of strings
-         ****
-         */
+        public function addSearchPath($pathname)
+        /**/
         {
-            if (!is_array($path)) $path = array($path);
-            
-            $this->searchpath = array_unique(array_merge($this->searchpath, $path));
+            if (!in_array($pathname, $this->searchpath)) {
+                $this->searchpath[] = $pathname;
+            }
         }
         
-        /****m* compiler/findFile
-         * SYNOPSIS
+        /**
+         * Lookup a template file in the configured searchpathes.
+         *
+         * @octdoc  m:compiler/findFile
+         * @param   string      $filename       Name of file to lookup.
          */
         public function findFile($filename)
-        /*
-         * FUNCTION
-         *      lookup a file in the searchpath 
-         * INPUTS
-         *      * $filename (string) -- name of file to lookup
-         * OUTPUTS
-         *      (mixed) -- returns full path of file or false, if file could not be located
-         ****
-         */
+        /**/
         {
             $return = false;
             
@@ -846,38 +823,30 @@ namespace org\octris\core\tpl {
             return $return;
         }
 
-        /****m* compiler/getTokenName
-         * SYNOPSIS
+        /**
+         * Return name of token.
+         *
+         * @octdoc  m:compiler/getTokenName
+         * @param   int     $token      ID of token.
+         * @return  string              Name of token.
          */
         protected function getTokenName($token)
-        /*
-         * FUNCTION
-         *      return name of token
-         * INPUTS
-         *      * $token (int) -- ID of token
-         * OUTPUTS
-         *      (string) -- name of token
-         ****
-         */
+        /**/
         {
             return (isset(self::$tokennames[$token])
                     ? self::$tokennames[$token]
                     : 'T_UNKNOWN');
         }
-        
-        /****m* compiler/getTokenName
-         * SYNOPSIS
+
+        /**
+         * Return names of multiple tokens.
+         *
+         * @octdoc  m:compiler/getTokenNames
+         * @param   array       $tokens     Array of token IDs.
+         * @return  array                   Names of tokens.
          */
         protected function getTokenNames(array $tokens)
-        /*
-         * FUNCTION
-         *      return names for tokens
-         * INPUTS
-         *      * $tokens (array) -- array of tokens
-         * OUTPUTS
-         *      (string) -- name of token
-         ****
-         */
+        /**/
         {
             $return = array();
             
@@ -886,22 +855,18 @@ namespace org\octris\core\tpl {
             return $return;
         }
         
-        /****m* compiler/error
-         * SYNOPSIS
+        /**
+         * Trigger an error and halt execution.
+         *
+         * @octdoc  m:compiler/error
+         * @param   string      $type       Type of error to trigger.
+         * @param   int         $cline      Line in compiler class error was triggered from.
+         * @param   int         $line       Line in template the error was triggered for.
+         * @param   int         $token      ID of token that triggered the error.
+         * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
         protected function error($type, $cline, $line, $token, $payload = NULL)
-        /*
-         * FUNCTION
-         *      trigger an error
-         * INPUTS
-         *      * $type (string) -- type of error to trigger
-         *      * $cline (int) -- error occurred in this line of compiler class
-         *      * $line (int) -- error occurred in this line of the template
-         *      * $token (int) -- ID of token, that triggered the error
-         *      * $payload (mixed) -- (optional) additional information -- either an array of expected token IDs, or an additional 
-         *        message
-         ****
-         */
+        /**/
         {
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
@@ -916,21 +881,17 @@ namespace org\octris\core\tpl {
          
             die();
         }
-        
-        /****m* compiler/tokenize
-         * SYNOPSIS
+
+        /**
+         * Tokenizer converts template snippets to tokens.
+         *
+         * @octdoc  m:compiler/tokenize
+         * @param   string      $in         Template snippet to tokenize.
+         * @param   int         $line       Line number of template the snippet was taken from.
+         * @return  array                   Tokens parsed from snippet.
          */
         protected function tokenize($in, $line)
-        /*
-         * FUNCTION
-         *      tokenizer converts template snippet to tokens
-         * INPUTS
-         *      * $in (string) -- template snippet to tokenize
-         *      * $line (int) -- line number of snippet in template 
-         * OUTPUTS
-         *      (array) -- tokens
-         ****
-         */
+        /**/
         {
             $out = array();
             $in  = stripslashes($in);
@@ -974,21 +935,17 @@ namespace org\octris\core\tpl {
             return $out;
         }
 
-        /****m* compiler/analyze
-         * SYNOPSIS
+        /**
+         * Token analyzer. The analyzer applies rulesets to tokens and checks if
+         * the rules are fulfilled.
+         *
+         * @octdoc  m:compiler/analyze
+         * @param   array       $tokens     Tokens to analyze.
+         * @param   array       $blocks     Block information required by analyzer / compiler.
+         * @return  bool                    Returns true if token analysis succeeded.
          */
         protected function analyze(array $tokens, array &$blocks)
-        /*
-         * FUNCTION
-         *      token analyzer -- applies rulesets to tokens and check if the
-         *      rules are fulfilled
-         * INPUTS
-         *      * $tokens (array) -- tokens to analyz
-         *      * $blocks (array) -- block information required by analyzer / compiler
-         * OUTPUTS
-         *      (array) -- errors
-         ****
-         */
+        /**/
         {
             $braces  = 0;               // brace level
             $current = null;            // current token
@@ -1076,19 +1033,15 @@ namespace org\octris\core\tpl {
             return true;
         }
 
-        /****m* compiler/gettext
-         * SYNOPSIS
+        /**
+         * Implementation of gettext compiler.
+         *
+         * @octdoc  m:compiler/gettext
+         * @param   array       $args       Arguments for gettext.
+         * @return  string                  Compiled code for gettext.
          */
         protected function gettext($args)
-        /*
-         * FUNCTION
-         *      gettext compiler
-         * INPUTS
-         *      * $args (array) -- arguments for gettext
-         * OUTPUTS
-         *      (string) -- compiled code for gettext
-         ****
-         */
+        /**/
         {
             if (preg_match('/^(["\'])(.*?)\1$/', $args[0], $match)) {
                 $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/s';
@@ -1128,20 +1081,16 @@ namespace org\octris\core\tpl {
             return $return;
         }
         
-        /****m* compiler/compile
-         * SYNOPSIS
+        /**
+         * Compile tokens to PHP code.
+         *
+         * @octdoc  m:compiler/compile
+         * @param   array       $tokens     Array of tokens to compile.
+         * @param   array       $blocks     Block information required by analyzer / compiler.
+         * @return  string                  Generated PHP code.
          */
         protected function compile(&$tokens, &$blocks)
-        /*
-         * FUNCTION
-         *      compile tokens to php code
-         * INPUTS
-         *      * $tokens (array) -- array of tokens to compile
-         *      * $blocks (array) -- block information required by analyzer / compiler
-         * OUTPUTS
-         *      (string) -- generated php code
-         ****
-         */
+        /**/
         {
             $stack = array();
             $code  = array();
@@ -1268,21 +1217,17 @@ namespace org\octris\core\tpl {
             return $code;
         }
         
-        /****m* compiler/toolchain
-         * SYNOPSIS
+        /**
+         * Execute compiler toolchain for a template snippet.
+         *
+         * @octdoc  m:compiler/toolchain
+         * @param   string      $snippet        Template snippet to process.
+         * @param   int         $line           Line in template processed.
+         * @param   array       $blocks         Block information required by analyzer / compiler.
+         * @return  string                      Processed / compiled snippet.
          */
         protected function toolchain($snippet, $line, array &$blocks)
-        /*
-         * FUNCTION
-         *      execute compiler toolchain for a template snippet
-         * INPUTS
-         *      * $snippet (string) -- template snippet to process
-         *      * $line (int) -- line template to process
-         *      * $blocks (array) -- block information required by analyzer / compiler
-         * OUTPUTS
-         *      (string) -- processed / compiled snippet
-         ****
-         */
+        /**/
         {
             $tokens = $this->tokenize($snippet, $line);
             $code   = '';
@@ -1297,19 +1242,15 @@ namespace org\octris\core\tpl {
             return $code;
         }
         
-        /****m* compiler/parse
-         * SYNOPSIS
+        /**
+         * Parse template and extract all template functionality to compile.
+         *
+         * @octdoc  m:compiler/parse
+         * @param   string      $filename       Name of file to process.
+         * @return  string                      Processed / compiled template
          */
         protected function parse($filename)
-        /*
-         * FUNCTION
-         *      parse template and extract all template functionality to compile
-         * INPUTS
-         *      * $filename (string) -- name of file to process
-         * OUTPUTS
-         *      (string) -- processed template
-         ****
-         */
+        /**/
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
@@ -1364,19 +1305,15 @@ namespace org\octris\core\tpl {
             return $tpl;
         }
         
-        /****m* compiler/process
-         * SYNOPSIS
+        /**
+         * Process a template.
+         *
+         * @octdoc  m:compiler/process
+         * @param   string      $filename       Name of template file to process.
+         * @return  string                      Compiled template.
          */
         public function process($filename)
-        /*
-         * FUNCTION
-         *      start compiler
-         * INPUTS
-         *      * $filename (string) -- name of file to process
-         * OUTPUTS
-         *      (string) -- compiled template
-         ****
-         */
+        /**/
         {
             $this->filename = $filename;
 
