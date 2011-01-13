@@ -3,55 +3,46 @@
 namespace org\octris\core\tpl {
     require_once('compiler.class.php');
     
-    /****c* tpl/lint
-     * NAME
-     *      lint
-     * FUNCTION
-     *      lint for templates
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
+    /**
+     * Lint for templates.
+     *
+     * @octdoc      c:tpl/lint
+     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
      */
-
-    class lint extends \org\octris\core\tpl\compiler {
-        /****v* lint/$errout
-         * SYNOPSIS
+    class lint extends \org\octris\core\tpl\compiler
+    /**/
+    {
+        /**
+         * File handle for error messages output.
+         *
+         * @octdoc  v:lint/$errout
+         * @var     resource
          */
         protected $errout;
-        /*
-         * FUNCTION
-         *      output for error messages
-         ****
-         */
-        
-        /****v* lint/$errors = 0
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Number of errors occured.
+         *
+         * @octdoc  v:lint/$errors
+         * @var     int
          */
         protected $errors = 0;
-        /*
-         * FUNCTION
-         *      number of errors occured
-         ****
-         */
+        /**/
 
-        /****m* compiler/error
-         * SYNOPSIS
+        /**
+         * Trigger an error.
+         *
+         * @octdoc  m:lint/error
+         * @param   string      $type       Type of error to trigger.
+         * @param   int         $cline      Line in compiler class error was triggered from.
+         * @param   int         $line       Line in template the error was triggered for.
+         * @param   int         $token      ID of token that triggered the error.
+         * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
         protected function error($type, $cline, $line, $token, $payload = NULL)
-        /*
-         * FUNCTION
-         *      trigger an error
-         * INPUTS
-         *      * $type (string) -- type of error to trigger
-         *      * $cline (int) -- error occurred in this line of compiler class
-         *      * $line (int) -- error occurred in this line of the template
-         *      * $token (int) -- ID of token, that triggered the error
-         *      * $payload (mixed) -- (optional) additional information -- either an array of expected token IDs, or an additional 
-         *        message
-         ****
-         */
+        /**/
         {
             if ($fp = fopen($this->errout, 'w+')) {
                 fwrite($fp, sprintf("\n** ERROR: %s(%d) **\n", $type, $cline));
@@ -73,20 +64,28 @@ namespace org\octris\core\tpl {
             if ($type == 'analyze') throw new \Exception('syntax error');
         }
         
-        /****m* lint/toolchain
-         * SYNOPSIS
+        /**
+         * Execute compiler toolchain for a template snippet.
+         *
+         * @octdoc  m:lint/toolchain
+         * @param   
+         */
+        public function toolchain()
+        /**/
+        {
+            
+        }
+        
+        /**
+         * Execute compiler toolchain for a template snippet.
+         *
+         * @octdoc  m:compiler/toolchain
+         * @param   string      $snippet        Template snippet to process.
+         * @param   int         $line           Line in template processed.
+         * @return  string                      Processed / compiled snippet.
          */
         protected function toolchain($snippet, $line)
-        /*
-         * FUNCTION
-         *      execute compiler toolchain for a template snippet
-         * INPUTS
-         *      * $snippet (string) -- template snippet to process
-         *      * $line (int) -- line template to process
-         * OUTPUTS
-         *      (string) -- processed / compiled snippet
-         ****
-         */
+        /**/
         {
             $tokens = $this->tokenize($snippet, $line);
             $code   = '';
@@ -101,20 +100,16 @@ namespace org\octris\core\tpl {
             return $code;
         }
         
-        /****m* lint/process
-         * SYNOPSIS
+        /**
+         * Process a template.
+         *
+         * @octdoc  m:compiler/process
+         * @param   string      $filename       Name of template file to lint.
+         * @param   string      $err            Destination for error reporting.
+         * @return  bool                        Returns true if template is valid.
          */
         public function process($filename, $errout = 'php://stdout')
-        /*
-         * FUNCTION
-         *      lint -- only tokenize and analyze file
-         * INPUTS
-         *      * $filename (string) -- file to lint
-         *      * $err (string) -- destination for error reporting
-         * OUTPUTS
-         *      (bool) -- returns true if template is valid, otherwise false
-         ****
-         */
+        /**/
         {
             $this->filename = $filename;
             $this->errors   = 0;
