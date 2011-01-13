@@ -1,89 +1,78 @@
 <?php
 
 namespace org\octris\core\tpl\compiler {
-    /****c* compiler/macro
-     * NAME
-     *      macro
-     * FUNCTION
-     *      Library for handling template macros. This is a static class.
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
+    /**
+     * Library for handling template macros.
+     *
+     * @octdoc      c:compiler/macro
+     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
      */
-
-    class macro {
-        /****v* macro/$registry
-         * SYNOPSIS
+    class macro
+    /**/
+    {
+        /**
+         * Macro registry.
+         *
+         * @octdoc  v:macro/$registry
+         * @var     array
          */
         protected static $registry = array();
-        /*
-         * FUNCTION
-         *      macro registry
-         ****
-         */
+        /**/
         
-        /****v* macro/$last_error
-         * SYNOPSIS
+        /**
+         * Last error occured.
+         *
+         * @octdoc  v:macro/$last_error
+         * @var     string
          */
         protected static $last_error = '';
-        /*
-         * FUNCTION
-         *      last occured error
-         ****
-         */
+        /**/
 
-        /*
-         * static class cannot be instantiated
+        /**
+         * Constructor and clone magic method are protected to prevent instantiating of class.
+         *
+         * @octdoc  m:macro/__construct, __clone
          */
         protected function __construct() {}
         protected function __clone() {}
+        /**/
         
-        /****m* macro/getError
-         * SYNOPSIS
+        /**
+         * Return last occured error.
+         *
+         * @octdoc  m:macro/getError
+         * @return  string                  Last occured error.
          */
         public static function getError()
-        /*
-         * FUNCTION
-         *      return last occured error
-         * OUTPUTS
-         *      (string) -- last occured error
-         ****
-         */
+        /**/
         {
             return self::$last_error;
         }
-        
-        /****m* macro/setError
-         * SYNOPSIS
+
+        /**
+         * Set error.
+         *
+         * @octdoc  m:macro/setError
+         * @param   string      $name       Name of constant the error occured for.
+         * @param   string      $msg        Additional error message.
          */
         protected static function setError($name, $msg)
-        /*
-         * FUNCTION
-         *      set error
-         * INPUTS
-         *      * $name (string) -- name of macro the error occured for
-         *      * $msg (string) -- additional error message
-         ****
-         */
+        /**/
         {
             self::$last_error = sprintf('"%s" -- %s', $name, $msg);
         }
-        
-        /****m* macro/registerMacro
-         * SYNOPSIS
+
+        /**
+         * Register a macro.
+         *
+         * @octdoc  m:macro/registerMacro
+         * @param   string      $name       Name of macro to register.
+         * @param   callback    $callback   Callback to call when macro is requested.
+         * @param   array       $args       For testing min/max number of arguments required for macro.
          */
         public static function registerMacro($name, $callback, array $args)
-        /*
-         * FUNCTION
-         *      register a macro
-         * INPUTS
-         *      * $name (string) -- name of macro to register
-         *      * $callback (mixed) -- callback to call when macro is executed
-         *      * $args (array) -- for testing arguments
-         ****
-         */
+        /**/
         {
             self::$registry[strtolower($name)] = array(
                 'callback' => $callback,
@@ -91,21 +80,16 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
-        /****m* macro/execMacro
-         * SYNOPSIS
+        /**
+         * Execute specified macro with specified arguments.
+         *
+         * @octdoc  m:macro/execMacro
+         * @param   string      $name       Name of macro to execute.
+         * @param   array       $args       Arguments for macro.
+         * @param   array       $options    Optional additional options for macro.
          */
         public static function execMacro($name, $args, array $options = array())
-        /*
-         * FUNCTION
-         *      execute specified macro with specified arguments
-         * INPUTS
-         *      * $name (string) -- name of macro to execute
-         *      * $args (array) -- arguments for macro
-         *      * $options (array) -- additional options for macro
-         * OUTPUTS
-         *      (mixed) -- output of macro
-         ****
-         */
+        /**/
         {
             self::$last_error = '';
             

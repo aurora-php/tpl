@@ -1,24 +1,23 @@
 <?php
 
 namespace org\octris\core\tpl\compiler {
-    /****c* compiler/rewrite
-     * NAME
-     *      rewrite
-     * FUNCTION
-     *      Rewrite template code. Rewrite inline function calls, and rewrite
-     *      function calls according to if they are allowed php function calls
-     *      or calls to functions that have to be registered to sandbox on
-     *      template rendering. This is a static class.
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
+    /**
+     * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
+     * if they are allowed php function calls or calls to functions that have to be registered to 
+     * sandbox on template rendering.
+     *
+     * @octdoc      c:compiler/rewrite
+     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
      */
-
-    class rewrite {
-        /****v* rewrite/$inline
-         * SYNOPSIS
+    class rewrite
+    /**/
+    {
+        /**
+         * Inline method rewrite.
+         *
+         * @octdoc  v:rewrite/$inline
+         * @var     array
          */
         protected static $inline = array(
             // blocks
@@ -78,14 +77,13 @@ namespace org\octris\core\tpl\compiler {
             'rpad'      => array('min' => 2, 'max' => 3),
             'concat'    => array('min' => 2),
         );
-        /*
-         * FUNCTION
-         *      inline method rewrite
-         ****
-         */
-        
-        /****v* rewrite/$phpfunc
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Allowed PHP functions and optional mapping to an template engine internal name.
+         *
+         * @octdoc  v:rewrite/$phpfunc
+         * @var     array
          */
         protected static $phpfunc = array(
             // string functions
@@ -106,55 +104,72 @@ namespace org\octris\core\tpl\compiler {
             'round'      => array('min' => 1, 'max' => 2),
             'ceil'       => array('min' => 1, 'max' => 1),
         );
-        /*
-         * FUNCTION
-         *      allowed php functions
-         ****
-         */
-        
-        /****v* rewrite/$forbidden
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Forbidden function names.
+         *
+         * @octdoc  v:rewrite/$forbidden
+         * @var     array
          */
         protected static $forbidden = array(
             'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
             '__construct', '__call', 'registermethod', 'render'
         );
-        /*
-         * FUNCTION
-         *      forbidden function names
-         ****
-         */
+        /**/
         
-        /****v* rewrite/$last_error
-         * SYNOPSIS
+        /**
+         * Last error occured.
+         *
+         * @octdoc  v:rewrite/$last_error
+         * @var     string
          */
         protected static $last_error = '';
-        /*
-         * FUNCTION
-         *      last error message
-         ****
-         */
-        
-        /*
-         * static class cannot be instantiated
+        /**/
+
+        /**
+         * Constructor and clone magic method are protected to prevent instantiating of class.
+         *
+         * @octdoc  m:rewrite/__construct, __clone
          */
         protected function __construct() {}
         protected function __clone() {}
+        /**/
         
-        /****m* rewrite/__callStatic
-         * SYNOPSIS
+        /**
+         * Return last occured error.
+         *
+         * @octdoc  m:rewrite/getError
+         * @return  string                  Last occured error.
+         */
+        public static function getError()
+        /**/
+        {
+            return self::$last_error;
+        }
+
+        /**
+         * Set error.
+         *
+         * @octdoc  m:rewrite/setError
+         * @param   string      $name       Name of constant the error occured for.
+         * @param   string      $msg        Additional error message.
+         */
+        protected static function setError($name, $msg)
+        /**/
+        {
+            self::$last_error = sprintf('"%s" -- %s', $name, $msg);
+        }
+
+        /**
+         * Wrapper for methods that can be rewritten.
+         *
+         * @octdoc  m:rewrite/__callStatic
+         * @param   string      $name       Name of method to rewrite.
+         * @param   array       $args       Arguments for method.
          */
         public static function __callStatic($name, $args)
-        /*
-         * FUNCTION
-         *      wrapper for methods that can be optimized
-         * INPUTS
-         *      * $name (string) -- name of method
-         *      * $args (array) -- arguments for method
-         * OUTPUTS
-         *      
-         ****
-         */
+        /**/
         {
             self::$last_error = '';
            
@@ -214,48 +229,14 @@ namespace org\octris\core\tpl\compiler {
             }
         }
         
-        /****m* rewrite/getError
-         * SYNOPSIS
-         */
-        public static function getError()
-        /*
-         * FUNCTION
-         *      return last occured error message
-         * OUTPUTS
-         *      (string) -- error message
-         ****
-         */
-        {
-            return self::$last_error;
-        }
-
-        /****m* rewrite/setError
-         * SYNOPSIS
-         */
-        protected static function setError($func, $msg)
-        /*
-         * FUNCTION
-         *      set an error message
-         * INPUTS
-         *      * $func (string) -- name of function the error occured for
-         *      * $msg (string) -- additional error message
-         ****
-         */
-        {
-            self::$last_error = sprintf('"%s" -- %s', $func, $msg);
-        }
-
-        /****m* rewrite/getUniqId
-         * SYNOPSIS
+        /**
+         * Helper function to create a uniq identifier required by several functions.
+         *
+         * @octdoc  m:rewrite/getUniqId
+         * @return  string                  Uniq identifier
          */
         protected static function getUniqId()
-        /*
-         * FUNCTION
-         *      uniq identifier generator
-         * OUTPUTS
-         *      (string) -- uniq identifier
-         ****
-         */
+        /**/
         {
             return md5(uniqid());
         }
