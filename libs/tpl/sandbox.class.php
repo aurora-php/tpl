@@ -507,44 +507,6 @@ namespace org\octris\core\tpl {
         }
 
         /**
-         * Cast input value to a specified type. In contrast to PHP's built-in settype function this one will try to cast arrays
-         * and objects to the template collection type. Additionally this function supports casting explicitly to the template
-         * collection type. All other types are handed over to PHP's built-in settype function.
-         *
-         * @octdoc  m:sandbox/settype
-         * @param   mixed       $val            Value to cast.
-         * @param   string      $type           Type to cast to.
-         * @return  mixed                       Casted value.
-         */
-        public function settype($val, $type)
-        /**/
-        {
-            $type = strtolower($type);
-            
-            if ($type == 'array' || $type == 'object') {
-                if (is_object($val)) {
-                    if (($val instanceof collection) || ($val instanceof collection\Iterator) || ($val instanceof \ArrayIterator)) {
-                        $val = $val->getArrayCopy();
-                    } else {
-                        $val = (array)$val;
-                    }
-                } elseif (!is_array($val)) {
-                    $val = array($val);
-                }
-                
-                if ($type == 'object') {
-                    $val = (object)$val;
-                }
-            } elseif ($type == 'collection') {
-                $val = new \org\octris\core\tpl\type\collection($val);
-            } else {
-                \settype($val, $type);
-            }
-            
-            return $val;
-        }
-
-        /**
          * Read a file and return it as string.
          *
          * @octdoc  m:sandbox/includetpl
