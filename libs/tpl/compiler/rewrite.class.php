@@ -405,7 +405,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _collection($args) {
-            return '$this->settype(' . $args[0] . ', "collection")';
+            return '\\org\\octris\\core\\tpl\\type::settype(' . $args[0] . ', "collection")';
         }
         
         protected static function _now() {
@@ -438,7 +438,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _implode($args) {
-            return '(implode(' . $args[0] . ', $this->settype(' . $args[1] . ', "array")))';
+            return '(implode(' . $args[0] . ', \\org\\octris\\core\\tpl\\type::settype(' . $args[1] . ', "array")))';
         }
         
         protected static function _lpad($args) {
