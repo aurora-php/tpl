@@ -790,8 +790,12 @@ namespace org\octris\core\tpl {
         public function addSearchPath($pathname)
         /**/
         {
-            if (!in_array($pathname, $this->searchpath)) {
-                $this->searchpath[] = $pathname;
+            if (is_array($pathname)) {
+                foreach ($pathname as $path) $this->addSearchPath($path);
+            } else {
+                if (!in_array($pathname, $this->searchpath)) {
+                    $this->searchpath[] = $pathname;
+                }
             }
         }
         
