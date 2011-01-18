@@ -172,10 +172,10 @@ namespace org\octris\core\tpl {
         /**
          * Set values for multiple template variables.
          *
-         * @octdoc  m:tpl/setValue
+         * @octdoc  m:tpl/setValues
          * @param   array       $array      Key/value array with values.
          */
-        public function setValue($array)
+        public function setValues($array)
         /**/
         {
             foreach ($array as $k => $v) $this->setValue($k, $v);
