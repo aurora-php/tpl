@@ -89,10 +89,10 @@ namespace org\octris\core {
         /**
          * Set values for multiple template variables.
          *
-         * @octdoc  m:tpl/setValue
+         * @octdoc  m:tpl/setValues
          * @param   array       $array      Key/value array with values.
          */
-        public function setValue($array)
+        public function setValues($array)
         /**/
         {
             $this->sandbox->setValues($array);
