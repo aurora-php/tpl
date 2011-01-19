@@ -76,6 +76,10 @@ namespace org\octris\core\tpl\compiler {
             'lpad'      => array('min' => 2, 'max' => 3),
             'rpad'      => array('min' => 2, 'max' => 3),
             'concat'    => array('min' => 2),
+            
+            // array functions
+            'array'     => array('min' => 1),
+            'cycle'     => array('min' => 1, 'max' => 3),
         );
         /**/
 
@@ -455,6 +459,15 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _concat($args) {
             return '(' . implode(' . ', $args) . ')';
+        }
+        
+        // array functions
+        protected static function _array($args) {
+            return 'new \\org\\octris\\core\\tpl\\type\\collection(array(' . implode(', ', $args) . '))';
+        }
+        
+        protected static function _cycle($args) {
+            return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
         }
     }
 }
