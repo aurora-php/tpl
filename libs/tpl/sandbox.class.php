@@ -460,6 +460,60 @@ namespace org\octris\core\tpl {
         }
 
         /**
+         * Implementation for 'cycle' function. Cycle can be used inside a block of type '#loop' or '#each'. An
+         * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list 
+         * according to the internal pointer position.
+         *
+         * @octdoc  m:sandbox/cycle
+         * @param   string      $id         Uniq identifier for cycle.
+         * @param   array       $array      List of elements to use for cycling.
+         * @param   bool        $pingpong   Optional flag indicates whether to start with first element or moving pointer
+         *                                  back and forth in case the pointer reached first (or last) element in the list.
+         * @param   mixed       $reset      Optional reset flag. The cycle pointer is reset if value provided differs from stored
+         *                                  reset value
+         * @return  mixed                   Current list item.
+         */
+        public function cycle($id, $array, $pingpong = false, $reset = 1)
+        /**/
+        {
+            $id = 'cycle:' . $id;
+            
+            if (!isset($this->meta[$id])) {
+                if ($pingpong) {
+                    // merge reverse copy of array for pingpong cycling
+                    $array = new \org\octris\core\tpl\type\collection($array->getArrayCopy());
+                    $array->merge(array_slice(array_reverse($array->getArrayCopy()), 1, -1));
+                }
+                
+                $this->meta[$id] = array(
+                    'iterator'    => $array->getIterator(),
+                    'pingpong'    => !!$pingpong,
+                    'reset_value' => $reset
+                );
+                
+                $this->meta[$id]['iterator']->rewind();
+            } elseif ($this->meta[$id]['reset_value'] !== $reset) {
+                $this->meta[$id]['reset_value'] = $reset;
+                
+                $this->meta[$id]['iterator']->rewind();
+            }
+
+            $return = '';
+
+            if (!$this->meta[$id]['iterator']->valid()) {
+                $this->meta[$id]['iterator']->rewind();
+            }
+
+            if ($this->meta[$id]['iterator']->valid()) {
+                $return = $this->meta[$id]['iterator']->current()->item;
+
+                $this->meta[$id]['iterator']->next();
+            }
+
+            return $return;
+        }
+
+        /**
          * Output specified value.
          *
          * @octdoc  m:sandbox/write
