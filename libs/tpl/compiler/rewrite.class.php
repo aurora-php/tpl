@@ -189,7 +189,7 @@ namespace org\octris\core\tpl\compiler {
                 }
                 if (isset(self::$phpfunc[$name]['max'])) {
                     if ($cnt > self::$phpfunc[$name]['max']) {
-                        self::setError($name, 'to many arguments');
+                        self::setError($name, 'too many arguments');
                     }
                 }
                 
@@ -210,7 +210,7 @@ namespace org\octris\core\tpl\compiler {
                 }
                 if (isset(self::$inline[$name]['max'])) {
                     if ($cnt > self::$inline[$name]['max']) {
-                        self::setError($name, 'to many arguments');
+                        self::setError($name, 'too many arguments');
                     }
                 }
                 
