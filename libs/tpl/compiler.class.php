@@ -63,6 +63,7 @@ namespace org\octris\core\tpl {
 
             self::T_LET         => 'let',
             self::T_GETTEXT     => '_',
+            self::T_BOOL        => '(true|false)',
             self::T_METHOD      => '[a-z_][a-z0-9_]*',
             self::T_VARIABLE    => '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+',
             self::T_CONSTANT    => "%[_a-z][_a-z0-9]*",
@@ -70,7 +71,6 @@ namespace org\octris\core\tpl {
         
             self::T_STRING      => "([\"']).*?(?!\\\\)\\2",
             self::T_NUMBER      => '[+-]?[0-9]+(\.[0-9]+|)',
-            self::T_BOOL        => '(true|false)',
             
             self::T_WHITESPACE  => '\s+',
             self::T_NEWLINE     => '\n+',
@@ -1190,6 +1190,7 @@ namespace org\octris\core\tpl {
                         implode('"]["', explode(':', strtolower(substr($value, 1))))
                     );
                     break;
+                case self::T_BOOL:
                 case self::T_STRING:
                 case self::T_NUMBER:
                     $code[] = $value;
