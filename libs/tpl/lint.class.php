@@ -47,7 +47,7 @@ namespace org\octris\core\tpl {
             if ($fp = fopen($this->errout, 'w+')) {
                 fwrite($fp, sprintf("\n** ERROR: %s(%d) **\n", $type, $cline));
                 fwrite($fp, sprintf("   line :    %d\n", $line));
-                fwrite($fp, sprintf("   file:     %s\n", $this->filename));
+                fwrite($fp, sprintf("   file :    %s\n", $this->filename));
                 fwrite($fp, sprintf("   token:    %s\n", $this->getTokenName($token)));
             
                 if (is_array($payload)) {
