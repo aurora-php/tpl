@@ -92,7 +92,6 @@ namespace org\octris\core\tpl\compiler {
         protected static $phpfunc = array(
             // string functions
             'chunk'      => array('min' => 3, 'max' => 3, 'map' => 'chunk_split'),
-            'count'      => array('min' => 1, 'max' => 1),
             'ltrim'      => array('min' => 1, 'max' => 2),
             'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
             'replace'    => array('min' => 3, 'max' => 3, 'map' => 'str_replace'),
@@ -107,6 +106,9 @@ namespace org\octris\core\tpl\compiler {
             // numeric functions
             'round'      => array('min' => 1, 'max' => 2),
             'ceil'       => array('min' => 1, 'max' => 1),
+            
+            // array functions
+            'count'      => array('min' => 1, 'max' => 1),
         );
         /**/
 
