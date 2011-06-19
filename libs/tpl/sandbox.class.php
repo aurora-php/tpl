@@ -551,10 +551,8 @@ namespace org\octris\core\tpl {
         {
             return var_export(
                 ((is_object($var) && 
-                 ($var instanceof \org\octris\core\type\collection || 
-                  $var instanceof \org\octris\core\type\collection\Iterator || 
-                  $var instanceof \ArrayIterator)) 
-                ? $var->getArrayCopy() 
+                 ($var instanceof \ArrayIterator || $var instanceof \ArrayObject)) 
+                ? (array)$var
                 : $var), 
                 true
             );
