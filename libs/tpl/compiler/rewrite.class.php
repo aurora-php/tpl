@@ -391,7 +391,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _ne($args) {
-            return '(' . implode(' == ', $args) . ')';
+            return '(' . implode(' != ', $args) . ')';
         }
         
         protected static function _bool($args) {
