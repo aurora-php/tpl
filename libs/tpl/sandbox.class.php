@@ -485,45 +485,55 @@ namespace org\octris\core\tpl {
          *                                  reset value
          * @return  mixed                   Current list item.
          */
-        // public function cycle($id, $array, $pingpong = false, $reset = 1)
+        public function cycle($id, $array, $pingpong = false, $reset = 1)
         /**/
-        // {
-        //     $id = 'cycle:' . $id;
-        //     
-        //     if (!isset($this->meta[$id])) {
-        //         if ($pingpong) {
-        //             // merge reverse copy of array for pingpong cycling
-        //             $array = new \org\octris\core\tpl\type\collection($array->getArrayCopy());
-        //             $array->merge(array_slice(array_reverse($array->getArrayCopy()), 1, -1));
-        //         }
-        //         
-        //         $this->meta[$id] = array(
-        //             'iterator'    => $array->getIterator(),
-        //             'pingpong'    => !!$pingpong,
-        //             'reset_value' => $reset
-        //         );
-        //         
-        //         $this->meta[$id]['iterator']->rewind();
-        //     } elseif ($this->meta[$id]['reset_value'] !== $reset) {
-        //         $this->meta[$id]['reset_value'] = $reset;
-        //         
-        //         $this->meta[$id]['iterator']->rewind();
-        //     }
-        // 
-        //     $return = '';
-        // 
-        //     if (!$this->meta[$id]['iterator']->valid()) {
-        //         $this->meta[$id]['iterator']->rewind();
-        //     }
-        // 
-        //     if ($this->meta[$id]['iterator']->valid()) {
-        //         $return = $this->meta[$id]['iterator']->current()->item;
-        // 
-        //         $this->meta[$id]['iterator']->next();
-        //     }
-        // 
-        //     return $return;
-        // }
+        {
+            $id = 'cycle:' . $id;
+            
+            if (!isset($this->meta[$id])) {
+                $this->meta[$id] = array(
+                    'iterator'    => $array,
+                    'direction'   => 1,
+                    'pingpong'    => !!$pingpong,
+                    'reset_value' => $reset
+                );
+                
+                $this->meta[$id]['iterator']->rewind();
+            } elseif ($this->meta[$id]['reset_value'] !== $reset) {
+                $this->meta[$id]['reset_value'] = $reset;
+                $this->meta[$id]['direction']   = 1;
+                
+                $this->meta[$id]['iterator']->rewind();
+            }
+        
+            $return = '';
+        
+            if (!$this->meta[$id]['iterator']->valid()) {
+                if ($this->meta[$id]['pingpong']) {
+                    if ($this->meta[$id]['direction'] == 1) {
+                        $this->meta[$id]['direction'] = -1;
+                        $this->meta[$id]['iterator']->prev();
+                    } else {
+                        $this->meta[$id]['direction'] = 1;
+                        $this->meta[$id]['iterator']->rewind();
+                    }
+                } else {
+                    $this->meta[$id]['iterator']->rewind();
+                }
+            }
+        
+            if ($this->meta[$id]['iterator']->valid()) {
+                $return = $this->meta[$id]['iterator']->current()->item;
+        
+                if ($this->meta[$id]['direction'] == 1) {
+                    $this->meta[$id]['iterator']->next();
+                } else {
+                    $this->meta[$id]['iterator']->prev();
+                }
+            }
+        
+            return $return;
+        }
 
         /**
          * Output specified value.
