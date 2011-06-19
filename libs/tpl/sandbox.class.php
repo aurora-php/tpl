@@ -225,30 +225,42 @@ namespace org\octris\core\tpl {
         public function each($id, &$ctrl, $array, &$meta = NULL)
         /**/
         {
-            $id = 'each:' . $id . ':' . crc32(serialize($array->getArrayCopy()));
+            $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
             
             if (!isset($this->meta[$id])) {
-                $this->meta[$id] = $array->getIterator();
+                $this->meta[$id] = $array;
             }
             
+            $getMeta = function($array) {
+                $pos = $array->getPosition();
+                $cnt = count($array);
+                
+                return array(
+                    'key'       => key($array),
+                    'pos'       => $pos,
+                    'count'     => $cnt,
+                    'is_first'  => ($pos == 0),
+                    'is_last'   => ($pos == $cnt - 1)
+                );
+            };
+            
             if (($return = $this->meta[$id]->valid())) {
-                $item = $this->meta[$id]->current();
+                $ctrl = $this->meta[$id]->current();
+                $meta = $getMeta($this->meta[$id]);
                 
                 $this->meta[$id]->next();
             } else {
                 // $value = '';
                 $this->meta[$id]->rewind();
-                $item = $this->meta[$id]->current();
+                
+                $ctrl = $this->meta[$id]->current();
+                $meta = $getMeta($this->meta[$id]);
             }
-            
-            $ctrl = $item->item;
-            $meta = array(
-                'key'       => $item->key,
-                'pos'       => $item->pos,
-                'count'     => $item->count,
-                'is_first'  => $item->is_first,
-                'is_last'   => $item->is_last
-            );
+
+            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \org\octris\core\type\collection)) {
+                // cast to collection type, if item is either an array or an object, but no object of type 'collection'
+                $ctrl = new \org\octris\core\type\collection($ctrl);
+            }
 
             return $return;
         }
