@@ -411,7 +411,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _collection($args) {
-            return '\\org\\octris\\core\\tpl\\type::settype(' . $args[0] . ', "collection")';
+            return '\\org\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
         }
         
         protected static function _now() {
@@ -440,11 +440,11 @@ namespace org\octris\core\tpl\compiler {
         
         // string functions
         protected static function _explode($args) {
-            return 'new \\org\\octris\\core\\tpl\\type\\collection(explode(' . implode(', ', $args) . '))';
+            return 'new \\org\\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
         }
         
         protected static function _implode($args) {
-            return '(implode(' . $args[0] . ', \\org\\octris\\core\\tpl\\type::settype(' . $args[1] . ', "array")))';
+            return '(implode(' . $args[0] . ', \\org\\octris\\core\\type::settype(' . $args[1] . ', "array")))';
         }
         
         protected static function _lpad($args) {
@@ -465,7 +465,7 @@ namespace org\octris\core\tpl\compiler {
         
         // array functions
         protected static function _array($args) {
-            return 'new \\org\\octris\\core\\tpl\\type\\collection(array(' . implode(', ', $args) . '))';
+            return 'new \\org\\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
         }
         
         protected static function _cycle($args) {
