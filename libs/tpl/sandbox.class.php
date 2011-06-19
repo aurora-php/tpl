@@ -191,10 +191,10 @@ namespace org\octris\core\tpl {
         public function setValue($name, $value)
         /**/
         {
-            if (is_scalar($value)) {
+            if (is_scalar($value) || (is_object($value) && $value instanceof \org\octris\core\type\collection)) {
                 $this->data[$name] = $value;
             } else {
-                $this->data[$name] = new type\collection($value);
+                $this->data[$name] = new \org\octris\core\type\collection($value);
             }
         }
         
