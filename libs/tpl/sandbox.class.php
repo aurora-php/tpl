@@ -191,10 +191,10 @@ namespace org\octris\core\tpl {
         public function setValue($name, $value)
         /**/
         {
-            if (is_scalar($value)) {
+            if (is_scalar($value) || (is_object($value) && $value instanceof \org\octris\core\type\collection)) {
                 $this->data[$name] = $value;
             } else {
-                $this->data[$name] = new type\collection($value);
+                $this->data[$name] = new \org\octris\core\type\collection($value);
             }
         }
         
@@ -225,30 +225,42 @@ namespace org\octris\core\tpl {
         public function each($id, &$ctrl, $array, &$meta = NULL)
         /**/
         {
-            $id = 'each:' . $id . ':' . crc32(serialize($array->getArrayCopy()));
+            $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
             
             if (!isset($this->meta[$id])) {
-                $this->meta[$id] = $array->getIterator();
+                $this->meta[$id] = $array;
             }
             
+            $getMeta = function($array) {
+                $pos = $array->getPosition();
+                $cnt = count($array);
+                
+                return array(
+                    'key'       => key($array),
+                    'pos'       => $pos,
+                    'count'     => $cnt,
+                    'is_first'  => ($pos == 0),
+                    'is_last'   => ($pos == $cnt - 1)
+                );
+            };
+            
             if (($return = $this->meta[$id]->valid())) {
-                $item = $this->meta[$id]->current();
+                $ctrl = $this->meta[$id]->current();
+                $meta = $getMeta($this->meta[$id]);
                 
                 $this->meta[$id]->next();
             } else {
                 // $value = '';
                 $this->meta[$id]->rewind();
-                $item = $this->meta[$id]->current();
+                
+                $ctrl = $this->meta[$id]->current();
+                $meta = $getMeta($this->meta[$id]);
             }
-            
-            $ctrl = $item->item;
-            $meta = array(
-                'key'       => $item->key,
-                'pos'       => $item->pos,
-                'count'     => $item->count,
-                'is_first'  => $item->is_first,
-                'is_last'   => $item->is_last
-            );
+
+            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \org\octris\core\type\collection)) {
+                // cast to collection type, if item is either an array or an object, but no object of type 'collection'
+                $ctrl = new \org\octris\core\type\collection($ctrl);
+            }
 
             return $return;
         }
@@ -479,14 +491,9 @@ namespace org\octris\core\tpl {
             $id = 'cycle:' . $id;
             
             if (!isset($this->meta[$id])) {
-                if ($pingpong) {
-                    // merge reverse copy of array for pingpong cycling
-                    $array = new \org\octris\core\tpl\type\collection($array->getArrayCopy());
-                    $array->merge(array_slice(array_reverse($array->getArrayCopy()), 1, -1));
-                }
-                
                 $this->meta[$id] = array(
-                    'iterator'    => $array->getIterator(),
+                    'iterator'    => $array,
+                    'direction'   => 1,
                     'pingpong'    => !!$pingpong,
                     'reset_value' => $reset
                 );
@@ -494,22 +501,37 @@ namespace org\octris\core\tpl {
                 $this->meta[$id]['iterator']->rewind();
             } elseif ($this->meta[$id]['reset_value'] !== $reset) {
                 $this->meta[$id]['reset_value'] = $reset;
+                $this->meta[$id]['direction']   = 1;
                 
                 $this->meta[$id]['iterator']->rewind();
             }
-
+        
             $return = '';
-
+        
             if (!$this->meta[$id]['iterator']->valid()) {
-                $this->meta[$id]['iterator']->rewind();
+                if ($this->meta[$id]['pingpong']) {
+                    if ($this->meta[$id]['direction'] == 1) {
+                        $this->meta[$id]['direction'] = -1;
+                        $this->meta[$id]['iterator']->prev();
+                    } else {
+                        $this->meta[$id]['direction'] = 1;
+                        $this->meta[$id]['iterator']->rewind();
+                    }
+                } else {
+                    $this->meta[$id]['iterator']->rewind();
+                }
             }
-
+        
             if ($this->meta[$id]['iterator']->valid()) {
                 $return = $this->meta[$id]['iterator']->current()->item;
-
-                $this->meta[$id]['iterator']->next();
+        
+                if ($this->meta[$id]['direction'] == 1) {
+                    $this->meta[$id]['iterator']->next();
+                } else {
+                    $this->meta[$id]['iterator']->prev();
+                }
             }
-
+        
             return $return;
         }
 
@@ -551,10 +573,8 @@ namespace org\octris\core\tpl {
         {
             return var_export(
                 ((is_object($var) && 
-                 ($var instanceof \org\octris\core\type\collection || 
-                  $var instanceof \org\octris\core\type\collection\Iterator || 
-                  $var instanceof \ArrayIterator)) 
-                ? $var->getArrayCopy() 
+                 ($var instanceof \ArrayIterator || $var instanceof \ArrayObject)) 
+                ? (array)$var
                 : $var), 
                 true
             );

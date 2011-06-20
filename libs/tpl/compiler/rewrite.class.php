@@ -91,22 +91,24 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $phpfunc = array(
             // string functions
-            'chunk'      => array('min' => 3, 'max' => 3, 'map' => 'chunk_split'),
-            'count'      => array('min' => 1, 'max' => 1),
-            'ltrim'      => array('min' => 1, 'max' => 2),
+            'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string\chunk_split'),
+            'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string\ltrim'),
             'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
-            'replace'    => array('min' => 3, 'max' => 3, 'map' => 'str_replace'),
-            'rtrim'      => array('min' => 1, 'max' => 2),
-            'sprintf'    => array('min' => 1),
-            'tolower'    => array('min' => 1, 'max' => 1, 'map' => 'strtolower'),
-            'toupper'    => array('min' => 1, 'max' => 1, 'map' => 'strtoupper'),
-            'substr'     => array('min' => 2, 'max' => 3),
-            'trim'       => array('min' => 1, 'max' => 2),
-            'vsprintf'   => array('min' => 2, 'max' => 2),
+            'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string\str_replace'),
+            'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string\rtrim'),
+            'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string\sprintf'),
+            'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string\strtolower'),
+            'toupper'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string\strtoupper'),
+            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string\substr'),
+            'trim'       => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string\trim'),
+            'vsprintf'   => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string\vsprintf'),
             
             // numeric functions
             'round'      => array('min' => 1, 'max' => 2),
             'ceil'       => array('min' => 1, 'max' => 1),
+            
+            // array functions
+            'count'      => array('min' => 1, 'max' => 1),
         );
         /**/
 
@@ -389,7 +391,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _ne($args) {
-            return '(' . implode(' == ', $args) . ')';
+            return '(' . implode(' != ', $args) . ')';
         }
         
         protected static function _bool($args) {
@@ -409,7 +411,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _collection($args) {
-            return '\\org\\octris\\core\\tpl\\type::settype(' . $args[0] . ', "collection")';
+            return '\\org\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
         }
         
         protected static function _now() {
@@ -438,11 +440,11 @@ namespace org\octris\core\tpl\compiler {
         
         // string functions
         protected static function _explode($args) {
-            return 'new \\org\\octris\\core\\tpl\\type\\collection(explode(' . implode(', ', $args) . '))';
+            return 'new \\org\\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
         }
         
         protected static function _implode($args) {
-            return '(implode(' . $args[0] . ', \\org\\octris\\core\\tpl\\type::settype(' . $args[1] . ', "array")))';
+            return '(implode(' . $args[0] . ', \\org\\octris\\core\\type::settype(' . $args[1] . ', "array")))';
         }
         
         protected static function _lpad($args) {
@@ -463,7 +465,7 @@ namespace org\octris\core\tpl\compiler {
         
         // array functions
         protected static function _array($args) {
-            return 'new \\org\\octris\\core\\tpl\\type\\collection(array(' . implode(', ', $args) . '))';
+            return 'new \\org\\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
         }
         
         protected static function _cycle($args) {
