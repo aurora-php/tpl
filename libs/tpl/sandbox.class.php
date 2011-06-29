@@ -230,22 +230,25 @@ namespace org\octris\core\tpl {
          * @param   \org\octris\core\type\collection    $collection     Collection to use for iteration.
          * @param   array                               $meta           Optional control variable for meta information storage.
          * @return  bool                                                Returns 'true' as long as iterator did not reach end of array.
+         *
+         * @todo    Be careful with 'spl_object_hash' used here. The hash could have been reused, because the collection was unset ...
          */
         public function each($id, &$ctrl, \org\octris\core\type\collection $collection, &$meta = null)
         /**/
         {
-            $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
+            $id = 'each:' . $id . ':' . spl_object_hash($collection);
+            // $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
             
             if (!isset($this->meta[$id])) {
-                $this->meta[$id] = $array;
+                $this->meta[$id] = $collection->getIterator();
             }
             
-            $getMeta = function($array) {
-                $pos = $array->getPosition();
-                $cnt = count($array);
+            $getMeta = function($collection)  {
+                $pos = $collection->getPosition();
+                $cnt = count($collection);
                 
                 return array(
-                    'key'       => key($array),
+                    'key'       => key($collection),
                     'pos'       => $pos,
                     'count'     => $cnt,
                     'is_first'  => ($pos == 0),
