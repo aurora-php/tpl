@@ -225,13 +225,13 @@ namespace org\octris\core\tpl {
          * template block.
          *
          * @octdoc  m:sandbox/each
-         * @param   string      $id         uniq identifier for loop.
-         * @param   mixed       $ctrl       Control variable is overwritten and used by this method.
-         * @param   array       $array      Array to use for iteration.
-         * @param   array       $meta       Optional control variable for meta information storage.
-         * @return  bool                    Returns 'true' as long as iterator did not reach end of array.
+         * @param   string                              $id             uniq identifier for loop.
+         * @param   mixed                               $ctrl           Control variable is overwritten and used by this method.
+         * @param   \org\octris\core\type\collection    $collection     Collection to use for iteration.
+         * @param   array                               $meta           Optional control variable for meta information storage.
+         * @return  bool                                                Returns 'true' as long as iterator did not reach end of array.
          */
-        public function each($id, &$ctrl, $array, &$meta = NULL)
+        public function each($id, &$ctrl, \org\octris\core\type\collection $collection, &$meta = null)
         /**/
         {
             $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
