@@ -100,17 +100,17 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $phpfunc = array(
             // string functions
-            'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string\chunk_split'),
-            'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string\ltrim'),
+            'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
+            'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
             'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
-            'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string\str_replace'),
-            'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string\rtrim'),
-            'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string\sprintf'),
-            'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string\strtolower'),
-            'toupper'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string\strtoupper'),
-            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string\substr'),
-            'trim'       => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string\trim'),
-            'vsprintf'   => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string\vsprintf'),
+            'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::str_replace'),
+            'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::rtrim'),
+            'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string::sprintf'),
+            'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtolower'),
+            'toupper'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtoupper'),
+            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
+            'trim'       => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::trim'),
+            'vsprintf'   => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string::vsprintf'),
             
             // numeric functions
             'round'      => array('min' => 1, 'max' => 2),
