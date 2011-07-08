@@ -1194,10 +1194,12 @@ namespace org\octris\core\tpl {
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
                     break;
                 case self::T_VARIABLE:
-                    $code[] = sprintf(
+                    $tmp = sprintf(
                         '$this->data["%s"]', 
                         implode('"]["', explode(':', strtolower(substr($value, 1))))
                     );
+                    
+                    $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
                     break;
                 case self::T_BOOL:
                 case self::T_STRING:
