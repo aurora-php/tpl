@@ -217,7 +217,7 @@ namespace org\octris\core {
                 $tpl = $c->process($filename);
             
                 $c = new tpl\compress();
-                $tpl = $c->process($tpl, $this->path['js'], $this->path['css']);
+                $tpl = $c->process($tpl, $this->path, $this->resources);
                 $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
                 
                 file_put_contents($out, $tpl);
