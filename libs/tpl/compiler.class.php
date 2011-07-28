@@ -1199,7 +1199,8 @@ namespace org\octris\core\tpl {
                         implode('"]["', explode(':', strtolower(substr($value, 1))))
                     );
                     
-                    $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
+                    // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
+                    $code[] = $tmp;
                     break;
                 case self::T_BOOL:
                 case self::T_STRING:

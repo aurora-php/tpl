@@ -72,6 +72,19 @@ namespace org\octris\core {
         /**/
 
         /**
+         * Resource pathes for various file types.
+         *
+         * @octdoc  v:tpl/$resources
+         * @var     array
+         */
+        protected $resources = array(
+            'tpl'   => '',
+            'js'    => '',
+            'css'   => ''
+        );
+        /**/
+
+        /**
          * Constructor.
          *
          * @octdoc  m:tpl/__construct
@@ -153,6 +166,22 @@ namespace org\octris\core {
         }
 
         /**
+         * Set path for a resource like stylesheets, images according to the
+         * specified extension.
+         *
+         * @octdoc  m:tpl/setResourcePath
+         * @param   string      $ext        Extension of file to set path for.
+         * @param   string      $pathname   Name of path to register.
+         */
+        public function setResourcePath($ext, $pathname)
+        /**/
+        {
+            if (array_key_exists($ext, $this->resources) && is_dir($pathname)) {
+                $this->resources[$ext] = rtrim($pathname, '/');
+            }
+        }
+
+        /**
          * Set output path for compiled templates and compressed files.
          *
          * @octdoc  m:tpl/setOutputPath
@@ -162,8 +191,8 @@ namespace org\octris\core {
         public function setOutputPath($ext, $pathname)
         /**/
         {
-            if (array_key_exists($type, $this->path) && is_writable($path)) {
-                $this->path[$type] = rtrim($path, '/');
+            if (array_key_exists($ext, $this->path) && is_writable($pathname)) {
+                $this->path[$ext] = rtrim($pathname, '/');
             }
         }
 
@@ -188,7 +217,7 @@ namespace org\octris\core {
                 $tpl = $c->process($filename);
             
                 $c = new tpl\compress();
-                $tpl = $c->process($tpl, $this->path['js'], $this->path['css']);
+                $tpl = $c->process($tpl, $this->path, $this->resources);
                 $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
                 
                 file_put_contents($out, $tpl);
