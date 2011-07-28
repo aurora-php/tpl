@@ -72,6 +72,19 @@ namespace org\octris\core {
         /**/
 
         /**
+         * Resource pathes for various file types.
+         *
+         * @octdoc  v:tpl/$resources
+         * @var     array
+         */
+        protected $resources = array(
+            'tpl'   => '',
+            'js'    => '',
+            'css'   => ''
+        );
+        /**/
+
+        /**
          * Constructor.
          *
          * @octdoc  m:tpl/__construct
@@ -149,6 +162,22 @@ namespace org\octris\core {
                 if (!in_array($pathname, $this->searchpath)) {
                     $this->searchpath[] = $pathname;
                 }
+            }
+        }
+
+        /**
+         * Set path for a resource like stylesheets, images according to the
+         * specified extension.
+         *
+         * @octdoc  m:tpl/setResourcePath
+         * @param   string      $ext        Extension of file to set path for.
+         * @param   string      $pathname   Name of path to register.
+         */
+        public function setResourcePath($ext, $pathname)
+        /**/
+        {
+            if (array_key_exists($ext, $this->resources) && is_dir($pathname)) {
+                $this->resources[$ext] = rtrim($pathname, '/');
             }
         }
 
