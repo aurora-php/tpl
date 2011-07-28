@@ -162,8 +162,8 @@ namespace org\octris\core {
         public function setOutputPath($ext, $pathname)
         /**/
         {
-            if (array_key_exists($type, $this->path) && is_writable($path)) {
-                $this->path[$type] = rtrim($path, '/');
+            if (array_key_exists($ext, $this->path) && is_writable($pathname)) {
+                $this->path[$ext] = rtrim($pathname, '/');
             }
         }
 
