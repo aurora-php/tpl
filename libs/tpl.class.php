@@ -11,7 +11,7 @@
 
 namespace org\octris\core {
     use \org\octris\core\tpl\compiler as compiler;
-    
+
     /**
      * Main class of template engine.
      *
@@ -146,7 +146,7 @@ namespace org\octris\core {
         {
             $this->sandbox->registerMethod($name, $callback, $args);
         }
-        
+
         /**
          * Register pathname for looking up templates in.
          *
@@ -215,23 +215,23 @@ namespace org\octris\core {
 
             if (($filename = $c->findFile($inp)) !== false) {
                 $tpl = $c->process($filename);
-            
+
                 $c = new tpl\compress();
                 $tpl = $c->process($tpl, $this->path, $this->resources);
                 $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
-                
+
                 file_put_contents($out, $tpl);
             } else {
                 die(sprintf(
-                    'unable to locate file "%s" in "%s"', 
+                    'unable to locate file "%s" in "%s"',
                     $inp,
                     implode(':', $this->searchpath)
                 ));
             }
-            
+
             return $out;
         }
-        
+
         /**
          * Compile template and return compiled template as string.
          *
@@ -244,7 +244,7 @@ namespace org\octris\core {
         {
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $tpl = '';
-            
+
             $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
@@ -255,15 +255,15 @@ namespace org\octris\core {
                 $tpl = $c->process($filename);
             } else {
                 die(sprintf(
-                    'unable to locate file "%s" in "%s"', 
+                    'unable to locate file "%s" in "%s"',
                     $inp,
                     implode(':', $this->searchpath)
                 ));
             }
-            
+
             return $tpl;
         }
-        
+
         /**
          * Render a template and send output to stdout.
          *
@@ -275,7 +275,7 @@ namespace org\octris\core {
         /**/
         {
             $context = (is_null($context) ? tpl\sandbox::T_CONTEXT_HTML : $context);
-            
+
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
@@ -284,10 +284,10 @@ namespace org\octris\core {
                 // template compiler and javascript/css compressor
                 $out = $this->process($inp, $out);
             }
-            
+
             $this->sandbox->render($out, $context);
         }
-        
+
         /**
          * Render a template and return output as string.
          *
