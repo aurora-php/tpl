@@ -285,7 +285,7 @@ namespace org\octris\core {
                 $out = $this->process($inp, $out);
             }
             
-            $this->sandbox->render($out);
+            $this->sandbox->render($out, $context);
         }
         
         /**
