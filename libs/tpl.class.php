@@ -210,7 +210,7 @@ namespace org\octris\core {
             $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
-            $c->setL10n($this->l10n);
+            if (!is_null($this->l10n)) $c->setL10n($this->l10n);
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
