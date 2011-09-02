@@ -22,11 +22,11 @@ namespace org\octris\core\tpl {
     {
         /**
          * Template contexts.
-         * 
+         *
          * @octdoc  d:sandbox/T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
          */
-        const T_CONTEXT_HTML       = 1; 
-        const T_CONTEXT_JAVASCRIPT = 2; 
+        const T_CONTEXT_HTML       = 1;
+        const T_CONTEXT_JAVASCRIPT = 2;
         const T_CONTEXT_TEXT       = 3;
         const T_CONTEXT_XML        = 4;
         /**/
@@ -66,7 +66,7 @@ namespace org\octris\core\tpl {
          */
         protected $registry = array();
         /**/
-        
+
         /**
          * Context to use for autoescaping.
          *
@@ -84,7 +84,7 @@ namespace org\octris\core\tpl {
          */
         protected $filename = '';
         /**/
-        
+
         /**
          * Instance of locale class.
          *
@@ -155,7 +155,7 @@ namespace org\octris\core\tpl {
             printf("   line :    %d\n", $line);
             printf("   file:     %s\n", $this->filename);
             printf("   message:  %s\n", $msg);
-            
+
             die();
         }
 
@@ -171,13 +171,13 @@ namespace org\octris\core\tpl {
         /**/
         {
             $name = strtolower($name);
-            
+
             $this->registry[$name] = array(
                 'callback' => $callback,
                 'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
             );
         }
-        
+
         /**
          * Set values for multiple template variables.
          *
@@ -189,7 +189,7 @@ namespace org\octris\core\tpl {
         {
             foreach ($array as $k => $v) $this->setValue($k, $v);
         }
-        
+
         /**
          * Set value for one template variable.
          *
@@ -206,7 +206,7 @@ namespace org\octris\core\tpl {
                 $this->data[$name] = new \org\octris\core\type\collection($value);
             }
         }
-        
+
         /**
          * Gettext implementation.
          *
@@ -242,11 +242,11 @@ namespace org\octris\core\tpl {
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = $collection->getIterator();
             }
-            
+
             $getMeta = function($collection)  {
                 $pos = $collection->getPosition();
                 $cnt = count($collection);
-                
+
                 return array(
                     'key'       => key($collection),
                     'pos'       => $pos,
@@ -255,16 +255,16 @@ namespace org\octris\core\tpl {
                     'is_last'   => ($pos == $cnt - 1)
                 );
             };
-            
+
             if (($return = $this->meta[$id]->valid())) {
                 $ctrl = $this->meta[$id]->current();
                 $meta = $getMeta($this->meta[$id]);
-                
+
                 $this->meta[$id]->next();
             } else {
                 // $value = '';
                 $this->meta[$id]->rewind();
-                
+
                 $ctrl = $this->meta[$id]->current();
                 $meta = $getMeta($this->meta[$id]);
             }
@@ -276,7 +276,7 @@ namespace org\octris\core\tpl {
 
             return $return;
         }
-        
+
         /**
          * Implementation for '#cut' and '#copy' block functions. Starts output buffer.
          *
@@ -305,7 +305,7 @@ namespace org\octris\core\tpl {
         {
             $buffer = array_pop($this->pastebin);
             $buffer['buffer'] = ob_get_contents();
-            
+
             if ($buffer['cut']) {
                 ob_end_clean();
             } else {
@@ -330,7 +330,7 @@ namespace org\octris\core\tpl {
          * @param   mixed       $timeout        Cache timeout.
          * @return  bool                        Returns true if caching succeeded.
          */
-        public function cacheStart($key, $timeout) 
+        public function cacheStart($key, $timeout)
         /**/
         {
             // TODO
@@ -355,7 +355,7 @@ namespace org\octris\core\tpl {
          * @param   mixed       $end            Optional end date/time as string or unix timestamp.
          * @return  bool                        Returns true if cron block creation succeeded.
          */
-        public function cron($start, $end = 0) 
+        public function cron($start, $end = 0)
         /**/
         {
             if (!ctype_digit($start)) {
@@ -391,7 +391,7 @@ namespace org\octris\core\tpl {
         /**/
         {
             $id = 'loop:' . $id . ':' . crc32("$from:$to");
-            
+
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = array(
                     'from'  => $from,
@@ -437,7 +437,7 @@ namespace org\octris\core\tpl {
          * @param   mixed       $reset      Optional trigger reset flag. The trigger is reset if value provided differs from stored reset value.
          * @return  bool                    Returns true if trigger is raised.
          */
-        public function trigger($id, $steps = 2, $start = 0, $reset = 1) 
+        public function trigger($id, $steps = 2, $start = 0, $reset = 1)
         /**/
         {
             $id = 'trigger:' . $id . ':' . crc32("$steps:$start");
@@ -471,7 +471,7 @@ namespace org\octris\core\tpl {
         /**/
         {
             $id = 'onchange:' . $id;
-            
+
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = NULL;
             }
@@ -485,7 +485,7 @@ namespace org\octris\core\tpl {
 
         /**
          * Implementation for 'cycle' function. Cycle can be used inside a block of type '#loop' or '#each'. An
-         * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list 
+         * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list
          * according to the internal pointer position.
          *
          * @octdoc  m:sandbox/cycle
@@ -501,7 +501,7 @@ namespace org\octris\core\tpl {
         /**/
         {
             $id = 'cycle:' . $id;
-            
+
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = array(
                     'iterator'    => $array,
@@ -509,17 +509,17 @@ namespace org\octris\core\tpl {
                     'pingpong'    => !!$pingpong,
                     'reset_value' => $reset
                 );
-                
+
                 $this->meta[$id]['iterator']->rewind();
             } elseif ($this->meta[$id]['reset_value'] !== $reset) {
                 $this->meta[$id]['reset_value'] = $reset;
                 $this->meta[$id]['direction']   = 1;
-                
+
                 $this->meta[$id]['iterator']->rewind();
             }
-        
+
             $return = '';
-        
+
             if (!$this->meta[$id]['iterator']->valid()) {
                 if ($this->meta[$id]['pingpong']) {
                     if ($this->meta[$id]['direction'] == 1) {
@@ -533,17 +533,17 @@ namespace org\octris\core\tpl {
                     $this->meta[$id]['iterator']->rewind();
                 }
             }
-        
+
             if ($this->meta[$id]['iterator']->valid()) {
                 $return = $this->meta[$id]['iterator']->current()->item;
-        
+
                 if ($this->meta[$id]['direction'] == 1) {
                     $this->meta[$id]['iterator']->next();
                 } else {
                     $this->meta[$id]['iterator']->prev();
                 }
             }
-        
+
             return $return;
         }
 
@@ -569,10 +569,10 @@ namespace org\octris\core\tpl {
                     break;
                 }
             }
-            
+
             print $val;
         }
-        
+
         /**
          * Dump contents of variable and return it as string.
          *
@@ -584,10 +584,10 @@ namespace org\octris\core\tpl {
         /**/
         {
             return var_export(
-                ((is_object($var) && 
-                 ($var instanceof \ArrayIterator || $var instanceof \ArrayObject)) 
+                ((is_object($var) &&
+                 ($var instanceof \ArrayIterator || $var instanceof \ArrayObject))
                 ? (array)$var
-                : $var), 
+                : $var),
                 true
             );
         }
@@ -619,7 +619,7 @@ namespace org\octris\core\tpl {
         {
             $this->filename = $filename;
             $this->context  = $context;
-            
+
             require($filename);
         }
     }
