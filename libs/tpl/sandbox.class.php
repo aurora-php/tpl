@@ -236,9 +236,9 @@ namespace org\octris\core\tpl {
         public function each($id, &$ctrl, \org\octris\core\type\collection $collection, &$meta = null)
         /**/
         {
-            $id = 'each:' . $id . ':' . spl_object_hash($collection);
-            // $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
-            
+            // $id = 'each:' . $id . ':' . spl_object_hash($collection);
+            $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
+
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = $collection->getIterator();
             }
