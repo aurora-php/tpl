@@ -261,12 +261,20 @@ namespace org\octris\core\tpl {
                 $meta = $getMeta($this->meta[$id]);
 
                 $this->meta[$id]->next();
-            } else {
-                // $value = '';
+            } elseif (count($this->meta[$id]) > 0) {
                 $this->meta[$id]->rewind();
 
                 $ctrl = $this->meta[$id]->current();
                 $meta = $getMeta($this->meta[$id]);
+            } else {
+                $ctrl = null;
+                $meta = array(
+                    'key'       => null,
+                    'pos'       => null,
+                    'count'     => 0,
+                    'is_first'  => false,
+                    'is_last'   => false
+                );
             }
 
             if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \org\octris\core\type\collection)) {
