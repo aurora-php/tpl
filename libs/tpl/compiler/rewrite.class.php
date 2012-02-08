@@ -25,7 +25,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Inline method rewrite.
          *
-         * @octdoc  v:rewrite/$inline
+         * @octdoc  p:rewrite/$inline
          * @var     array
          */
         protected static $inline = array(
@@ -95,7 +95,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Allowed PHP functions and optional mapping to an template engine internal name.
          *
-         * @octdoc  v:rewrite/$phpfunc
+         * @octdoc  p:rewrite/$phpfunc
          * @var     array
          */
         protected static $phpfunc = array(
@@ -124,7 +124,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Forbidden function names.
          *
-         * @octdoc  v:rewrite/$forbidden
+         * @octdoc  p:rewrite/$forbidden
          * @var     array
          */
         protected static $forbidden = array(
@@ -136,7 +136,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Last error occured.
          *
-         * @octdoc  v:rewrite/$last_error
+         * @octdoc  p:rewrite/$last_error
          * @var     string
          */
         protected static $last_error = '';

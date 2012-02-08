@@ -56,7 +56,7 @@ namespace org\octris\core\tpl {
         /**
          * Regular expression patterns for parser tokens.
          *
-         * @octdoc  v:compiler/$tokens
+         * @octdoc  p:compiler/$tokens
          * @var     array
          */
         private static $tokens = array(
@@ -89,7 +89,7 @@ namespace org\octris\core\tpl {
         /**
          * Template analyzer rules.
          *
-         * @octdoc  v:compiler/$rules
+         * @octdoc  p:compiler/$rules
          * @octdoc  private static $rules = array(...);
          * @var     array
          */
@@ -731,7 +731,7 @@ namespace org\octris\core\tpl {
         /**
          * Names of tokens. This array gets build the first time the constructor is called.
          *
-         * @octdoc  v:compiler/$tokennames
+         * @octdoc  p:compiler/$tokennames
          * @var     array
          */
         private static $tokennames = NULL;
@@ -740,7 +740,7 @@ namespace org\octris\core\tpl {
         /**
          * Name of file currently compiled.
          *
-         * @octdoc  v:compiler/$filename
+         * @octdoc  p:compiler/$filename
          * @var     string
          */
         protected $filename = '';
@@ -749,7 +749,7 @@ namespace org\octris\core\tpl {
         /**
          * Stores pathes to look into when searching for template to load.
          *
-         * @octdoc  v:compiler/$searchpath
+         * @octdoc  p:compiler/$searchpath
          * @var     array
          */
         protected $searchpath = array();
@@ -758,7 +758,7 @@ namespace org\octris\core\tpl {
         /**
          * Instance of locale class.
          *
-         * @octdoc  v:compiler/$l10n
+         * @octdoc  p:compiler/$l10n
          * @var     \org\octris\core\l10n
          */
         protected $l10n;

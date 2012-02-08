@@ -34,7 +34,7 @@ namespace org\octris\core\tpl {
         /**
          * Template data.
          *
-         * @octdoc  v:sandbox/$data
+         * @octdoc  p:sandbox/$data
          * @var     array
          */
         public $data = array();
@@ -43,7 +43,7 @@ namespace org\octris\core\tpl {
         /**
          * Internal storage for meta data required for block functions.
          *
-         * @octdoc  v:sandbox/$meta
+         * @octdoc  p:sandbox/$meta
          * @var     array
          */
         protected $meta = array();
@@ -52,7 +52,7 @@ namespace org\octris\core\tpl {
         /**
          * Internal storage for cut/copied buffers.
          *
-         * @octdoc  v:sandbox/$pastebin
+         * @octdoc  p:sandbox/$pastebin
          * @var     array
          */
         protected $pastebin = array();
@@ -61,7 +61,7 @@ namespace org\octris\core\tpl {
         /**
          * Function registry.
          *
-         * @octdoc  v:sandbox/$registry
+         * @octdoc  p:sandbox/$registry
          * @var     array
          */
         protected $registry = array();
@@ -70,7 +70,7 @@ namespace org\octris\core\tpl {
         /**
          * Context to use for autoescaping.
          *
-         * @octdoc  v:sandbox/$context
+         * @octdoc  p:sandbox/$context
          * @var     int
          */
         protected $context;
@@ -79,7 +79,7 @@ namespace org\octris\core\tpl {
         /**
          * Name of file that is rendered by the sandbox instance.
          *
-         * @octdoc  v:sandbox/$filename
+         * @octdoc  p:sandbox/$filename
          * @var     string
          */
         protected $filename = '';
@@ -88,7 +88,7 @@ namespace org\octris\core\tpl {
         /**
          * Instance of locale class.
          *
-         * @octdoc  v:compiler/$l10n
+         * @octdoc  p:compiler/$l10n
          * @var     \org\octris\core\l10n
          */
         protected $l10n;

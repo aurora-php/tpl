@@ -23,7 +23,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Constant registry.
          *
-         * @octdoc  v:constant/$registry
+         * @octdoc  p:constant/$registry
          * @var     array
          */
         protected static $registry = array();
@@ -32,7 +32,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Last occured error.
          *
-         * @octdoc  v:constant/$last_error
+         * @octdoc  p:constant/$last_error
          * @var     string
          */
         protected static $last_error = '';
