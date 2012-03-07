@@ -200,7 +200,7 @@ namespace org\octris\core\tpl {
         public function setValue($name, $value)
         /**/
         {
-            if (is_scalar($value) || (is_object($value) && $value instanceof \org\octris\core\type\collection)) {
+            if (is_scalar($value) || (is_object($value) && $value instanceof \org\octris\core\type\collection_if)) {
                 $this->data[$name] = $value;
             } else {
                 $this->data[$name] = new \org\octris\core\type\collection($value);
@@ -227,13 +227,13 @@ namespace org\octris\core\tpl {
          * @octdoc  m:sandbox/each
          * @param   string                              $id             uniq identifier for loop.
          * @param   mixed                               $ctrl           Control variable is overwritten and used by this method.
-         * @param   \org\octris\core\type\collection    $collection     Collection to use for iteration.
+         * @param   \org\octris\core\type\collection_if $collection     Collection to use for iteration.
          * @param   array                               $meta           Optional control variable for meta information storage.
          * @return  bool                                                Returns 'true' as long as iterator did not reach end of array.
          *
          * @todo    Be careful with 'spl_object_hash' used here. The hash could have been reused, because the collection was unset ...
          */
-        public function each($id, &$ctrl, \org\octris\core\type\collection $collection, &$meta = null)
+        public function each($id, &$ctrl, \org\octris\core\type\collection_if $collection, &$meta = null)
         /**/
         {
             // $id = 'each:' . $id . ':' . spl_object_hash($collection);
@@ -241,6 +241,10 @@ namespace org\octris\core\tpl {
 
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = $collection->getIterator();
+
+                if (!($this->meta['id'] instanceof \org\octris\core\type\iterator_if)) {
+                    throw new \Exception("iterator does not implement interace '\\org\\octris\\core\\type\\interator_if");
+                }
             }
 
             $getMeta = function($collection)  {
@@ -277,8 +281,8 @@ namespace org\octris\core\tpl {
                 );
             }
 
-            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \org\octris\core\type\collection)) {
-                // cast to collection type, if item is either an array or an object, but no object of type 'collection'
+            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \org\octris\core\type\collection_if)) {
+                // cast to collection type, if item is either an array or an object, but no object of type 'collection_if'
                 $ctrl = new \org\octris\core\type\collection($ctrl);
             }
 
