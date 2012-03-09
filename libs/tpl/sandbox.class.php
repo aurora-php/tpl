@@ -23,12 +23,13 @@ namespace org\octris\core\tpl {
         /**
          * Template contexts.
          *
-         * @octdoc  d:sandbox/T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
+         * @octdoc  d:sandbox/T_CONTEXT_AUTO, T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
          */
-        const T_CONTEXT_HTML       = 1;
-        const T_CONTEXT_JAVASCRIPT = 2;
-        const T_CONTEXT_TEXT       = 3;
-        const T_CONTEXT_XML        = 4;
+        const T_CONTEXT_AUTO       = 'auto';        // auto escaping
+        const T_CONTEXT_HTML       = 'html';
+        const T_CONTEXT_JAVASCRIPT = 'js';
+        const T_CONTEXT_TEXT       = 'text';
+        const T_CONTEXT_XML        = 'xml';
         /**/
 
         /**
@@ -594,20 +595,27 @@ namespace org\octris\core\tpl {
          * Output specified value.
          *
          * @octdoc  m:sandbox/write
-         * @param   string      $val            Optional value to output.
-         * @param   bool        $auto_escape    Optional flag whether to auto-escape value.
+         * @param   string          $val            Optional value to output.
+         * @param   string|bool     $escape         Optional escaping mode or false, if no escaping should be performed.
          */
-        public function write($val = '', $auto_escape = true)
+        public function write($val = '', $escape = self::T_CONTEXT_AUTO)
         /**/
         {
-            if ($auto_escape) {
-                switch($this->context) {
+            if ($escape !== false) {
+                if ($escape == self::T_CONTEXT_AUTO) {
+                    $escape = $this->context;
+                }
+
+                switch($escape) {
                 case self::T_CONTEXT_HTML:
                     $val = htmlspecialchars($val);
                     break;
                 case self::T_CONTEXT_JAVASCRIPT:
                     break;
                 case self::T_CONTEXT_TEXT:
+                    break;
+                case self::T_CONTEXT_XML:
+                    break;
                 default:
                     break;
                 }
