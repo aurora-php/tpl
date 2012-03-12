@@ -217,8 +217,9 @@ namespace org\octris\core {
          * @octdoc  m:tpl/process
          * @param   string      $inp        Input filename.
          * @param   string      $out        Output filename.
+         * @param   string      $escape     Escaping to use.
          */
-        protected function process($inp, $out)
+        protected function process($inp, $out, $escape)
         /**/
         {
             // tpl\compiler\constant::setConstants($this->constants);
@@ -229,7 +230,7 @@ namespace org\octris\core {
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
-                $tpl = $c->process($filename);
+                $tpl = $c->process($filename, $escape);
 
                 $c = new tpl\compress();
                 $tpl = $c->process($tpl, $this->path, $this->resources);
@@ -252,9 +253,10 @@ namespace org\octris\core {
          *
          * @octdoc  m:tpl/compile
          * @param   string      $filename       Name of template file to compile.
+         * @param   string      $escape         Optional escaping to use.
          * @return  string                      Compiled template.
          */
-        public function compile($filename)
+        public function compile($filename, $escape = self::T_ESC_HTML)
         /**/
         {
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
@@ -267,7 +269,7 @@ namespace org\octris\core {
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
-                $tpl = $c->process($filename);
+                $tpl = $c->process($filename, $escape);
             } else {
                 die(sprintf(
                     'unable to locate file "%s" in "%s"',
@@ -284,23 +286,21 @@ namespace org\octris\core {
          *
          * @octdoc  m:tpl/render
          * @param   string      $filename       Filename of template to render.
-         * @param   int         $context        Rendering context.
+         * @param   string      $escape         Optional escaping to use.
          */
-        public function render($filename, $context = null)
+        public function render($filename, $escape = self::T_ESC_HTML)
         /**/
         {
-            $context = (is_null($context) ? tpl\sandbox::T_CONTEXT_HTML : $context);
-
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
             if (!$this->use_cache) {
                 // do not use cache -- first process template using
                 // template compiler and javascript/css compressor
-                $out = $this->process($inp, $out);
+                $out = $this->process($inp, $out, $escape);
             }
 
-            $this->sandbox->render($out, $context);
+            $this->sandbox->render($out);
         }
 
         /**
@@ -308,15 +308,15 @@ namespace org\octris\core {
          *
          * @octdoc  m:tpl/fetch
          * @param   string      $filename       Filename of template to render.
-         * @param   int         $context        Rendering context.
+         * @param   string      $escape         Optional escaping to use.
          * @return  string                      Rendered template.
          */
-        public function fetch($filename, $context = null)
+        public function fetch($filename, $escape = self::T_ESC_HTML)
         /**/
         {
             ob_start();
 
-            $this->render($filename, $context);
+            $this->render($filename, $escape);
 
             $return = ob_get_contents();
             ob_end_clean();
@@ -330,12 +330,12 @@ namespace org\octris\core {
          * @octdoc  m:tpl/save
          * @param   string      $savename       Filename to save output to.
          * @param   string      $filename       Filename of template to render.
-         * @param   int         $context        Rendering context.
+         * @param   string      $escape         Optional escaping to use.
          */
-        public function save($savename, $filename, $context = null)
+        public function save($savename, $filename, $escape = self::T_ESC_HTML)
         /**/
         {
-            file_put_contents($savename, $this->fetch($filename, $context));
+            file_put_contents($savename, $this->fetch($filename, $escape));
         }
     }
 }
