@@ -89,6 +89,9 @@ namespace org\octris\core\tpl\compiler {
             // array functions
             'array'     => array('min' => 1),
             'cycle'     => array('min' => 1, 'max' => 3),
+
+            // misc functions
+            'escape'    => array('min' => 2, 'max' => 2),
         );
         /**/
 
@@ -129,7 +132,7 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $forbidden = array(
             'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
-            '__construct', '__call', 'registermethod', 'render'
+            '__construct', '__call', 'registermethod', 'render', 'write'
         );
         /**/
         
@@ -479,6 +482,11 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _cycle($args) {
             return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
+        }
+
+        // misc functions
+        protected static function _escape($args) {
+            return '($this->escape(' . implode(', ', $args) . '))';
         }
     }
 }
