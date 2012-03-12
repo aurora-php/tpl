@@ -1260,20 +1260,15 @@ namespace org\octris\core\tpl {
         }
         
         /**
-         * Parse template and extract all template functionality to compile.
+         * Prepare template for parsing. Deactivate PHP code by replacing it as template snippet. This
+         * allows for templatizing PHP files.
          *
-         * @octdoc  m:compiler/parse
-         * @param   string      $filename       Name of file to process.
-         * @return  string                      Processed / compiled template
+         * @octdoc  m:compiler/prepare
+         * @param   string      $tpl            Template content to prepare.
          */
-        protected function parse($filename)
+        protected function prepare($tpl)
         /**/
         {
-            $blocks = array('analyzer' => array(), 'compiler' => array());
-
-            $tpl = file_get_contents($filename);
-
-            // rewrite php open-/close-tags
             $pattern = '/(\{\{(.*?)\}\}|<\?php|\?>)/s';
             $offset  = 0;
 
@@ -1289,7 +1284,22 @@ namespace org\octris\core\tpl {
                 
                 $offset = $m[1][1] + $len;
             }
-            
+
+            return $tpl;
+        }
+
+        /**
+         * Parse template and extract all template functionality to compile.
+         *
+         * @octdoc  m:compiler/parse
+         * @param   string      $tpl            Template content to parse.
+         * @return  string                      Processed / compiled template.
+         */
+        protected function parse($tpl)
+        /**/
+        {
+            $blocks = array('analyzer' => array(), 'compiler' => array());
+
             // process template snippets
             $pattern = '/(\{\{(.*?)\}\})/s';
 
@@ -1334,7 +1344,10 @@ namespace org\octris\core\tpl {
         {
             $this->filename = $filename;
 
-            return $this->parse($filename);
+            $tpl = file_get_contents($filename);
+            $tpl = $this->prepare($tpl);
+
+            return $this->parse($tpl);
         }
     }
 }
