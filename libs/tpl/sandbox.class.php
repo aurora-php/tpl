@@ -21,18 +21,6 @@ namespace org\octris\core\tpl {
     /**/
     {
         /**
-         * Template contexts.
-         *
-         * @octdoc  d:sandbox/T_CONTEXT_AUTO, T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
-         */
-        const T_CONTEXT_AUTO       = 'auto';        // auto escaping
-        const T_CONTEXT_HTML       = 'html';
-        const T_CONTEXT_JAVASCRIPT = 'js';
-        const T_CONTEXT_TEXT       = 'text';
-        const T_CONTEXT_XML        = 'xml';
-        /**/
-
-        /**
          * Template data.
          *
          * @octdoc  p:sandbox/$data
@@ -66,15 +54,6 @@ namespace org\octris\core\tpl {
          * @var     array
          */
         protected $registry = array();
-        /**/
-
-        /**
-         * Context to use for autoescaping.
-         *
-         * @octdoc  p:sandbox/$context
-         * @var     int
-         */
-        protected $context;
         /**/
 
         /**
@@ -596,31 +575,10 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:sandbox/write
          * @param   string          $val            Optional value to output.
-         * @param   string|bool     $escape         Optional escaping mode or false, if no escaping should be performed.
          */
-        public function write($val = '', $escape = self::T_CONTEXT_AUTO)
+        public function write($val = '')
         /**/
         {
-            if ($escape !== false) {
-                if ($escape == self::T_CONTEXT_AUTO) {
-                    $escape = $this->context;
-                }
-
-                switch($escape) {
-                case self::T_CONTEXT_HTML:
-                    $val = htmlspecialchars($val);
-                    break;
-                case self::T_CONTEXT_JAVASCRIPT:
-                    break;
-                case self::T_CONTEXT_TEXT:
-                    break;
-                case self::T_CONTEXT_XML:
-                    break;
-                default:
-                    break;
-                }
-            }
-
             print $val;
         }
 
@@ -663,13 +621,11 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:sandbox/render
          * @param   string      $filename       Filename of template to render.
-         * @param   int         $context        Context of files. Context is required for auto-escaping.
          */
-        public function render($filename, $context)
+        public function render($filename)
         /**/
         {
             $this->filename = $filename;
-            $this->context  = $context;
 
             require($filename);
         }
