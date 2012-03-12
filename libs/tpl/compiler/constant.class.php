@@ -14,7 +14,7 @@ namespace org\octris\core\tpl\compiler {
      * Library for handling template constants.
      *
      * @octdoc      c:compiler/constant
-     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class constant
@@ -26,7 +26,15 @@ namespace org\octris\core\tpl\compiler {
          * @octdoc  p:constant/$registry
          * @var     array
          */
-        protected static $registry = array();
+        protected static $registry = array(
+            // pre-defined constants for escaping
+            'ESC_NONE' => '',
+            'ESC_ATTR' => 'attr',
+            'ESC_CSS'  => 'css', 
+            'ESC_JS'   => 'js',
+            'ESC_TAG'  => 'tag',
+            'ESC_URL'  => 'url'
+        );
         /**/
 
         /**
