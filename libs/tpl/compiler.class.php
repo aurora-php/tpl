@@ -16,12 +16,73 @@ namespace org\octris\core\tpl {
      * Implementation of template compiler.
      *
      * @octdoc      c:tpl/compiler
-     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class compiler
     /**/
     {
+        /**
+         * HTML-Parser tokens.
+         *
+         * @octdoc  d:compiler/T_HTML_...
+         */
+        const T_HTML_DATA        = 1;
+        const T_HTML_TAG         = 2;
+        const T_HTML_ATTRIBUTE   = 3;
+        
+        const T_HTML_URL         = 10;
+
+        const T_HTML_JAVASCRIPT  = 30;
+        const T_HTML_CSS         = 40;
+        
+        const T_HTML_COMMAND     = 50;
+        /**/
+
+        /**
+         * Patterns for HTML parser.
+         *
+         * @octdoc  p:compiler/$patterns
+         * @var     array
+         */
+        protected static $patterns = array(
+            // data state
+            self::T_DATA => array(
+                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
+                '/<script.*?>/i'                => self::T_JAVASCRIPT,
+                '/<style.*?>/i'                 => self::T_CSS,
+                '/<([a-z]+)(!? \/|)>/i'         => self::T_DATA,
+                '/<\/[a-z]+>/i'                 => self::T_DATA,
+                '/<([a-z]+)/i'                  => self::T_TAG
+            ),
+            
+            // tag state
+            self::T_TAG => array(
+                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
+                "/([a-z]+(?:-[a-z]+|))=[\"']/i" => self::T_ATTRIBUTE,
+                '/\/?>/'                        => self::T_DATA
+            ),
+            
+            // attribute state
+            self::T_ATTRIBUTE => array(
+                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
+                "/[\"']/"                       => self::T_TAG
+            ),
+            
+            // javascript state
+            self::T_JAVASCRIPT => array(
+                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
+                '/<\/script>/i'                 => self::T_DATA
+            ),
+            
+            // css state
+            self::T_CSS => array(
+                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
+                '/<\/style>/i'                  => self::T_DATA
+            )
+        );
+        /**/
+
         /**
          * Parser tokens.
          * 
@@ -1293,9 +1354,10 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:compiler/parse
          * @param   string      $tpl            Template content to parse.
+         * @param   string      $escape         Escaping to use.
          * @return  string                      Processed / compiled template.
          */
-        protected function parse($tpl)
+        protected function parse($tpl, $escape)
         /**/
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
@@ -1313,7 +1375,12 @@ namespace org\octris\core\tpl {
                 $nl = substr($tpl, $m[1][1] + strlen($m[1][0]), 1);
                 $nl = ($nl == "\n" || $nl == "\r" ? $nl : '');
 
-                $tpl = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line, $blocks) . $nl, $m[1][1], strlen($m[1][0]));
+                $tpl = substr_replace(
+                    $tpl, 
+                    $this->toolchain(trim($m[2][0]), $line, $blocks, $escape) . $nl, 
+                    $m[1][1], 
+                    strlen($m[1][0])
+                );
                 
                 if ($crc == crc32($tpl)) {
                     $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
@@ -1333,13 +1400,74 @@ namespace org\octris\core\tpl {
         }
         
         /**
+         * Simple HTML parser for auto-escaping functionality. Note, that this parser implementation currently is
+         * very experimental due to it's very simple implementation.
+         *
+         * @octdoc  m:compiler/htmlparse
+         * @param   string      $tpl            Template content to parse.
+         * @return  string                      Processed / compiled template.
+         */
+        protected function htmlparse($tpl)
+        /**/
+        {
+            $blocks = array('analyzer' => array(), 'compiler' => array());
+            $line   = 0;
+
+            $state  = self::T_HTML_DATA;
+            $offset = 0;
+            $len    = strlen($tpl);
+            
+            $getState = function($state) use ($tpl, &$offset) {
+                $match = false;
+                
+                foreach (self::$patterns[$state] as $pattern => $new_state) {
+                    if (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE, $offset)) {
+                        if ($match === false || $m[0][1] < $match['offset']) {
+                            $match = array(
+                                'offset'  => $m[0][1],
+                                'state'   => $new_state,
+                                'payload' => (isset($m[1]) ? $m[1][0] : null),
+                                'len'     => strlen($m[0][0])
+                            );
+                        }
+                    }
+                }
+                
+                return $match;
+            };
+
+            while ($offset < $len) {
+                if (($match = $getState($state)) === false) {
+                    break;
+                }
+                
+                if ($match['state'] == self::T_HTML_COMMAND) {
+                    // template parser
+                    $tpl = substr_replace(
+                        $tpl, 
+                        $this->toolchain(trim($match['payload']), $line, $blocks, $state), 
+                        $match['offset'], 
+                        $match['len']
+                    );
+                } else {
+                    $state = $match['state'];
+                }
+
+                $offset = $match['offset'] + $match['len'];
+            }
+
+            return $tpl;
+        }
+
+        /**
          * Process a template.
          *
          * @octdoc  m:compiler/process
          * @param   string      $filename       Name of template file to process.
+         * @param   string      $escape         Escaping to use.
          * @return  string                      Compiled template.
          */
-        public function process($filename)
+        public function process($filename, $escape)
         /**/
         {
             $this->filename = $filename;
@@ -1347,7 +1475,28 @@ namespace org\octris\core\tpl {
             $tpl = file_get_contents($filename);
             $tpl = $this->prepare($tpl);
 
-            return $this->parse($tpl);
+            if ($escape == \org\octris\core\tpl::T_AUTO) {
+                // auto-escaping, try to determine escaping from file extension
+                $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+                if ($ext == 'html') {
+                    $escape = \org\octris\core\tpl::T_HTML
+                } elseif ($ext == 'css') {
+                    $escape = \org\octris\core\tpl::T_CSS
+                } elseif ($ext == 'js') {
+                    $escape = \org\octris\core\tpl::T_JS
+                } else {
+                    $escape = \org\octris\core\tpl::T_NONE
+                }
+            }
+
+            if ($escape == \org\octris\core\tpl::T_HTML) {
+                $tpl = $this->htmlparse($tpl);
+            } else {
+                $tpl = $this->parse($tpl, $escape);
+            }
+
+            return $tpl;
         }
     }
 }
