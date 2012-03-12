@@ -23,6 +23,21 @@ namespace org\octris\core {
     /**/
     {
         /**
+         * Escape types.
+         *
+         * @octdoc  d:tpl/T_ESC_NONE, T_ESC_AUTO, T_ESC_ATTR, T_ESC_CSS, T_ESC_HTML, T_ESC_JS, T_ESC_TAG, T_ESC_URL
+         */
+        const T_ESC_NONE = false;
+        const T_ESC_AUTO = 'auto';
+        const T_ESC_ATTR = 'attr';
+        const T_ESC_CSS  = 'css';
+        const T_ESC_HTML = 'html';
+        const T_ESC_JS   = 'js';
+        const T_ESC_TAG  = 'tag';
+        const T_ESC_URL  = 'url';
+        /**/
+
+        /**
          * Instance of sandbox for executing template in.
          *
          * @octdoc  p:tpl/$sandbox
