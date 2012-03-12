@@ -1411,7 +1411,6 @@ namespace org\octris\core\tpl {
         /**/
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
-            $line   = 0;
 
             $state  = self::T_HTML_DATA;
             $offset = 0;
@@ -1441,6 +1440,8 @@ namespace org\octris\core\tpl {
                     break;
                 }
                 
+                $line = substr_count(substr($tpl, 0, $match['offset']), "\n") + 1;
+
                 if ($match['state'] == self::T_HTML_COMMAND) {
                     // template parser
                     $tpl = substr_replace(
