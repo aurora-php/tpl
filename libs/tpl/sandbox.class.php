@@ -14,7 +14,7 @@ namespace org\octris\core\tpl {
      * Sandbox to execute templates in.
      *
      * @octdoc      c:tpl/sandbox
-     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class sandbox
