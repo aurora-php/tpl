@@ -571,14 +571,53 @@ namespace org\octris\core\tpl {
         }
 
         /**
+         * Escape a value according to the specified escaping context.
+         *
+         * @octdoc  m:sandbox/escape
+         * @param   string          $val            Value to escape.
+         * @param   string          $escape         Escaping to use.
+         */
+        public function escape($val, $escape)
+        /**/
+        {
+            switch ($escape) {
+            case \org\octris\core\tpl::T_ESC_ATTR:
+                $val = \org\octris\core\tpl\escape::escapeAttributeValue($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_CSS:
+                $val = \org\octris\core\tpl\escape::escapeCss($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_HTML:
+                $val = \org\octris\core\tpl\escape::escapeHtml($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_JS:
+                $val = \org\octris\core\tpl\escape::escapeJavascript($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_TAG:
+                $val = \org\octris\core\tpl\escape::escapeAttribute($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_URL:
+                $val = \org\octris\core\tpl\escape::escapeUrl($val);
+                break;
+            }
+
+            return $val;
+        }
+
+        /**
          * Output specified value.
          *
          * @octdoc  m:sandbox/write
          * @param   string          $val            Optional value to output.
+         * @param   string          $escape         Optional escaping to use.
          */
-        public function write($val = '')
+        public function write($val = '', $escape = '')
         /**/
         {
+            if ($escape !== \org\octris\core\tpl::T_ESC_NONE) {
+                $val = $this->escape($val, $escape);
+            }
+
             print $val;
         }
 

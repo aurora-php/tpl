@@ -23,67 +23,6 @@ namespace org\octris\core\tpl {
     /**/
     {
         /**
-         * HTML-Parser tokens.
-         *
-         * @octdoc  d:compiler/T_HTML_...
-         */
-        const T_HTML_DATA        = 1;
-        const T_HTML_TAG         = 2;
-        const T_HTML_ATTRIBUTE   = 3;
-        
-        const T_HTML_URL         = 10;
-
-        const T_HTML_JAVASCRIPT  = 30;
-        const T_HTML_CSS         = 40;
-        
-        const T_HTML_COMMAND     = 50;
-        /**/
-
-        /**
-         * Patterns for HTML parser.
-         *
-         * @octdoc  p:compiler/$patterns
-         * @var     array
-         */
-        protected static $patterns = array(
-            // data state
-            self::T_DATA => array(
-                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                '/<script.*?>/i'                => self::T_JAVASCRIPT,
-                '/<style.*?>/i'                 => self::T_CSS,
-                '/<([a-z]+)(!? \/|)>/i'         => self::T_DATA,
-                '/<\/[a-z]+>/i'                 => self::T_DATA,
-                '/<([a-z]+)/i'                  => self::T_TAG
-            ),
-            
-            // tag state
-            self::T_TAG => array(
-                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                "/([a-z]+(?:-[a-z]+|))=[\"']/i" => self::T_ATTRIBUTE,
-                '/\/?>/'                        => self::T_DATA
-            ),
-            
-            // attribute state
-            self::T_ATTRIBUTE => array(
-                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                "/[\"']/"                       => self::T_TAG
-            ),
-            
-            // javascript state
-            self::T_JAVASCRIPT => array(
-                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                '/<\/script>/i'                 => self::T_DATA
-            ),
-            
-            // css state
-            self::T_CSS => array(
-                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                '/<\/style>/i'                  => self::T_DATA
-            )
-        );
-        /**/
-
-        /**
          * Parser tokens.
          * 
          * @octdoc  d:compiler/T_...
@@ -131,6 +70,7 @@ namespace org\octris\core\tpl {
             self::T_BRACE_CLOSE => '\)',
             self::T_PSEPARATOR  => '\,',
 
+            self::T_ESCAPE      => 'escape',
             self::T_LET         => 'let',
             self::T_GETTEXT     => '_',
             self::T_BOOL        => '(true|false)',
@@ -391,6 +331,48 @@ namespace org\octris\core\tpl {
                     )
                 ),
         
+                // escape : escape(..., ...)
+                self::T_ESCAPE => array(
+                    self::T_BRACE_OPEN  => array(
+                        self::T_VARIABLE    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                        self::T_CONSTANT    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                        self::T_STRING      => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                        self::T_VARIABLE    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                    )
+                ),
+
                 // let : let($..., ...)
                 self::T_LET  => array(
                     self::T_BRACE_OPEN  => array(
@@ -1161,9 +1143,10 @@ namespace org\octris\core\tpl {
          * @octdoc  m:compiler/compile
          * @param   array       $tokens     Array of tokens to compile.
          * @param   array       $blocks     Block information required by analyzer / compiler.
+         * @param   string      $escape     Escaping to use.
          * @return  string                  Generated PHP code.
          */
-        protected function compile(&$tokens, &$blocks)
+        protected function compile(&$tokens, &$blocks, $escape)
         /**/
         {
             $stack = array();
@@ -1220,6 +1203,7 @@ namespace org\octris\core\tpl {
                     // gettext handling
                     $code = array($this->gettext(array_reverse($code)));
                     break;
+                case self::T_ESCAPE:
                 case self::T_LET:
                 case self::T_METHOD:
                     // replace/rewrite method call
@@ -1276,7 +1260,12 @@ namespace org\octris\core\tpl {
                     } elseif (in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
                         $code = array(implode('', $code));
                     } elseif (!in_array($last_token, array(self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE))) {
-                        $code = array('<?php $this->write(' . implode('', $code) . '); ?>');
+                        if ($last_token == self::T_ESCAPE) {
+                            // no additional escaping, when 'escape' method was used
+                            $code = array('<?php $this->write(' . implode('', $code) . '); ?>');
+                        } else {
+                            $code = array('<?php $this->write(' . implode('', $code) . ', "' . $escape . '"); ?>');
+                        }
                     } else {
                         $code = array('<?php ' . implode('', $code) . ' ?>');
                     }
@@ -1302,9 +1291,10 @@ namespace org\octris\core\tpl {
          * @param   string      $snippet        Template snippet to process.
          * @param   int         $line           Line in template processed.
          * @param   array       $blocks         Block information required by analyzer / compiler.
+         * @param   string      $escape         Escaping to use.
          * @return  string                      Processed / compiled snippet.
          */
-        protected function toolchain($snippet, $line, array &$blocks)
+        protected function toolchain($snippet, $line, array &$blocks, $escape)
         /**/
         {
             $tokens = $this->tokenize($snippet, $line);
@@ -1313,7 +1303,7 @@ namespace org\octris\core\tpl {
             if (count($tokens) > 0) {
                 if ($this->analyze($tokens, $blocks) !== false) {
                     $tokens = array_reverse($tokens);
-                    $code   = implode('', $this->compile($tokens, $blocks));
+                    $code   = implode('', $this->compile($tokens, $blocks, $escape));
                 }
             }
             
@@ -1478,9 +1468,9 @@ namespace org\octris\core\tpl {
 
             if ($escape == \org\octris\core\tpl::T_AUTO) {
                 // auto-escaping, try to determine escaping from file extension
-                $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-                if ($ext == 'html') {
+                if ($ext == 'html' || $ext == 'htm') {
                     $escape = \org\octris\core\tpl::T_HTML
                 } elseif ($ext == 'css') {
                     $escape = \org\octris\core\tpl::T_CSS
