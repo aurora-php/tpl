@@ -20,7 +20,7 @@ namespace org\octris\core\tpl\compiler {
      * * http://www.w3.org/TR/html4/index/attributes.html
      * * http://www.w3.org/TR/html4/interact/scripts.html
      * 
-     * @octdoc      c:compiler/rewrite
+     * @octdoc      c:compiler/htmlparser
      * @copyright   copyright (c) 2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
