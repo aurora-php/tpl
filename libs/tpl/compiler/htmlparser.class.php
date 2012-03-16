@@ -11,12 +11,17 @@
 
 namespace org\octris\core\tpl\compiler {
     /**
-     * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
-     * if they are allowed php function calls or calls to functions that have to be registered to 
-     * sandbox on template rendering.
-     *
+     * HTML Template parser for auto-escaping. Note, that the current parser is very
+     * simple and has probably security issues. Auto-escaping is therefore to be
+     * considered as experimental.
+     * 
+     * The following pages hold interesting information for escaping in HTML files:
+     * 
+     * * http://www.w3.org/TR/html4/index/attributes.html
+     * * http://www.w3.org/TR/html4/interact/scripts.html
+     * 
      * @octdoc      c:compiler/rewrite
-     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @copyright   copyright (c) 2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class htmlparser
@@ -25,13 +30,13 @@ namespace org\octris\core\tpl\compiler {
         /**
          * HTML-Parser tokens.
          *
-         * @octdoc  d:htmlparser/T_HTML_...
+         * @octdoc  d:htmlparser/T_...
          */
         const T_DATA        = 1;
         const T_TAG         = 2;
         const T_ATTRIBUTE   = 3;
         
-        const T_URL         = 10;
+        const T_URI         = 10;
 
         const T_JAVASCRIPT	= 30;
         const T_CSS         = 40;
@@ -59,14 +64,15 @@ namespace org\octris\core\tpl\compiler {
             // tag state
             self::T_TAG => array(
                 '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                "/([a-z]+(?:-[a-z]+|))=[\"']/i" => self::T_ATTRIBUTE,
+                "/href=\"(javascript:)[^\/]/i"  => self::T_ATTRIBUTE,
+                "/([a-z]+(?:-[a-z]+|))=\"/i"    => self::T_ATTRIBUTE,
                 '/\/?>/'                        => self::T_DATA
             ),
             
             // attribute state
             self::T_ATTRIBUTE => array(
                 '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
-                "/[\"']/"                       => self::T_TAG
+                "/(?!\\\\)\"/"                  => self::T_TAG
             ),
             
             // javascript state
@@ -84,13 +90,38 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
-         * Attributes and the context that they should resolve to.
+         * State to escape mapping.
+         *
+         * @octdoc  p:htmlparser/$mapping
+         * @var     array
+         */
+        protected static $mapping = array(
+            self::T_ATTRIBUTE  => \org\octris\core\tpl::T_ESC_ATTR,
+            self::T_CSS        => \org\octris\core\tpl::T_ESC_CSS,
+            self::T_DATA       => \org\octris\core\tpl::T_ESC_HTML,
+            self::T_JAVASCRIPT => \org\octris\core\tpl::T_ESC_JS,
+            self::T_TAG        => \org\octris\core\tpl::T_ESC_TAG,
+            self::T_URI        => \org\octris\core\tpl::T_ESC_URI
+        );
+        /**/
+
+        /**
+         * Attributes and their relevant context information.
          *
          * @octdoc  p:htmlparser/$attributes
          * @var     array
          */
-        protected $attributes = array(
-        	
+        protected static $attributes = array(
+            'js' => array(
+                'onload', 'onunload', 'onclick', 'ondblclick', 
+                'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 
+                'onfocus', 'onblur', 'onkeypress', 'onkeydown', 'onkeyup',
+                'onsubmit', 'onreset', 'onselect', 'onchange'
+            ),
+            'uri' => array(
+                'action', 'background', 'cite', 'classid', 'codebase', 'data',
+                'href', 'longdesc', 'profile', 'src', 'usemap'
+            )
         );
         /**/
 
@@ -99,13 +130,14 @@ namespace org\octris\core\tpl\compiler {
          *
          * @octdoc  m:htmlparser/parse
          * @param 	string 			$tpl 			Template to parse.
-         * @param 	callback 		$cb 			Callback to execute for parsed content.
+         * @param 	callback 		$cb_compile		Callback to execute snippet compiler.
+         * @param   callback        $cb_error       Callback for handling parse errors.
          * @parsm
          */
-        public function parse($tpl)
+        public static function parse($tpl, $cb_compile, $cb_error)
         /**/
         {
-            $state  = self::T_DATA;
+            $escape = $state  = self::T_DATA;
             $offset = 0;
             $len    = strlen($tpl);
             
@@ -116,10 +148,10 @@ namespace org\octris\core\tpl\compiler {
                     if (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE, $offset)) {
                         if ($match === false || $m[0][1] < $match['offset']) {
                             $match = array(
-                                'offset'  => $m[0][1],
-                                'state'   => $new_state,
-                                'payload' => (isset($m[1]) ? $m[1][0] : null),
-                                'len'     => strlen($m[0][0])
+                                'offset'     => $m[0][1],
+                                'state'      => $new_state,
+                                'payload'    => (isset($m[1]) ? $m[1][0] : null),
+                                'len'        => strlen($m[0][0])
                             );
                         }
                     }
@@ -137,21 +169,42 @@ namespace org\octris\core\tpl\compiler {
 
                 if ($match['state'] == self::T_COMMAND) {
                     // template parser
+                    if (!isset(self::$mapping[$escape])) {
+                        // escaping unknown
+                        $cb_error(__FUNCTION__, __LINE__, $line, sprintf('unknown escaping context "%d"', $escape));
+
+                        $escape = \org\octris\core\tpl::T_ESC_NONE;
+                    }
+
                     $tpl = substr_replace(
                         $tpl,
-                        $cb(trim($match['payload']), $line, $blocks, $state),
+                        $cb_compiler(trim($match['payload']), $line, $blocks, $escape),
                         $match['offset'], 
                         $match['len']
                     );
                 } else {
-                    $state = $match['state'];
+                    $escape = $state = $match['state'];
+
+                    if ($match['state'] == self::T_ATTRIBUTE)
+                        $payload = strtolower($match['payload']);
+
+                        if ($payload == 'javascript:') {
+                            // (href) tag with javascript executable attribute value
+                            $escape = self::T_JAVASCRIPT;
+                        } elseif (in_array($payload, self::$attributes['js'])) {
+                            // attribute that executes javascript
+                            $escape = self::T_JAVASCRIPT;
+                        } elseif (in_array($payload, self::$attributes['uri'])) {
+                            // attribute that contains an URI
+                            $escape = self::T_URI;
+                        }
+                    }
                 }
 
                 $offset = $match['offset'] + $match['len'];
             }
 
             return $tpl;
-            
         }
     }
 }

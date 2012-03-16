@@ -596,7 +596,7 @@ namespace org\octris\core\tpl {
             case \org\octris\core\tpl::T_ESC_TAG:
                 $val = \org\octris\core\tpl\escape::escapeAttribute($val);
                 break;
-            case \org\octris\core\tpl::T_ESC_URL:
+            case \org\octris\core\tpl::T_ESC_URI:
                 $val = \org\octris\core\tpl\escape::escapeUrl($val);
                 break;
             }

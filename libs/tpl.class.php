@@ -25,7 +25,7 @@ namespace org\octris\core {
         /**
          * Escape types.
          *
-         * @octdoc  d:tpl/T_ESC_NONE, T_ESC_AUTO, T_ESC_ATTR, T_ESC_CSS, T_ESC_HTML, T_ESC_JS, T_ESC_TAG, T_ESC_URL
+         * @octdoc  d:tpl/T_ESC_NONE, T_ESC_AUTO, T_ESC_ATTR, T_ESC_CSS, T_ESC_HTML, T_ESC_JS, T_ESC_TAG, T_ESC_URI
          */
         const T_ESC_NONE = '';
         const T_ESC_AUTO = 'auto';
@@ -34,7 +34,7 @@ namespace org\octris\core {
         const T_ESC_HTML = 'html';
         const T_ESC_JS   = 'js';
         const T_ESC_TAG  = 'tag';
-        const T_ESC_URL  = 'url';
+        const T_ESC_URI  = 'uri';
         /**/
 
         /**

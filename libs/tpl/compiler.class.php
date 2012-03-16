@@ -1352,32 +1352,51 @@ namespace org\octris\core\tpl {
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
-            // process template snippets
-            $pattern = '/(\{\{(.*?)\}\})/s';
+                $tpl = $this->htmlparse($tpl);
+            } else {
+                $tpl = $this->parse($tpl, $escape);
+            }
 
-            while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
-                $crc  = crc32($tpl);
-                $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
-
-                // not sure why 'nl' is required, but \n and \r are removed,
-                // when template snippet is at the end of a line -- so we
-                // have to add the newline again.
-                $nl = substr($tpl, $m[1][1] + strlen($m[1][0]), 1);
-                $nl = ($nl == "\n" || $nl == "\r" ? $nl : '');
-
-                $tpl = substr_replace(
-                    $tpl, 
-                    $this->toolchain(trim($m[2][0]), $line, $blocks, $escape) . $nl, 
-                    $m[1][1], 
-                    strlen($m[1][0])
+            if ($escape == \org\octris\core\tpl::T_HTML) {
+                // parser for auto-escaping turned on
+                $tpl = \org\octris\core\tpl\compiler\htmlparser::parse(
+                    $tpl,
+                    function($snippet, $line, $escape) use (&$blocks) {
+                        $this->toolchain($snippet, $line, $blocks, $escape);
+                    },
+                    function($func, $cline, $line, $payload = null) {
+                        $this->error($func, $cline, $line, 0, $payload);
+                    }
                 );
-                
-                if ($crc == crc32($tpl)) {
-                    $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
+            } else {
+                // parser for auto-escaping turned off
+                $pattern = '/(\{\{(.*?)\}\})/s';
+
+                while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
+                    $crc  = crc32($tpl);
+                    $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
+
+                    // not sure why 'nl' is required, but \n and \r are removed,
+                    // when template snippet is at the end of a line -- so we
+                    // have to add the newline again.
+                    $nl = substr($tpl, $m[1][1] + strlen($m[1][0]), 1);
+                    $nl = ($nl == "\n" || $nl == "\r" ? $nl : '');
+
+                    $tpl = substr_replace(
+                        $tpl, 
+                        $this->toolchain(trim($m[2][0]), $line, $blocks, $escape) . $nl, 
+                        $m[1][1], 
+                        strlen($m[1][0])
+                    );
+                    
+                    if ($crc == crc32($tpl)) {
+                        $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
+                    }
                 }
             }
 
             if (count($blocks['analyzer']) > 0) {
+                // all block-commands in a template have to be closed
                 $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
@@ -1389,67 +1408,6 @@ namespace org\octris\core\tpl {
             return $tpl;
         }
         
-        /**
-         * Simple HTML parser for auto-escaping functionality. Note, that this parser implementation currently is
-         * very experimental due to it's very simple implementation.
-         *
-         * @octdoc  m:compiler/htmlparse
-         * @param   string      $tpl            Template content to parse.
-         * @return  string                      Processed / compiled template.
-         */
-        protected function htmlparse($tpl)
-        /**/
-        {
-            $blocks = array('analyzer' => array(), 'compiler' => array());
-
-            $state  = self::T_HTML_DATA;
-            $offset = 0;
-            $len    = strlen($tpl);
-            
-            $getState = function($state) use ($tpl, &$offset) {
-                $match = false;
-                
-                foreach (self::$patterns[$state] as $pattern => $new_state) {
-                    if (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE, $offset)) {
-                        if ($match === false || $m[0][1] < $match['offset']) {
-                            $match = array(
-                                'offset'  => $m[0][1],
-                                'state'   => $new_state,
-                                'payload' => (isset($m[1]) ? $m[1][0] : null),
-                                'len'     => strlen($m[0][0])
-                            );
-                        }
-                    }
-                }
-                
-                return $match;
-            };
-
-            while ($offset < $len) {
-                if (($match = $getState($state)) === false) {
-                    break;
-                }
-                
-                $line = substr_count(substr($tpl, 0, $match['offset']), "\n") + 1;
-
-                if ($match['state'] == self::T_HTML_COMMAND) {
-                    // template parser
-                    $tpl = substr_replace(
-                        $tpl, 
-                        $this->toolchain(trim($match['payload']), $line, $blocks, $state), 
-                        $match['offset'], 
-                        $match['len']
-                    );
-                } else {
-                    $state = $match['state'];
-                }
-
-                $offset = $match['offset'] + $match['len'];
-            }
-
-            return $tpl;
-        }
-
         /**
          * Process a template.
          *
@@ -1481,13 +1439,7 @@ namespace org\octris\core\tpl {
                 }
             }
 
-            if ($escape == \org\octris\core\tpl::T_HTML) {
-                $tpl = $this->htmlparse($tpl);
-            } else {
-                $tpl = $this->parse($tpl, $escape);
-            }
-
-            return $tpl;
+            return $this->parse($tpl, $escape);
         }
     }
 }
