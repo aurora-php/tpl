@@ -21,6 +21,15 @@ namespace org\octris\core\tpl\compiler {
     /**/
     {
         /**
+         * Option flags.
+         *
+         * @octdoc  p:htmlparser/T_DEBUG, T_IGNORE_COMMENTS
+         */
+        const T_DEBUG           = 1;    // for switching on debug mode
+        const T_IGNORE_COMMENTS = 2;    // for ignoring commands in comments
+        /**/
+        
+        /**
          * Parser states.
          *
          * @octdoc  p:htmlparser/T_...
@@ -40,9 +49,11 @@ namespace org\octris\core\tpl\compiler {
     
         const T_COMMENT_OPEN    = 30;
         const T_COMMENT_CLOSE   = 31;
+        const T_COMMENT_COMMAND = 32;
     
         const T_CDATA_OPEN      = 40;
         const T_CDATA_CLOSE     = 41;
+        const T_CDATA_COMMAND   = 42;
         /**/
     
         /**
@@ -66,7 +77,7 @@ namespace org\octris\core\tpl\compiler {
             self::T_COMMENT_CLOSE   => '/-->/',
         
             self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
-            self::T_CDATA_CLOSE     => '/\]\]/',
+            self::T_CDATA_CLOSE     => '/\]\]>/',
         
             self::T_COMMAND         => '/\b(_c_[a-f0-9]+_)\b/',
         );
@@ -81,7 +92,9 @@ namespace org\octris\core\tpl\compiler {
         protected static $rules = array(
             self::T_DATA            => array(
                 self::T_TAG_START,
-                self::T_COMMAND
+                self::T_COMMAND,
+                self::T_COMMENT_OPEN,
+                self::T_CDATA_OPEN
             ),
         
             self::T_TAG_START       => array(
@@ -111,6 +124,26 @@ namespace org\octris\core\tpl\compiler {
                 self::T_TAG_END_CLOSE,
                 self::T_ATTR_START,
                 self::T_COMMAND
+            ),
+            
+            self::T_COMMENT_OPEN    => array(
+                self::T_COMMENT_COMMAND,
+                self::T_COMMENT_CLOSE
+            ),
+            
+            self::T_COMMENT_COMMAND => array(
+                self::T_COMMENT_COMMAND,
+                self::T_COMMENT_CLOSE
+            ),
+            
+            self::T_CDATA_OPEN      => array(
+                self::T_CDATA_COMMAND,
+                self::T_CDATA_CLOSE
+            ),
+            
+            self::T_CDATA_COMMAND   => array(
+                self::T_CDATA_COMMAND,
+                self::T_CDATA_CLOSE
             )
         );
         /**/
@@ -199,12 +232,12 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
-         * Stack for escaping modes in html DATA contexts.
+         * Stack for escaping modes.
          *
-         * @octdoc  p:htmlparser/$escape_data
+         * @octdoc  p:htmlparser/$escape
          * @var     array
          */
-        protected $escape_data = array('html');
+        protected $escape = array(\org\octris\core\tpl::T_ESC_HTML);
         /**/
 
         /**
@@ -226,13 +259,21 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
+         * Whether to ignore commands inside of HTML comments.
+         *
+         * @octdoc  p:htmlparser/$ignore_comment
+         */
+        protected $ignore_comment;
+        /**/
+
+        /**
          * Constructor.
          *
          * @octdoc  m:htmlparser/__construct
          * @param   string                  $tpl                        HTML document to parse.
-         * @param   bool                    $debug                      Optional parameter to turn on debug-mode.
+         * @param   int                     $flags                      Optional option flags to set.
          */
-        public function __construct($tpl, $debug = false) 
+        public function __construct($tpl, $flags = 0) 
         /**/
         {
             if (is_null(self::$tokennames)) {
@@ -241,24 +282,50 @@ namespace org\octris\core\tpl\compiler {
             }
         
             $this->tpl   = $this->normalize($tpl);
-            $this->debug = $debug;
-
+            
             print $this->tpl;
+
+            // option flags
+            $this->debug          = (($flags & self::T_DEBUG) === self::T_DEBUG);
+            $this->ignore_comment = (($flags & self::T_IGNORE_COMMENTS) === self::T_IGNORE_COMMENTS);
         }
 
         /** Implementation of methods required for Iterator interface **/
 
-        function rewind() {
+        /**
+         * Set offset to 0 to parse template again.
+         *
+         * @octdoc  p:htmlparser/rewind
+         */
+        public function rewind() 
+        /**/
+        {
             $this->offset = 0;
         
             $this->next();
         }
 
-        function current() {
+        /**
+         * Return current parsed command.
+         *
+         * @octdoc  p:htmlparser/current
+         * @return  array                       Array with template command and escaping.
+         */
+        public function current() 
+        /**/
+        {
             return $this->current;
         }
-
-        function key() {
+        
+        /**
+         * Return current offset of parser.
+         *
+         * @octdoc  p:htmlparser/key
+         * @return  int                         Offset.
+         */
+        public function key() 
+        /**/
+        {
             return $this->offset;
         }
 
@@ -275,15 +342,21 @@ namespace org\octris\core\tpl\compiler {
             while (($state = $this->getNextState())) {
                 // parsing in progress
                 switch ($state['state']) {
-                case self::T_COMMAND:
+                case self::T_COMMENT_COMMAND:
+                    if ($this->ignore_comments) {
+                        continue(2);
+                    }
+                    /** FALL THRU **/
+                case self::T_CDATA_COMMAND:
                 case self::T_ATTR_COMMAND:
+                case self::T_COMMAND:
                     if (!isset($this->commands[$state['payload']])) {
                         throw new \Exception(sprintf('unknown command "%s"', $state['payload']));
                     }
                     
                     $current = array(
                         'snippet' => $this->commands[$state['payload']],
-                        'escape'  => end($this->escape_data)
+                        'escape'  => end($this->escape)
                     );
                     break(2);
                 case self::T_TAG_START:
@@ -294,29 +367,33 @@ namespace org\octris\core\tpl\compiler {
                     } else {
                         switch (strtolower($state['payload'])) {
                         case 'script':
-                            array_push($this->escape_data, 'js');
+                            array_push($this->escape, \org\octris\core\tpl::T_ESC_JS);
                             break;
                         case 'style':
-                            array_push($this->escape_data, 'css');
+                            array_push($this->escape, \org\octris\core\tpl::T_ESC_CSS);
                             break;
                         default:
-                            array_push($this->escape_data, 'html');
+                            array_push($this->escape, \org\octris\core\tpl::T_ESC_HTML);
                             break;
                         }
                     }
                     break;
+                case self::T_CDATA_CLOSE:
+                case self::T_COMMENT_CLOSE:
                 case self::T_TAG_END_CLOSE:
-                    array_pop($this->escape_data);
+                    array_pop($this->escape);
                     /** FALL THRU **/
                 case self::T_TAG_END_OPEN:
                     $this->state = self::T_DATA;
                     continue(2);
                 case self::T_TAG_CLOSE:
-                    if (count($this->escape_data) == 1) {
-                        if ($this->escape_data[0] != 'html') $this->escape_data[0] = 'html';
+                    if (count($this->escape) == 1) {
+                        if ($this->escape[0] != \org\octris\core\tpl::T_ESC_HTML) {
+                            $this->escape[0] = \org\octris\core\tpl::T_ESC_HTML;
+                        }
+                    } else {
+                        array_pop($this->escape);
                     }
-            
-                    array_pop($this->escape_data);
             
                     $this->state = self::T_DATA;
                     continue(2);
@@ -327,16 +404,16 @@ namespace org\octris\core\tpl\compiler {
                         $name = strtolower($state['payload']);
                         
                         if (in_array($name, self::$attributes['js'])) {
-                            array_push($this->escape_data, 'js');
+                            array_push($this->escape, \org\octris\core\tpl::T_ESC_JS);
                         } elseif (in_array($name, self::$attributes['uri'])) {
-                            array_push($this->escape_data, 'uri');
+                            array_push($this->escape, \org\octris\core\tpl::T_ESC_URI);
                         } else {
-                            array_push($this->escape_data, 'attribute');
+                            array_push($this->escape, \org\octris\core\tpl::T_ESC_ATTR);
                         }
                     }
                     break;
                 case self::T_ATTR_END:
-                    array_pop($this->escape_data);
+                    array_pop($this->escape);
                     break;
                 }
             
@@ -415,7 +492,7 @@ namespace org\octris\core\tpl\compiler {
 namespace {
     $tpl = <<<XML
 <html>
-    <body {{attr()}}="{{value()}}">
+    <body onload="{{value()}}">
         {{command()}}
     </body>
 </html>
