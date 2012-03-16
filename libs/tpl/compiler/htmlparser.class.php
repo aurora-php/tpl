@@ -33,7 +33,10 @@ namespace org\octris\core\tpl\compiler {
         const T_TAG_END_CLOSE   = 12;
         const T_TAG_NAME        = 13;
         const T_TAG_CLOSE       = 14;
-        const T_TAG_ATTRIBUTE   = 15;
+    
+        const T_ATTR_START      = 20;
+        const T_ATTR_END        = 21;
+        const T_ATTR_COMMAND    = 22;
     
         const T_COMMENT_OPEN    = 30;
         const T_COMMENT_CLOSE   = 31;
@@ -54,7 +57,10 @@ namespace org\octris\core\tpl\compiler {
             self::T_TAG_END_CLOSE   => '/\s*\/>/',
             self::T_TAG_NAME        => '/(_c_[a-f0-9]+_|(?i:[a-z]+))/',
             self::T_TAG_CLOSE       => '/\/(_c_[a-f0-9]+_|(?i:[a-z]+))>/',
-            self::T_TAG_ATTRIBUTE   => '/(?<=\s)(_c_[a-f0-9]+_|(?i:[a-z:_][a-z:_.-]*))=\"(.*?)(?!\\\\)\"/',
+            
+            self::T_ATTR_START      => '/(?<=\s)(_c_[a-f0-9]+_|(?i:[a-z:_][a-z:_.-]*))=\"/',
+            self::T_ATTR_END        => '/(?!\\\\)\"/',
+            self::T_ATTR_COMMAND    => '/\b(_c_[a-f0-9]+_)\b/',
         
             self::T_COMMENT_OPEN    => '/<!--/',
             self::T_COMMENT_CLOSE   => '/-->/',
@@ -62,7 +68,7 @@ namespace org\octris\core\tpl\compiler {
             self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
             self::T_CDATA_CLOSE     => '/\]\]/',
         
-            self::T_COMMAND         => '/\b_c_[a-f0-9]+_\b/',
+            self::T_COMMAND         => '/\b(_c_[a-f0-9]+_)\b/',
         );
         /**/
     
@@ -86,14 +92,24 @@ namespace org\octris\core\tpl\compiler {
             self::T_TAG_NAME        => array(
                 self::T_TAG_END_OPEN,
                 self::T_TAG_END_CLOSE,
-                self::T_TAG_ATTRIBUTE,
+                self::T_ATTR_START,
                 self::T_COMMAND
             ),
         
-            self::T_TAG_ATTRIBUTE   => array(
+            self::T_ATTR_START      => array(
+                self::T_ATTR_COMMAND,
+                self::T_ATTR_END
+            ),
+            
+            self::T_ATTR_COMMAND    => array(
+                self::T_ATTR_COMMAND,
+                self::T_ATTR_END
+            ),
+            
+            self::T_ATTR_END        => array(
                 self::T_TAG_END_OPEN,
                 self::T_TAG_END_CLOSE,
-                self::T_TAG_ATTRIBUTE,
+                self::T_ATTR_START,
                 self::T_COMMAND
             )
         );
@@ -260,18 +276,23 @@ namespace org\octris\core\tpl\compiler {
                 // parsing in progress
                 switch ($state['state']) {
                 case self::T_COMMAND:
+                case self::T_ATTR_COMMAND:
+                    if (!isset($this->commands[$state['payload']])) {
+                        throw new \Exception(sprintf('unknown command "%s"', $state['payload']));
+                    }
+                    
                     $current = array(
-                        'snippet' => $state['payload'],
+                        'snippet' => $this->commands[$state['payload']],
                         'escape'  => end($this->escape_data)
                     );
                     break(2);
                 case self::T_TAG_START:
                     break;
                 case self::T_TAG_NAME:
-                    if (substr($state['payload'][0][0], 0, 3) == '_c_') {
-                        die('template command not allowed!');
+                    if (substr($state['payload'], 0, 3) == '_c_') {
+                        die('template command not allowed as tag-name!');
                     } else {
-                        switch (strtolower($state['payload'][0][0])) {
+                        switch (strtolower($state['payload'])) {
                         case 'script':
                             array_push($this->escape_data, 'js');
                             break;
@@ -290,9 +311,6 @@ namespace org\octris\core\tpl\compiler {
                 case self::T_TAG_END_OPEN:
                     $this->state = self::T_DATA;
                     continue(2);
-                case self::T_TAG_ATTRIBUTE:
-                    print "\ncall attribute parser\n";
-                    break;
                 case self::T_TAG_CLOSE:
                     if (count($this->escape_data) == 1) {
                         if ($this->escape_data[0] != 'html') $this->escape_data[0] = 'html';
@@ -302,6 +320,24 @@ namespace org\octris\core\tpl\compiler {
             
                     $this->state = self::T_DATA;
                     continue(2);
+                case self::T_ATTR_START:
+                    if (substr($state['payload'], 0, 3) == '_c_') {
+                        die('template command not allowed as attribute-name!');
+                    } else {
+                        $name = strtolower($state['payload']);
+                        
+                        if (in_array($name, self::$attributes['js'])) {
+                            array_push($this->escape_data, 'js');
+                        } elseif (in_array($name, self::$attributes['uri'])) {
+                            array_push($this->escape_data, 'uri');
+                        } else {
+                            array_push($this->escape_data, 'attribute');
+                        }
+                    }
+                    break;
+                case self::T_ATTR_END:
+                    array_pop($this->escape_data);
+                    break;
                 }
             
                 $this->state = $state['state'];
@@ -331,15 +367,11 @@ namespace org\octris\core\tpl\compiler {
             
                 if (preg_match($pattern, $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset)) {
                     if ($match === false || $m[0][1] < $match['offset']) {
-                        $payload = array();
-                        if (isset($m[1])) $payload[] = $m[1];
-                        if (isset($m[2])) $payload[] = $m[2];
-                    
                         $match = array(
                             'offset'    => $m[0][1],
                             'state'     => $new_state,
                             'token'     => self::$tokennames[$new_state],
-                            'payload'   => $payload,
+                            'payload'   => (isset($m[1]) ? $m[1][0] : ''),
                             'escape'    => null,
                             'length'    => strlen($m[0][0])
                         );
