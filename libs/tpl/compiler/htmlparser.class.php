@@ -261,9 +261,9 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Whether to ignore commands inside of HTML comments.
          *
-         * @octdoc  p:htmlparser/$ignore_comment
+         * @octdoc  p:htmlparser/$ignore_comments
          */
-        protected $ignore_comment;
+        protected $ignore_comments;
         /**/
 
         /**
@@ -286,8 +286,8 @@ namespace org\octris\core\tpl\compiler {
             print $this->tpl;
 
             // option flags
-            $this->debug          = (($flags & self::T_DEBUG) === self::T_DEBUG);
-            $this->ignore_comment = (($flags & self::T_IGNORE_COMMENTS) === self::T_IGNORE_COMMENTS);
+            $this->debug           = (($flags & self::T_DEBUG) === self::T_DEBUG);
+            $this->ignore_comments = (($flags & self::T_IGNORE_COMMENTS) === self::T_IGNORE_COMMENTS);
         }
 
         /** Implementation of methods required for Iterator interface **/
