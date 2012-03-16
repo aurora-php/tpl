@@ -19,6 +19,7 @@ namespace org\octris\core\tpl\compiler {
      * 
      * * http://www.w3.org/TR/html4/index/attributes.html
      * * http://www.w3.org/TR/html4/interact/scripts.html
+     * * http://tools.ietf.org/html/draft-hoehrmann-javascript-scheme-03
      * 
      * @octdoc      c:compiler/htmlparser
      * @copyright   copyright (c) 2012 by Harald Lapp
@@ -33,8 +34,11 @@ namespace org\octris\core\tpl\compiler {
          * @octdoc  d:htmlparser/T_...
          */
         const T_DATA        = 1;
+
         const T_TAG         = 2;
-        const T_ATTRIBUTE   = 3;
+        const T_TAG_INNER   = 3;
+        
+        const T_ATTRIBUTE   = 4;
         
         const T_URI         = 10;
 
@@ -58,11 +62,18 @@ namespace org\octris\core\tpl\compiler {
                 '/<style.*?>/i'                 => self::T_CSS,
                 '/<([a-z]+)(!? \/|)>/i'         => self::T_DATA,
                 '/<\/[a-z]+>/i'                 => self::T_DATA,
-                '/<([a-z]+)/i'                  => self::T_TAG
+                '/<([a-z]+)/i'                  => self::T_TAG_INNER,
+                '/<\/?/i'                       => self::T_TAG,
             ),
             
-            // tag state
+            // tag (name of a tag) state
             self::T_TAG => array(
+                '/[a-z]+/i'                     => self::T_TAG_INNER,
+                '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
+            ),
+
+            // tag-inner (inside a tag) state
+            self::T_TAG_INNER => array(
                 '/\{\{(.*?)\}\}/'               => self::T_COMMAND,
                 "/href=\"(javascript:)[^\/]/i"  => self::T_ATTRIBUTE,
                 "/([a-z]+(?:-[a-z]+|))=\"/i"    => self::T_ATTRIBUTE,
@@ -182,6 +193,11 @@ namespace org\octris\core\tpl\compiler {
                         $match['offset'], 
                         $match['len']
                     );
+
+                    if ($state == self::T_TAG) {
+                        // template command was a tag-name
+                        $state = self::T_TAG_INNER;
+                    }
                 } else {
                     $escape = $state = $match['state'];
 
