@@ -926,7 +926,7 @@ namespace org\octris\core\tpl {
         {
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
-            printf("   file:     %s\n", $this->filename);
+            printf("   file :    %s\n", $this->filename);
             printf("   token:    %s\n", $this->getTokenName($token));
             
             if (is_array($payload)) {
