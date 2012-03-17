@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\compiler {
+namespace org\octris\core\tpl\parser {
     /**
      * HTML Parser for auto-escaping functionality.
      *
-     * @octdoc      c:compiler/htmlparser
+     * @octdoc      c:parser/htmlparser
      * @copyright   copyright (c) 2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
@@ -370,7 +370,8 @@ namespace org\octris\core\tpl\compiler {
                     
                     $current = array(
                         'snippet' => $this->commands[$state['payload']],
-                        'escape'  => end($this->escape)
+                        'escape'  => end($this->escape),
+                        'line'    => $state['line']
                     );
                     break(2);
                 case self::T_TAG_START:
@@ -491,6 +492,18 @@ namespace org\octris\core\tpl\compiler {
             print_r($match);
         
             return $match;
+        }
+    
+        /**
+         * Allows to set offset to parse from outside the iterator instance.
+         *
+         * @octdoc  m:htmlparser/setOffset
+         * @param   int         $offset     Offset to set.
+         */
+        public function setOffset($offset)
+        /**/
+        {
+            $this->next_offset = $offset;
         }
     
         /**
