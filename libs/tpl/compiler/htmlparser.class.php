@@ -178,6 +178,15 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
+         * Filename of HTML document.
+         *
+         * @octdoc  p:htmlparser/$filename
+         * @var     string
+         */
+        protected $filename;
+        /**/
+
+        /**
          * HTML document to parse.
          *
          * @octdoc  p:htmlparser/$tpl
@@ -267,13 +276,23 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
+         * Error handler to call for reporting parse errors.
+         *
+         * @octdoc  p:htmlparser/$error_handler
+         * @var     callback
+         */
+        protected $error_handler;
+        /**/
+
+        /**
          * Constructor.
          *
          * @octdoc  m:htmlparser/__construct
+         * @param   string                  $filename                   Filename of HTML document to parse. This will only be used for better error reporting and can also be left empty.
          * @param   string                  $tpl                        HTML document to parse.
          * @param   int                     $flags                      Optional option flags to set.
          */
-        public function __construct($tpl, $flags = 0) 
+        public function __construct($filename, $tpl, $flags = 0) 
         /**/
         {
             if (is_null(self::$tokennames)) {
@@ -281,7 +300,11 @@ namespace org\octris\core\tpl\compiler {
                 self::$tokennames = array_flip($class->getConstants());
             }
         
-            $this->tpl   = $this->normalize($tpl);
+            $this->error_handler = function() {
+            };
+        
+            $this->tpl      = $this->normalize($tpl);
+            $this->filename = $filename;
             
             print $this->tpl;
 
@@ -351,7 +374,10 @@ namespace org\octris\core\tpl\compiler {
                 case self::T_ATTR_COMMAND:
                 case self::T_COMMAND:
                     if (!isset($this->commands[$state['payload']])) {
-                        throw new \Exception(sprintf('unknown command "%s"', $state['payload']));
+                        $this->error(
+                            __FUNCTION__, __LINE__, $state['line'], $state['state'], 
+                            sprintf('command with id "%s" is unknown', $state['payload'])
+                        );
                     }
                     
                     $current = array(
@@ -363,7 +389,10 @@ namespace org\octris\core\tpl\compiler {
                     break;
                 case self::T_TAG_NAME:
                     if (substr($state['payload'], 0, 3) == '_c_') {
-                        die('template command not allowed as tag-name!');
+                        $this->error(
+                            __FUNCTION__, __LINE__, $state['line'], $state['state'], 
+                            'template command not allowed as tag-name'
+                        );
                     } else {
                         switch (strtolower($state['payload'])) {
                         case 'script':
@@ -399,7 +428,10 @@ namespace org\octris\core\tpl\compiler {
                     continue(2);
                 case self::T_ATTR_START:
                     if (substr($state['payload'], 0, 3) == '_c_') {
-                        die('template command not allowed as attribute-name!');
+                        $this->error(
+                            __FUNCTION__, __LINE__, $state['line'], $state['state'], 
+                            'template command not allowed as attribute-name'
+                        );
                     } else {
                         $name = strtolower($state['payload']);
                         
@@ -431,12 +463,17 @@ namespace org\octris\core\tpl\compiler {
         /** Helper methods for parser **/
     
         function getNextState() {
-            $this->offset = $this->next_offset;
-
             if (!isset(self::$rules[$this->state])) {
-                throw new \Exception(sprintf('no rule for state "%s"', self::$tokennames[$this->state]));
+                $line = substr_count(substr($this->tpl, 0, $this->offset), "\n") + 1;
+
+                $this->error(
+                    __FUNCTION__, __LINE__, $line, $this->state, 
+                    'no rule for current token'
+                );
             }
         
+            $this->offset = $this->next_offset;
+
             $match = false;
         
             foreach (self::$rules[$this->state] as $new_state) {
@@ -450,7 +487,8 @@ namespace org\octris\core\tpl\compiler {
                             'token'     => self::$tokennames[$new_state],
                             'payload'   => (isset($m[1]) ? $m[1][0] : ''),
                             'escape'    => null,
-                            'length'    => strlen($m[0][0])
+                            'length'    => strlen($m[0][0]),
+                            'line'      => substr_count(substr($this->tpl, 0, $m[0][1]), "\n") + 1
                         );
                 
                         if ($this->debug) $match['match'] = $m[0][0];
@@ -467,6 +505,45 @@ namespace org\octris\core\tpl\compiler {
             return $match;
         }
     
+        /**
+         * Set handler for error reporting.
+         *
+         * @octdoc  m:htmlparser/setErrorHandler
+         * @param   string                      $cb                             Callback method for error reporting.
+         */
+        protected function setErrorHandler($cb)
+        /**/
+        {
+            $this->error_handler = $cb;
+        }
+    
+        /**
+         * Trigger an error and halt execution.
+         *
+         * @octdoc  m:htmlparser/error
+         * @param   string      $type       Type of error to trigger.
+         * @param   int         $cline      Line in htmlparser class error was triggered from.
+         * @param   int         $line       Line in template the error was triggered for.
+         * @param   int         $token      ID of token that triggered the error.
+         * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
+         */
+        protected function error($type, $cline, $line, $token, $payload = NULL)
+        /**/
+        {
+            printf("\n** ERROR: %s(%d) **\n", $type, $cline);
+            printf("   line :    %d\n", $line);
+            printf("   file :    %s\n", $this->filename);
+            printf("   token:    %s\n", ($token > 0 ? self::$tokennames[$token] : ''));
+            
+            if (is_array($payload)) {
+                printf("   expected: %s\n", implode(', ', $this->getTokenNames(array_keys($payload))));
+            } elseif (isset($payload)) {
+                printf("   message:  %s\n", $payload);
+            }
+         
+            die();
+        }
+
         /**
          * Search and replace all template commands and insert them in a dictionary for simpler HTML parsing.
          *
@@ -490,6 +567,8 @@ namespace org\octris\core\tpl\compiler {
 }
 
 namespace {
+    require_once('org.octris.core/tpl.class.php');
+    
     $tpl = <<<XML
 <html>
     <body onload="{{value()}}">
@@ -498,7 +577,7 @@ namespace {
 </html>
 XML;
 
-    $p = new \org\octris\core\tpl\compiler\htmlparser($tpl, true);
+    $p = new \org\octris\core\tpl\compiler\htmlparser('-', $tpl, true);
     foreach ($p as $s) {
         print "----\n";
         print_r($s);
