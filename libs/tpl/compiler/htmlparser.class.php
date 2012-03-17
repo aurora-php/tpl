@@ -276,15 +276,6 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
-         * Error handler to call for reporting parse errors.
-         *
-         * @octdoc  p:htmlparser/$error_handler
-         * @var     callback
-         */
-        protected $error_handler;
-        /**/
-
-        /**
          * Constructor.
          *
          * @octdoc  m:htmlparser/__construct
@@ -299,9 +290,6 @@ namespace org\octris\core\tpl\compiler {
                 $class = new \ReflectionClass($this);
                 self::$tokennames = array_flip($class->getConstants());
             }
-        
-            $this->error_handler = function() {
-            };
         
             $this->tpl      = $this->normalize($tpl);
             $this->filename = $filename;
@@ -503,18 +491,6 @@ namespace org\octris\core\tpl\compiler {
             print_r($match);
         
             return $match;
-        }
-    
-        /**
-         * Set handler for error reporting.
-         *
-         * @octdoc  m:htmlparser/setErrorHandler
-         * @param   string                      $cb                             Callback method for error reporting.
-         */
-        protected function setErrorHandler($cb)
-        /**/
-        {
-            $this->error_handler = $cb;
         }
     
         /**
