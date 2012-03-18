@@ -1311,88 +1311,33 @@ namespace org\octris\core\tpl {
         }
         
         /**
-         * Prepare template for parsing. Deactivate PHP code by replacing it as template snippet. This
-         * allows for templatizing PHP files.
-         *
-         * @octdoc  m:compiler/prepare
-         * @param   string      $tpl            Template content to prepare.
-         */
-        protected function prepare($tpl)
-        /**/
-        {
-            $pattern = '/(\{\{(.*?)\}\}|<\?php|\?>)/s';
-            $offset  = 0;
-
-            while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE, $offset)) {
-                if ($m[1][0] == '<?php' || $m[1][0] == '?>') {
-                    // de-activate php code by replacing tags with template snippets
-                    $rpl = '{{string("' . $m[1][0] . '")}}';
-                    $tpl = substr_replace($tpl, $rpl, $m[1][1], strlen($m[1][0]));
-                    $len = strlen($rpl);
-                } else {
-                    $len = strlen($m[1][0]);
-                }
-                
-                $offset = $m[1][1] + $len;
-            }
-
-            return $tpl;
-        }
-
-        /**
          * Parse template and extract all template functionality to compile.
          *
          * @octdoc  m:compiler/parse
-         * @param   string      $tpl            Template content to parse.
          * @param   string      $escape         Escaping to use.
          * @return  string                      Processed / compiled template.
          */
-        protected function parse($tpl, $escape)
+        protected function parse($escape)
         /**/
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
-                $tpl = $this->htmlparse($tpl);
-            } else {
-                $tpl = $this->parse($tpl, $escape);
-            }
-
             if ($escape == \org\octris\core\tpl::T_HTML) {
                 // parser for auto-escaping turned on
-                $tpl = \org\octris\core\tpl\compiler\htmlparser::parse(
-                    $tpl,
-                    function($snippet, $line, $escape) use (&$blocks) {
-                        $this->toolchain($snippet, $line, $blocks, $escape);
-                    },
-                    function($func, $cline, $line, $payload = null) {
-                        $this->error($func, $cline, $line, 0, $payload);
-                    }
-                );
+                $parser = new \org\octris\core\tpl\parser\html($this->filename);
             } else {
-                // parser for auto-escaping turned off
-                $pattern = '/(\{\{(.*?)\}\})/s';
+                $parser = new \org\octris\core\tpl\parser\default($this->filename);
+                $parser->setFilter(function($command) use ($escape) {
+                    $command['escape'] = $escape;
 
-                while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
-                    $crc  = crc32($tpl);
-                    $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
+                    return $command;
+                });
+            }
 
-                    // not sure why 'nl' is required, but \n and \r are removed,
-                    // when template snippet is at the end of a line -- so we
-                    // have to add the newline again.
-                    $nl = substr($tpl, $m[1][1] + strlen($m[1][0]), 1);
-                    $nl = ($nl == "\n" || $nl == "\r" ? $nl : '');
+            foreach ($parser as $command) {
+                $snippet = $this->toolchain($command['snippet'], $command['line'], $blocks, $command['escape']);
 
-                    $tpl = substr_replace(
-                        $tpl, 
-                        $this->toolchain(trim($m[2][0]), $line, $blocks, $escape) . $nl, 
-                        $m[1][1], 
-                        strlen($m[1][0])
-                    );
-                    
-                    if ($crc == crc32($tpl)) {
-                        $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
-                    }
-                }
+                $parser->replaceSnippet($command['offset'], strlen($command['snippet']), $snippet);
             }
 
             if (count($blocks['analyzer']) > 0) {
@@ -1404,6 +1349,8 @@ namespace org\octris\core\tpl {
                     }, array_reverse($blocks['analyzer'])))
                 ));
             }
+
+            $tpl = $parser->getTemplate();
             
             return $tpl;
         }
@@ -1421,9 +1368,6 @@ namespace org\octris\core\tpl {
         {
             $this->filename = $filename;
 
-            $tpl = file_get_contents($filename);
-            $tpl = $this->prepare($tpl);
-
             if ($escape == \org\octris\core\tpl::T_AUTO) {
                 // auto-escaping, try to determine escaping from file extension
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -1439,7 +1383,7 @@ namespace org\octris\core\tpl {
                 }
             }
 
-            return $this->parse($tpl, $escape);
+            return $this->parse($escape);
         }
     }
 }
