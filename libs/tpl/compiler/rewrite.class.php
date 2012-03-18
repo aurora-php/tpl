@@ -97,7 +97,7 @@ namespace org\octris\core\tpl\compiler {
         /**/
 
         /**
-         * Allowed PHP functions and optional mapping to an template engine internal name.
+         * Allowed PHP functions and optional mapping to an PHP or framework internal name.
          *
          * @octdoc  p:rewrite/$phpfunc
          * @var     array
@@ -105,23 +105,33 @@ namespace org\octris\core\tpl\compiler {
         protected static $phpfunc = array(
             // string functions
             'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
+            'lcfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
             'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
             'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
             'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::str_replace'),
             'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::rtrim'),
             'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string::sprintf'),
+            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
             'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtolower'),
             'toupper'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtoupper'),
-            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
             'trim'       => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::trim'),
+            'ucfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::ucfirst'),
             'vsprintf'   => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string::vsprintf'),
             
             // numeric functions
-            'round'      => array('min' => 1, 'max' => 2),
+            'abs'        => array('min' => 1, 'max' => 1),
             'ceil'       => array('min' => 1, 'max' => 1),
-            
+            'floor'      => array('min' => 1, 'max' => 1),
+            'max'        => array('min' => 2),
+            'min'        => array('min' => 2),
+            'round'      => array('min' => 1, 'max' => 2),
+
             // array functions
             'count'      => array('min' => 1, 'max' => 1),
+
+            // misc functions
+            'jsonencode' => array('min' => 1, 'max' => 2, 'map' => 'json_encode'),
+            'jsondecode' => array('min' => 1, 'max' => 4, 'map' => 'json_decode'),
         );
         /**/
 
