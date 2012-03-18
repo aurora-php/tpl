@@ -93,6 +93,12 @@ namespace org\octris\core\tpl\compiler {
 
             // misc functions
             'escape'    => array('min' => 2, 'max' => 2),
+
+            // localisation functions
+            'monf'      => array('min' => 1, 'max' => 2),
+            'numf'      => array('min' => 1, 'max' => 2),
+            'datef'     => array('min' => 1, 'max' => 2),
+            'gender'    => array('min' => 1, 'max' => 2)
         );
         /**/
 
@@ -502,6 +508,20 @@ namespace org\octris\core\tpl\compiler {
         // misc functions
         protected static function _escape($args) {
             return '($this->escape(' . implode(', ', $args) . '))';
+        }
+
+        // localization functions
+        protected static function _numf($args) {
+            // TODO: implementation
+        }
+        protected static function _monff($args) {
+            // TODO: implementation
+        }
+        protected static function _datef($args) {
+            // TODO: implementation
+        }
+        protected static function _gender($args) {
+            // TODO: implementation
         }
     }
 }
