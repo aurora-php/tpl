@@ -84,6 +84,7 @@ namespace org\octris\core\tpl\compiler {
             'implode'   => array('min' => 2, 'max' => 2),
             'lpad'      => array('min' => 2, 'max' => 3),
             'rpad'      => array('min' => 2, 'max' => 3),
+            'totitle'   => array('min' => 1, 'max' => 1),
             'concat'    => array('min' => 2),
             
             // array functions
@@ -471,6 +472,10 @@ namespace org\octris\core\tpl\compiler {
             return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
         }
         
+        protected static function _totitle($args) {
+            return '\\org\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+        }
+
         protected static function _concat($args) {
             return '(' . implode(' . ', $args) . ')';
         }
