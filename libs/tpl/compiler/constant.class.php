@@ -27,13 +27,36 @@ namespace org\octris\core\tpl\compiler {
          * @var     array
          */
         protected static $registry = array(
+            // pre-defined constants for bool type
+            'TRUE'     => true,
+            'FALSE'    => false,
+
             // pre-defined constants for escaping
             'ESC_NONE' => '',
             'ESC_ATTR' => 'attr',
             'ESC_CSS'  => 'css', 
             'ESC_JS'   => 'js',
-            'ESC_TAG'  => 'tag',
-            'ESC_URL'  => 'url'
+            'ESC_URI'  => 'uri',
+
+            // pre-defined constants for json_encode/json_decode
+            'JSON_HEX_QUOT'          => JSON_HEX_QUOT, 
+            'JSON_HEX_TAG'           => JSON_HEX_TAG, 
+            'JSON_HEX_AMP'           => JSON_HEX_AMP, 
+            'JSON_HEX_APOS'          => JSON_HEX_APOS, 
+            'JSON_NUMERIC_CHECK'     => JSON_NUMERIC_CHECK, 
+            'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING, 
+            'JSON_PRETTY_PRINT'      => JSON_PRETTY_PRINT, 
+            'JSON_UNESCAPED_SLASHES' => JSON_UNESCAPED_SLASHES, 
+            'JSON_FORCE_OBJECT'      => JSON_FORCE_OBJECT, 
+            'JSON_UNESCAPED_UNICODE' => JSON_UNESCAPED_UNICODE,
+            'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
+
+            // pre-defined constants for string functions
+            'CASE_UPPER'             => \org\octris\core\type\string::T_CASE_UPPER,
+            'CASE_LOWER'             => \org\octris\core\type\string::T_CASE_LOWER,
+            'CASE_TITLE'             => \org\octris\core\type\string::T_CASE_TITLE,
+            'CASE_UPPER_FIRST'       => \org\octris\core\type\string::T_CASE_UPPER_FIRST,
+            'CASE_LOWER_FIRST'       => \org\octris\core\type\string::T_CASE_LOWER_FIRST,
         );
         /**/
 
@@ -90,19 +113,25 @@ namespace org\octris\core\tpl\compiler {
         public static function setConstant($name, $value)
         /**/
         {
-            self::$registry[$name] = $value;
+            if (isset(self::$registry[$name])) {
+                throw new \Exception("constant '$name' is already defined");
+            } else {
+                self::$registry[$name] = $value;
+            }
         }
 
         /**
          * Set multiple constants.
          *
          * @octdoc  m:constant/setConstants
-         * @param   array       $array      Key/value array defining constants.
+         * @param   array       $constants  Key/value array defining constants.
          */
-        public static function setConstants($array)
+        public static function setConstants(array $constants)
         /**/
         {
-            self::$registry[$name] = array_merge(self::$registry[$name], $array);
+            foreach ($constants as $name => $value) {
+                $this->setConstant($name, $value);
+            }
         }
 
         /**
