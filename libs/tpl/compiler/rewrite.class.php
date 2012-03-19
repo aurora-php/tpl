@@ -111,6 +111,7 @@ namespace org\octris\core\tpl\compiler {
         protected static $phpfunc = array(
             // string functions
             'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
+            'chunk_id'   => array('min' => 1, 'max' => 5, 'map' => '\org\octris\core\type\string::chunk_id'),
             'cut'        => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::cut'),
             'lcfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
             'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
