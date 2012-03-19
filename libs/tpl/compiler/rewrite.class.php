@@ -111,11 +111,14 @@ namespace org\octris\core\tpl\compiler {
         protected static $phpfunc = array(
             // string functions
             'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
+            'cut'        => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::cut'),
             'lcfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
             'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
+            'obliterate' => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::obliterate'),
             'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
             'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::str_replace'),
             'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::rtrim'),
+            'shorten'    => array('min' => 1, 'max' => 3, 'map' => '\org\octris\core\type\string::shorten'),
             'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string::sprintf'),
             'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
             'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtolower'),
