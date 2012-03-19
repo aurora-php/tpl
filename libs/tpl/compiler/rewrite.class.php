@@ -95,10 +95,14 @@ namespace org\octris\core\tpl\compiler {
             'escape'    => array('min' => 2, 'max' => 2),
 
             // localisation functions
+            'comify'    => array('min' => 2, 'max' => 4),
+            'enum'      => array('min' => 2, 'max' => 5),
             'monf'      => array('min' => 1, 'max' => 2),
             'numf'      => array('min' => 1, 'max' => 2),
             'datef'     => array('min' => 1, 'max' => 2),
-            'gender'    => array('min' => 1, 'max' => 2)
+            'gender'    => array('min' => 1, 'max' => 2),
+            'quant'     => array('min' => 2, 'max' => 5),
+            'yesno'     => array('min' => 2, 'max' => 4),
         );
         /**/
 
@@ -515,6 +519,12 @@ namespace org\octris\core\tpl\compiler {
         }
 
         // localization functions
+        protected static function _comify($args) {
+            // TODO: implementation
+        }
+        protected static function _enum($args) {
+            // TODO: implementation
+        }        
         protected static function _numf($args) {
             // TODO: implementation
         }
@@ -525,6 +535,12 @@ namespace org\octris\core\tpl\compiler {
             // TODO: implementation
         }
         protected static function _gender($args) {
+            // TODO: implementation
+        }
+        protected static function _quant($args) {
+            // TODO: implementation
+        }
+        protected static function _yesno($args) {
             // TODO: implementation
         }
     }
