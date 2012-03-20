@@ -114,9 +114,9 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:parser/__construct
          * @param   string                  $filename                   Filename of template to load.
-         * @param   int                     $flags                      Option flags to set.
+         * @param   int                     $flags                      Optional ption flags to set.
          */
-        public function __construct($filename, $flags) 
+        public function __construct($filename, $flags = 0) 
         /**/
         {
             if (is_null(self::$tokennames)) {
@@ -179,6 +179,30 @@ namespace org\octris\core\tpl {
         /**/
         {
             return $this->offset;
+        }
+
+        /**
+         * This methods parses the template until a template command is reached. The template command is than evailable as iterator item.
+         *
+         * @octdoc  m:parser/next
+         */
+        public function next() 
+        /**/
+        {
+            $old_offset = $this->offset;
+
+            $this->offset = $this->next_offset;
+
+            if (($this->valid = (preg_match('/(\{\{(.*?)\}\})/s', $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset) > 0))) {
+                $this->current = array(
+                    'snippet' => (isset($m[1]) ? $m[1][0] : ''),
+                    'escape'  => null,
+                    'line'    => $this->getLineNumber($m[2][1]),
+                    'offset'  => $m[1][1]
+                );
+            } else {
+                $this->current = null;
+            }
         }
 
         /**
