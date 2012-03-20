@@ -17,7 +17,7 @@ namespace org\octris\core\tpl {
      * @copyright   copyright (c) 2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
-    abstract class parser implements \Iterator 
+    class parser implements \Iterator 
     /**/
     {
         /**
