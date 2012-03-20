@@ -10,8 +10,6 @@
  */
 
 namespace org\octris\core\tpl {
-    use \org\octris\core\tpl\compiler as compiler;
-    
     /**
      * Implementation of template compiler.
      *
@@ -44,6 +42,7 @@ namespace org\octris\core\tpl {
         const T_CONSTANT        = 23;
         const T_MACRO           = 24;
         const T_GETTEXT         = 25;
+        const T_ESCAPE          = 26;
     
         const T_STRING          = 30;
         const T_NUMBER          = 31;
@@ -1326,7 +1325,7 @@ namespace org\octris\core\tpl {
                 // parser for auto-escaping turned on
                 $parser = new \org\octris\core\tpl\parser\html($this->filename);
             } else {
-                $parser = new \org\octris\core\tpl\parser\default($this->filename);
+                $parser = new \org\octris\core\tpl\parser($this->filename);
                 $parser->setFilter(function($command) use ($escape) {
                     $command['escape'] = $escape;
 
@@ -1373,13 +1372,13 @@ namespace org\octris\core\tpl {
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
                 if ($ext == 'html' || $ext == 'htm') {
-                    $escape = \org\octris\core\tpl::T_HTML
+                    $escape = \org\octris\core\tpl::T_HTML;
                 } elseif ($ext == 'css') {
-                    $escape = \org\octris\core\tpl::T_CSS
+                    $escape = \org\octris\core\tpl::T_CSS;
                 } elseif ($ext == 'js') {
-                    $escape = \org\octris\core\tpl::T_JS
+                    $escape = \org\octris\core\tpl::T_JS;
                 } else {
-                    $escape = \org\octris\core\tpl::T_NONE
+                    $escape = \org\octris\core\tpl::T_NONE;
                 }
             }
 
