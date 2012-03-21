@@ -25,7 +25,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Inline method rewrite.
          *
-         * @octdoc  v:rewrite/$inline
+         * @octdoc  p:rewrite/$inline
          * @var     array
          */
         protected static $inline = array(
@@ -84,59 +84,87 @@ namespace org\octris\core\tpl\compiler {
             'implode'   => array('min' => 2, 'max' => 2),
             'lpad'      => array('min' => 2, 'max' => 3),
             'rpad'      => array('min' => 2, 'max' => 3),
+            'totitle'   => array('min' => 1, 'max' => 1),
             'concat'    => array('min' => 2),
             
             // array functions
             'array'     => array('min' => 1),
             'cycle'     => array('min' => 1, 'max' => 3),
+
+            // misc functions
+            'escape'    => array('min' => 2, 'max' => 2),
+
+            // localisation functions
+            'comify'    => array('min' => 2, 'max' => 4),
+            'enum'      => array('min' => 2, 'max' => 5),
+            'monf'      => array('min' => 1, 'max' => 2),
+            'numf'      => array('min' => 1, 'max' => 2),
+            'datef'     => array('min' => 1, 'max' => 2),
+            'gender'    => array('min' => 1, 'max' => 2),
+            'quant'     => array('min' => 2, 'max' => 5),
+            'yesno'     => array('min' => 2, 'max' => 4),
         );
         /**/
 
         /**
-         * Allowed PHP functions and optional mapping to an template engine internal name.
+         * Allowed PHP functions and optional mapping to an PHP or framework internal name.
          *
-         * @octdoc  v:rewrite/$phpfunc
+         * @octdoc  p:rewrite/$phpfunc
          * @var     array
          */
         protected static $phpfunc = array(
             // string functions
             'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
+            'chunk_id'   => array('min' => 1, 'max' => 5, 'map' => '\org\octris\core\type\string::chunk_id'),
+            'cut'        => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::cut'),
+            'lcfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
             'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
+            'obliterate' => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::obliterate'),
             'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
             'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::str_replace'),
             'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::rtrim'),
+            'shorten'    => array('min' => 1, 'max' => 3, 'map' => '\org\octris\core\type\string::shorten'),
             'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string::sprintf'),
+            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
             'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtolower'),
             'toupper'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtoupper'),
-            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
             'trim'       => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::trim'),
+            'ucfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::ucfirst'),
             'vsprintf'   => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string::vsprintf'),
             
             // numeric functions
-            'round'      => array('min' => 1, 'max' => 2),
+            'abs'        => array('min' => 1, 'max' => 1),
             'ceil'       => array('min' => 1, 'max' => 1),
-            
+            'floor'      => array('min' => 1, 'max' => 1),
+            'max'        => array('min' => 2),
+            'min'        => array('min' => 2),
+            'round'      => array('min' => 1, 'max' => 2),
+
             // array functions
             'count'      => array('min' => 1, 'max' => 1),
+
+            // misc functions
+            'jsonencode' => array('min' => 1, 'max' => 2, 'map' => 'json_encode'),
+            'jsondecode' => array('min' => 1, 'max' => 4, 'map' => 'json_decode'),
         );
         /**/
 
         /**
          * Forbidden function names.
          *
-         * @octdoc  v:rewrite/$forbidden
+         * @octdoc  p:rewrite/$forbidden
          * @var     array
          */
         protected static $forbidden = array(
             'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
-            '__construct', '__call', 'registermethod', 'render'
+            '__construct', '__call', 'registermethod', 'render', 'write'
         );
         /**/
         
         /**
          * Last error occured.
          *
-         * @octdoc  v:rewrite/$last_error
+         * @octdoc  p:rewrite/$last_error
          * @var     string
          */
         protected static $last_error = '';
@@ -468,6 +496,10 @@ namespace org\octris\core\tpl\compiler {
             return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
         }
         
+        protected static function _totitle($args) {
+            return '\\org\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+        }
+
         protected static function _concat($args) {
             return '(' . implode(' . ', $args) . ')';
         }
@@ -479,6 +511,37 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _cycle($args) {
             return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
+        }
+
+        // misc functions
+        protected static function _escape($args) {
+            return '($this->escape(' . implode(', ', $args) . '))';
+        }
+
+        // localization functions
+        protected static function _comify($args) {
+            // TODO: implementation
+        }
+        protected static function _enum($args) {
+            // TODO: implementation
+        }        
+        protected static function _numf($args) {
+            // TODO: implementation
+        }
+        protected static function _monff($args) {
+            // TODO: implementation
+        }
+        protected static function _datef($args) {
+            // TODO: implementation
+        }
+        protected static function _gender($args) {
+            // TODO: implementation
+        }
+        protected static function _quant($args) {
+            // TODO: implementation
+        }
+        protected static function _yesno($args) {
+            // TODO: implementation
         }
     }
 }

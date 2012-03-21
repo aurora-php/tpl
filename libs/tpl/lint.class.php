@@ -25,7 +25,7 @@ namespace org\octris\core\tpl {
         /**
          * File handle for error messages output.
          *
-         * @octdoc  v:lint/$errout
+         * @octdoc  p:lint/$errout
          * @var     resource
          */
         protected $errout;
@@ -34,7 +34,7 @@ namespace org\octris\core\tpl {
         /**
          * Number of errors occured.
          *
-         * @octdoc  v:lint/$errors
+         * @octdoc  p:lint/$errors
          * @var     int
          */
         protected $errors = 0;

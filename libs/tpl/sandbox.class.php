@@ -14,27 +14,16 @@ namespace org\octris\core\tpl {
      * Sandbox to execute templates in.
      *
      * @octdoc      c:tpl/sandbox
-     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class sandbox
     /**/
     {
         /**
-         * Template contexts.
-         *
-         * @octdoc  d:sandbox/T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
-         */
-        const T_CONTEXT_HTML       = 1;
-        const T_CONTEXT_JAVASCRIPT = 2;
-        const T_CONTEXT_TEXT       = 3;
-        const T_CONTEXT_XML        = 4;
-        /**/
-
-        /**
          * Template data.
          *
-         * @octdoc  v:sandbox/$data
+         * @octdoc  p:sandbox/$data
          * @var     array
          */
         public $data = array();
@@ -43,7 +32,7 @@ namespace org\octris\core\tpl {
         /**
          * Internal storage for meta data required for block functions.
          *
-         * @octdoc  v:sandbox/$meta
+         * @octdoc  p:sandbox/$meta
          * @var     array
          */
         protected $meta = array();
@@ -52,7 +41,7 @@ namespace org\octris\core\tpl {
         /**
          * Internal storage for cut/copied buffers.
          *
-         * @octdoc  v:sandbox/$pastebin
+         * @octdoc  p:sandbox/$pastebin
          * @var     array
          */
         protected $pastebin = array();
@@ -61,25 +50,16 @@ namespace org\octris\core\tpl {
         /**
          * Function registry.
          *
-         * @octdoc  v:sandbox/$registry
+         * @octdoc  p:sandbox/$registry
          * @var     array
          */
         protected $registry = array();
         /**/
 
         /**
-         * Context to use for autoescaping.
-         *
-         * @octdoc  v:sandbox/$context
-         * @var     int
-         */
-        protected $context;
-        /**/
-
-        /**
          * Name of file that is rendered by the sandbox instance.
          *
-         * @octdoc  v:sandbox/$filename
+         * @octdoc  p:sandbox/$filename
          * @var     string
          */
         protected $filename = '';
@@ -88,7 +68,7 @@ namespace org\octris\core\tpl {
         /**
          * Instance of locale class.
          *
-         * @octdoc  v:compiler/$l10n
+         * @octdoc  p:compiler/$l10n
          * @var     \org\octris\core\l10n
          */
         protected $l10n;
@@ -191,7 +171,10 @@ namespace org\octris\core\tpl {
         }
 
         /**
-         * Set value for one template variable.
+         * Set value for one template variable. Note, that resources are not allowed as values.
+         * Values of type 'array' and 'object' will be casted to '\org\octris\core\type\collection'
+         * unless an 'object' implements the interface '\Traversable'. Traversable objects will
+         * be used without casting.
          *
          * @octdoc  m:tpl/setValue
          * @param   string      $name       Name of template variable to set value of.
@@ -200,8 +183,10 @@ namespace org\octris\core\tpl {
         public function setValue($name, $value)
         /**/
         {
-            if (is_scalar($value) || (is_object($value) && $value instanceof \org\octris\core\type\collection)) {
+            if (is_scalar($value) || (is_object($value) && $value instanceof \Traversable)) {
                 $this->data[$name] = $value;
+            } elseif (is_resource($value)) {
+                $this->error(sprintf('"%s" -- type resource is not allowed', $name), 0, __LINE__);
             } else {
                 $this->data[$name] = new \org\octris\core\type\collection($value);
             }
@@ -227,58 +212,88 @@ namespace org\octris\core\tpl {
          * @octdoc  m:sandbox/each
          * @param   string                              $id             uniq identifier for loop.
          * @param   mixed                               $ctrl           Control variable is overwritten and used by this method.
-         * @param   \org\octris\core\type\collection    $collection     Collection to use for iteration.
+         * @param   \Traversable                        $object         Object to traverse.
          * @param   array                               $meta           Optional control variable for meta information storage.
          * @return  bool                                                Returns 'true' as long as iterator did not reach end of array.
-         *
-         * @todo    Be careful with 'spl_object_hash' used here. The hash could have been reused, because the collection was unset ...
          */
-        public function each($id, &$ctrl, \org\octris\core\type\collection $collection, &$meta = null)
+        public function each($id, &$ctrl, \Traversable $object, &$meta = null)
         /**/
         {
-            // $id = 'each:' . $id . ':' . spl_object_hash($collection);
-            $id = 'each:' . $id; //. ':' . crc32(serialize($array->getArrayCopy()));
+            $id = 'each:' . $id;
 
-            if (!isset($this->meta[$id])) {
-                $this->meta[$id] = $collection->getIterator();
-            }
+            $getMeta = function($reset = false) use ($id) {
+                $meta =& $this->meta[$id];
 
-            $getMeta = function($collection)  {
-                $pos = $collection->getPosition();
-                $cnt = count($collection);
+                if ($reset) {
+                    $meta['key']      = null;
+                    $meta['pos']      = null;
+                    $meta['count']    = null;
+                    $meta['is_first'] = false;
+                    $meta['is_last']  = false;
+                } elseif (is_null($meta['pos'])) {
+                    $meta['pos']      = 0;
+                    $meta['is_first'] = true;
+                    $meta['is_last']  = false;
+
+                    if ($meta['object'] instanceof \Countable) {
+                        $meta['count'] = count($meta['object']);
+                    }
+                } else {
+                    ++$meta['pos'];
+                    $meta['is_first'] = false;
+
+                    if (!is_null($meta['count']) && $meta['pos'] == ($meta['count'] - 1)) {
+                        $meta['is_last'] = true;
+                    }
+                }
 
                 return array(
-                    'key'       => key($collection),
-                    'pos'       => $pos,
-                    'count'     => $cnt,
-                    'is_first'  => ($pos == 0),
-                    'is_last'   => ($pos == $cnt - 1)
+                    'key'       => $meta['iterator']->key(),
+                    'pos'       => $meta['pos'],
+                    'count'     => $meta['count'],
+                    'is_first'  => $meta['is_first'],
+                    'is_last'   => $meta['is_last']
                 );
             };
 
-            if (($return = $this->meta[$id]->valid())) {
-                $ctrl = $this->meta[$id]->current();
-                $meta = $getMeta($this->meta[$id]);
-
-                $this->meta[$id]->next();
-            } elseif (count($this->meta[$id]) > 0) {
-                $this->meta[$id]->rewind();
-
-                $ctrl = $this->meta[$id]->current();
-                $meta = $getMeta($this->meta[$id]);
-            } else {
-                $ctrl = null;
-                $meta = array(
-                    'key'       => null,
-                    'pos'       => null,
-                    'count'     => 0,
-                    'is_first'  => false,
-                    'is_last'   => false
+            if (!isset($this->meta[$id])) {
+                $this->meta[$id] = array(
+                    'iterator' => ($object instanceof \IteratorAggregate
+                                    ? $object->getIterator()
+                                    : $object),
+                    'object'   => $object,
+                    'key'      => null,
+                    'pos'      => null,
+                    'count'    => null,
+                    'is_first' => false,
+                    'is_last'  => false
                 );
             }
 
-            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \org\octris\core\type\collection)) {
-                // cast to collection type, if item is either an array or an object, but no object of type 'collection'
+            if (($return = $this->meta[$id]['iterator']->valid())) {
+                $ctrl = $this->meta[$id]['iterator']->current();
+                $meta = $getMeta();
+
+                $this->meta[$id]['iterator']->next();
+            } else {
+                $this->meta[$id]['iterator']->rewind();
+
+                if ($this->meta[$id]['iterator']->valid()) {
+                    $ctrl = $this->meta[$id]['iterator']->current();
+                    $meta = $getMeta(true);
+                } else {
+                    $ctrl = null;
+                    $meta = array(
+                        'key'       => null,
+                        'pos'       => null,
+                        'count'     => 0,
+                        'is_first'  => false,
+                        'is_last'   => false
+                    );
+                }
+            }
+
+            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \Traversable)) {
                 $ctrl = new \org\octris\core\type\collection($ctrl);
             }
 
@@ -556,26 +571,51 @@ namespace org\octris\core\tpl {
         }
 
         /**
+         * Escape a value according to the specified escaping context.
+         *
+         * @octdoc  m:sandbox/escape
+         * @param   string          $val            Value to escape.
+         * @param   string          $escape         Escaping to use.
+         */
+        public function escape($val, $escape)
+        /**/
+        {
+            switch ($escape) {
+            case \org\octris\core\tpl::T_ESC_ATTR:
+                $val = \org\octris\core\tpl\escape::escapeAttributeValue($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_CSS:
+                $val = \org\octris\core\tpl\escape::escapeCss($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_HTML:
+                $val = \org\octris\core\tpl\escape::escapeHtml($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_JS:
+                $val = \org\octris\core\tpl\escape::escapeJavascript($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_TAG:
+                $val = \org\octris\core\tpl\escape::escapeAttribute($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_URI:
+                $val = \org\octris\core\tpl\escape::escapeUrl($val);
+                break;
+            }
+
+            return $val;
+        }
+
+        /**
          * Output specified value.
          *
          * @octdoc  m:sandbox/write
-         * @param   string      $val            Optional value to output.
-         * @param   bool        $auto_escape    Optional flag whether to auto-escape value.
+         * @param   string          $val            Optional value to output.
+         * @param   string          $escape         Optional escaping to use.
          */
-        public function write($val = '', $auto_escape = true)
+        public function write($val = '', $escape = '')
         /**/
         {
-            if ($auto_escape) {
-                switch($this->context) {
-                case self::T_CONTEXT_HTML:
-                    $val = htmlspecialchars($val);
-                    break;
-                case self::T_CONTEXT_JAVASCRIPT:
-                    break;
-                case self::T_CONTEXT_TEXT:
-                default:
-                    break;
-                }
+            if ($escape !== \org\octris\core\tpl::T_ESC_NONE) {
+                $val = $this->escape($val, $escape);
             }
 
             print $val;
@@ -620,13 +660,11 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:sandbox/render
          * @param   string      $filename       Filename of template to render.
-         * @param   int         $context        Context of files. Context is required for auto-escaping.
          */
-        public function render($filename, $context)
+        public function render($filename)
         /**/
         {
             $this->filename = $filename;
-            $this->context  = $context;
 
             require($filename);
         }

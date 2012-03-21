@@ -23,7 +23,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Macro registry.
          *
-         * @octdoc  v:macro/$registry
+         * @octdoc  p:macro/$registry
          * @var     array
          */
         protected static $registry = array();
@@ -32,7 +32,7 @@ namespace org\octris\core\tpl\compiler {
         /**
          * Last error occured.
          *
-         * @octdoc  v:macro/$last_error
+         * @octdoc  p:macro/$last_error
          * @var     string
          */
         protected static $last_error = '';
