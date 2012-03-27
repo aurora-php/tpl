@@ -291,10 +291,10 @@ namespace org\octris\core\tpl {
          * Filter to call before snippet is returned.
          *
          * @octdoc  m:parser/setFilter
-         * @param   callback            $callback           Callback to call.
+         * @param   callable            $callback           Callback to call.
          * @return  mixed                                   Data to return.
          */
-        public function setFilter($callback)
+        public function setFilter(callable $callback)
         /**/
         {
             $this->filter = $callback;

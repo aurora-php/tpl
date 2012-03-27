@@ -77,10 +77,10 @@ namespace org\octris\core\tpl\compiler {
          *
          * @octdoc  m:macro/registerMacro
          * @param   string      $name       Name of macro to register.
-         * @param   callback    $callback   Callback to call when macro is requested.
+         * @param   callable    $callback   Callback to call when macro is requested.
          * @param   array       $args       For testing min/max number of arguments required for macro.
          */
-        public static function registerMacro($name, $callback, array $args)
+        public static function registerMacro($name, callable $callback, array $args)
         /**/
         {
             self::$registry[strtolower($name)] = array(
