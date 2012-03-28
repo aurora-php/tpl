@@ -99,6 +99,7 @@ namespace org\octris\core\tpl\compiler {
             'enum'      => array('min' => 2, 'max' => 5),
             'monf'      => array('min' => 1, 'max' => 2),
             'numf'      => array('min' => 1, 'max' => 2),
+            'perf'      => array('min' => 1, 'max' => 2),
             'datef'     => array('min' => 1, 'max' => 2),
             'gender'    => array('min' => 1, 'max' => 2),
             'quant'     => array('min' => 2, 'max' => 5),
