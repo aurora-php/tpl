@@ -525,10 +525,13 @@ namespace org\octris\core\tpl\compiler {
         protected static function _enum($args) {
             // TODO: implementation
         }        
+        protected static function _monf($args) {
+            // TODO: implementation
+        }
         protected static function _numf($args) {
             // TODO: implementation
         }
-        protected static function _monff($args) {
+        protected static function _perf($args) {
             // TODO: implementation
         }
         protected static function _datef($args) {
