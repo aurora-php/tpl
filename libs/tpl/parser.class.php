@@ -133,8 +133,6 @@ namespace org\octris\core\tpl {
             $this->tpl      = $this->prepare($tpl);
             $this->filename = $filename;
             
-            print $this->tpl;
-
             // option flags
             $this->debug           = (($flags & self::T_DEBUG) === self::T_DEBUG);
             $this->ignore_comments = (($flags & self::T_IGNORE_COMMENTS) === self::T_IGNORE_COMMENTS);
