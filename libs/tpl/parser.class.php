@@ -227,7 +227,7 @@ namespace org\octris\core\tpl {
         protected function getLineNumber($offset)
         /**/
         {
-            return substr_count(substr($this->tpl, 0, $offset), "\n") + 1
+            return substr_count(substr($this->tpl, 0, $offset), "\n") + 1;
         }
 
         /**
