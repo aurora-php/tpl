@@ -193,7 +193,7 @@ namespace org\octris\core\tpl {
 
             if (($this->valid = (preg_match('/(\{\{(.*?)\}\})/s', $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset) > 0))) {
                 $this->current = array(
-                    'snippet' => (isset($m[1]) ? $m[1][0] : ''),
+                    'snippet' => (isset($m[2]) ? $m[2][0] : ''),
                     'escape'  => null,
                     'line'    => $this->getLineNumber($m[2][1]),
                     'offset'  => $m[1][1]
