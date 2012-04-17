@@ -70,25 +70,13 @@ namespace org\octris\core\tpl {
          
             ++$this->errors;
             
-            if ($type == 'analyze') throw new \Exception('syntax error');
+            if ($type == 'analyze' || $type == 'tokenize') throw new \Exception('syntax error');
         }
         
         /**
          * Execute compiler toolchain for a template snippet.
          *
          * @octdoc  m:lint/toolchain
-         * @param   
-         */
-        public function toolchain()
-        /**/
-        {
-            
-        }
-        
-        /**
-         * Execute compiler toolchain for a template snippet.
-         *
-         * @octdoc  m:compiler/toolchain
          * @param   string      $snippet        Template snippet to process.
          * @param   int         $line           Line in template processed.
          * @return  string                      Processed / compiled snippet.
@@ -112,7 +100,7 @@ namespace org\octris\core\tpl {
         /**
          * Process a template.
          *
-         * @octdoc  m:compiler/process
+         * @octdoc  m:lint/process
          * @param   string      $filename       Name of template file to lint.
          * @param   string      $err            Destination for error reporting.
          * @return  bool                        Returns true if template is valid.
