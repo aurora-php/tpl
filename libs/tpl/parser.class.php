@@ -187,9 +187,9 @@ namespace org\octris\core\tpl {
         public function next() 
         /**/
         {
-            $old_offset = $this->offset;
+            // $old_offset = $this->offset;
 
-            $this->offset = $this->next_offset;
+            // $this->offset = $this->next_offset;
 
             if (($this->valid = (preg_match('/(\{\{(.*?)\}\})/s', $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset) > 0))) {
                 $this->current = array(
