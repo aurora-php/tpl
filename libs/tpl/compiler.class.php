@@ -1321,7 +1321,7 @@ namespace org\octris\core\tpl {
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
-            if ($escape == \org\octris\core\tpl::T_HTML) {
+            if ($escape == \org\octris\core\tpl::T_ESC_HTML) {
                 // parser for auto-escaping turned on
                 $parser = new \org\octris\core\tpl\parser\html($this->filename);
             } else {
@@ -1367,18 +1367,18 @@ namespace org\octris\core\tpl {
         {
             $this->filename = $filename;
 
-            if ($escape == \org\octris\core\tpl::T_AUTO) {
+            if ($escape == \org\octris\core\tpl::T_ESC_AUTO) {
                 // auto-escaping, try to determine escaping from file extension
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
                 if ($ext == 'html' || $ext == 'htm') {
-                    $escape = \org\octris\core\tpl::T_HTML;
+                    $escape = \org\octris\core\tpl::T_ESC_HTML;
                 } elseif ($ext == 'css') {
-                    $escape = \org\octris\core\tpl::T_CSS;
+                    $escape = \org\octris\core\tpl::T_ESC_CSS;
                 } elseif ($ext == 'js') {
-                    $escape = \org\octris\core\tpl::T_JS;
+                    $escape = \org\octris\core\tpl::T_ESC_JS;
                 } else {
-                    $escape = \org\octris\core\tpl::T_NONE;
+                    $escape = \org\octris\core\tpl::T_ESC_NONE;
                 }
             }
 
