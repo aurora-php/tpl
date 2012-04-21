@@ -163,15 +163,6 @@ namespace org\octris\core\tpl\parser {
         /**/
 
         /**
-         * Offset to start parsing from in next iteration.
-         *
-         * @octdoc  p:html/$next_offset
-         * @var     int
-         */
-        protected $next_offset = 0;
-        /**/
-
-        /**
          * Current state of parser in document.
          *
          * @octdoc  p:html/$state
