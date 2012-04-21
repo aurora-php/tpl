@@ -203,6 +203,7 @@ namespace org\octris\core\tpl {
                     'snippet' => (isset($m[2]) ? $m[2][0] : ''),
                     'escape'  => null,
                     'line'    => $this->getLineNumber($m[2][1]),
+                    'length'  => strlen($m[0][0]),
                     'offset'  => $m[1][1]
                 );
                 
