@@ -1336,7 +1336,7 @@ namespace org\octris\core\tpl {
             foreach ($parser as $command) {
                 $snippet = $this->toolchain($command['snippet'], $command['line'], $blocks, $command['escape']);
 
-                $parser->replaceSnippet($command['offset'], strlen($command['snippet']), $snippet);
+                $parser->replaceSnippet($snippet);
             }
 
             if (count($blocks['analyzer']) > 0) {
