@@ -200,8 +200,6 @@ namespace org\octris\core\tpl\parser {
         /**/
         {
             parent::__construct($filename, $flags);
-
-            print $this->tpl;
         }
 
         /** Implementation of methods required for Iterator interface **/
@@ -364,8 +362,6 @@ namespace org\octris\core\tpl\parser {
                 $this->next_offset = $match['offset'] + $match['length'];
             }
         
-            print_r($match);
-        
             return $match;
         }
     
@@ -401,26 +397,5 @@ namespace org\octris\core\tpl\parser {
         
             return $tpl;
         }
-    }
-}
-
-namespace {    
-    $tpl = <<<XML
-<html>
-    <body onload="{{value()}}">
-        {{command()}}
-    </body>
-</html>
-XML;
-
-    $p = new \org\octris\core\tpl\parser\html(
-        'data://text/plain;base64,' . base64_encode($tpl), 
-        true
-    );
-    
-    foreach ($p as $s) {
-        print "----\n";
-        print_r($s);
-        print "----\n";
     }
 }
