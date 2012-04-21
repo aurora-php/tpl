@@ -83,6 +83,15 @@ namespace org\octris\core\tpl {
         /**/
     
         /**
+         * Offset to start parsing from in next iteration.
+         *
+         * @octdoc  p:html/$next_offset
+         * @var     int
+         */
+        protected $next_offset = 0;
+        /**/
+
+        /**
          * Whether parser is in a valid state. The parser is in a valid state, if the current parser iteration found something to work with.
          *
          * @octdoc  p:parser/$valid
