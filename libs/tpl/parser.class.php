@@ -196,9 +196,7 @@ namespace org\octris\core\tpl {
         public function next() 
         /**/
         {
-            // $old_offset = $this->offset;
-
-            // $this->offset = $this->next_offset;
+            $this->offset = $this->next_offset;
 
             if (($this->valid = (preg_match('/(\{\{(.*?)\}\})/s', $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset) > 0))) {
                 $this->current = array(
@@ -207,6 +205,8 @@ namespace org\octris\core\tpl {
                     'line'    => $this->getLineNumber($m[2][1]),
                     'offset'  => $m[1][1]
                 );
+                
+                $this->next_offset = $m[1][1] + strlen($m[1][0]);
             } else {
                 $this->current = null;
             }
