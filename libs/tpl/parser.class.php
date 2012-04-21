@@ -368,21 +368,31 @@ namespace org\octris\core\tpl {
          * Replace part of a template with specified string.
          * 
          * @octdoc  m:parser/replaceSnippet
-         * @param   int         $offset         Offset to start replacing at.
-         * @param   int         $len            Length of template snippet to replace.
          * @param   string      $str            String to replace template snippet with.
          * @param   bool        $move_offset    Optional whether to move offset after replacing or set it to value of first parameter.
          */
-        public function replaceSnippet($offset, $len, $str, $move_offset = false)
+        public function replaceSnippet($str, $move_offset = false)
         /**/
         {
-            $this->tpl = substr_replace($this->tpl, $str, $offset, $len);
+            $offset = $this->current['offset'];
+            $length = $this->current['length'];
+            
+            // fix problem where newline is removed when replacing on end of line
+            $nl  = substr($this->tpl, $offset + $length, 1);
+            
+            if ($nl == "\n" || $nl == "\r") {
+                $str .= $nl;
+            }
+
+            // replace template snippet
+            $this->tpl = substr_replace($this->tpl, $str, $offset, $length);
 
             if ($move_offset) {
-                $this->setOffset($offset + strlen($str));
+                $this->setOffset($offset + strlen($str) + strlen($nl));
             } else {
                 $this->setOffset($offset);
             }
         }
     }
 }
+
