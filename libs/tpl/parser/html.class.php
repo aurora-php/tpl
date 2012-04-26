@@ -250,7 +250,8 @@ namespace org\octris\core\tpl\parser {
                         'snippet' => $this->commands[$state['payload']],
                         'escape'  => end($this->escape),
                         'line'    => $state['line'],
-                        'offset'  => $state['offset']
+                        'offset'  => $state['offset'],
+                        'length'  => $state['length']
                     );
                     break(2);
                 case self::T_TAG_START:
