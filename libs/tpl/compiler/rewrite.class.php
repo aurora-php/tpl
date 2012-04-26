@@ -340,38 +340,43 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function __foreach($args) {
-            $var = '$_' . self::getUniqId();
+            $var = self::getUniqId();
             $arg = $args[1];
             unset($args[1]);
 
             return array(
                 sprintf(
-                    '%s = new \org\octris\core\tpl\sandbox\eachiterator(' . $arg . '); ' . 
-                    'while ($this->each(%s, ' . implode(', ', $args) . ')) {',
-                    $var, $var
+                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    'return new \org\octris\core\tpl\sandbox\eachiterator(%s);' . 
+                    '}); ' .
+                    'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var, $arg, $var
                 ),
-                sprintf('} unset(%s);', $var)
+                '}'
             );
         }
         
         protected static function __loop($args) {
-            $var = '$_' . self::getUniqId();
-            $tmp = sprintf(
-                'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))',    // use array_slice to emulate for (i = ..., i < ..., ) behaviour
-                $args[1], $args[2], $args[3]
-            );
+            $var = self::getUniqId();
             
+            $start = $args[1];
+            $end   = $args[2];
+            $step  = $args[3];
+
             unset($args[1]);
             unset($args[2]);
             unset($args[3]);
 
             return array(
                 sprintf(
-                    '%s = new \org\octris\core\tpl\sandbox\eachiterator(%s); ' . 
-                    'while ($this->each(%s, ' . implode(', ', $args) . ')) {',
-                    $var, $tmp, $var
+                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    'return new \org\octris\core\tpl\sandbox\eachiterator(' .
+                    'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
+                    '); }); ' . 
+                    'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var, $start, $end, $step, $var
                 ),
-                sprintf('} unset(%s);', $var)
+                '}'
             );
         }
 
