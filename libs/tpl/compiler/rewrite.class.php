@@ -30,6 +30,7 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $inline = array(
             // blocks
+            '#bench'    => array('min' => 1, 'max' => 1),
             '#cache'    => array('min' => 2, 'max' => 2),
             '#copy'     => array('min' => 1, 'max' => 1),
             '#cron'     => array('min' => 1, 'max' => 2),
@@ -288,6 +289,28 @@ namespace org\octris\core\tpl\compiler {
         /*
          * inline block functions, that can be converted directly
          */
+        protected static function __bench($args) {
+            $var1 = '$_' . self::getUniqId();
+            $var2 = '$_' . self::getUniqId();
+
+            return array(
+                sprintf(
+                    '%s = microtime(true); ' .
+                    'for (%s = 0; %s < abs(%s); ++%s) { ' .
+                    'if (%s == 1) ob_start();',
+                    $var1,
+                    $var2, $var2, $args[0], $var2,
+                    $var2
+                ),
+                sprintf(
+                    '} %s = microtime(true) - %s; ' .
+                    'if (abs(%s) > 0) ob_end_clean(); ' .
+                    'printf("[benchmark iterations: %%s, time: %%1.6f]", abs(%s), %s);',
+                    $var1, $var1, $args[0], $args[0], $var1
+                )
+            );
+        }
+
         protected static function __cache($args) {
             return array(
                 'if ($this->cache(' . implode(', ', $args) . ')) {', 
