@@ -30,6 +30,15 @@ namespace org\octris\core\tpl {
         /**/
 
         /**
+         * Storage for sandbox internal data objects.
+         *
+         * @octdoc  p:sandbox/$storage
+         * @var     \org\octris\core\tpl\sandbox\storage
+         */
+        protected $storage;
+        /**/
+
+        /**
          * Internal storage for meta data required for block functions.
          *
          * @octdoc  p:sandbox/$meta
@@ -82,6 +91,7 @@ namespace org\octris\core\tpl {
         public function __construct()
         /**/
         {
+            $this->storage = \org\octris\core\tpl\sandbox\storage::getInstance();
         }
 
         /**
