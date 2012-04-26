@@ -30,13 +30,13 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $inline = array(
             // blocks
-            '#if'       => array('min' => 1, 'max' => 1),
-            '#foreach'  => array('min' => 2, 'max' => 3),
             '#cache'    => array('min' => 2, 'max' => 2),
             '#copy'     => array('min' => 1, 'max' => 1),
             '#cron'     => array('min' => 1, 'max' => 2),
             '#cut'      => array('min' => 1, 'max' => 1),
-            '#loop'     => array('min' => 3, 'max' => 4),
+            '#if'       => array('min' => 1, 'max' => 1),
+            '#foreach'  => array('min' => 2, 'max' => 3),
+            '#loop'     => array('min' => 4, 'max' => 5),
             '#onchange' => array('min' => 1, 'max' => 1),
             '#trigger'  => array('min' => 0, 'max' => 3),
             
@@ -288,20 +288,6 @@ namespace org\octris\core\tpl\compiler {
         /*
          * inline block functions, that can be converted directly
          */
-        protected static function __if($args) {
-            return array(
-                'if (' . implode('', $args) . ') {',
-                '}'
-            );
-        }
-
-        protected static function __foreach($args) {
-            return array(
-                'while ($this->each("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {', 
-                '}'
-            );
-        }
-        
         protected static function __cache($args) {
             return array(
                 'if ($this->cache(' . implode(', ', $args) . ')) {', 
@@ -330,10 +316,39 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
-        protected static function __loop($args) {
+        protected static function __foreach($args) {
+            $var = '$_' . self::getUniqId();
+            $arg = $args[1];
+            unset($args[1]);
+
             return array(
-                'while ($this->loop("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
-                '}'
+                sprintf(
+                    '%s = new \org\octris\core\tpl\sandbox\eachiterator(' . $arg . '); ' . 
+                    'while ($this->each(%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var
+                ),
+                sprintf('} unset(%s);', $var)
+            );
+        }
+        
+        protected static function __loop($args) {
+            $var = '$_' . self::getUniqId();
+            $tmp = sprintf(
+                'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))',    // use array_slice to emulate for (i = ..., i < ..., ) behaviour
+                $args[1], $args[2], $args[3]
+            );
+            
+            unset($args[1]);
+            unset($args[2]);
+            unset($args[3]);
+
+            return array(
+                sprintf(
+                    '%s = new \org\octris\core\tpl\sandbox\eachiterator(%s); ' . 
+                    'while ($this->each(%s, ' . implode(', ', $args) . ')) {',
+                    $var, $tmp, $var
+                ),
+                sprintf('} unset(%s);', $var)
             );
         }
 
