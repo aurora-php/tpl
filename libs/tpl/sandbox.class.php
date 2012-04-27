@@ -30,6 +30,15 @@ namespace org\octris\core\tpl {
         /**/
 
         /**
+         * Storage for sandbox internal data objects.
+         *
+         * @octdoc  p:sandbox/$storage
+         * @var     \org\octris\core\tpl\sandbox\storage
+         */
+        protected $storage;
+        /**/
+
+        /**
          * Internal storage for meta data required for block functions.
          *
          * @octdoc  p:sandbox/$meta
@@ -82,6 +91,7 @@ namespace org\octris\core\tpl {
         public function __construct()
         /**/
         {
+            $this->storage = \org\octris\core\tpl\sandbox\storage::getInstance();
         }
 
         /**
@@ -210,91 +220,30 @@ namespace org\octris\core\tpl {
          * template block.
          *
          * @octdoc  m:sandbox/each
-         * @param   string                              $id             uniq identifier for loop.
-         * @param   mixed                               $ctrl           Control variable is overwritten and used by this method.
-         * @param   \Traversable                        $object         Object to traverse.
-         * @param   array                               $meta           Optional control variable for meta information storage.
-         * @return  bool                                                Returns 'true' as long as iterator did not reach end of array.
+         * @param   \org\octris\core\tpl\sandbox\eachiterator   $iterator       Iterator to use.
+         * @param   mixed                                       $ctrl           Control variable is overwritten and used by this method.
+         * @param   array                                       $meta           Optional variable for meta information storage.
+         * @return  bool                                                        Returns 'true' as long as iterator did not reach end of array.
          */
-        public function each($id, &$ctrl, \Traversable $object, &$meta = null)
+        public function each(\org\octris\core\tpl\sandbox\eachiterator $iterator, &$ctrl, &$meta = null)
         /**/
         {
-            $id = 'each:' . $id;
+            if (($return = $iterator->valid())) {
+                $ctrl = $iterator->current();
+                $meta = $iterator->getMeta();
 
-            $getMeta = function($reset = false) use ($id) {
-                $meta =& $this->meta[$id];
-
-                if ($reset) {
-                    $meta['key']      = null;
-                    $meta['pos']      = null;
-                    $meta['count']    = null;
-                    $meta['is_first'] = false;
-                    $meta['is_last']  = false;
-                } elseif (is_null($meta['pos'])) {
-                    $meta['pos']      = 0;
-                    $meta['is_first'] = true;
-                    $meta['is_last']  = false;
-
-                    if ($meta['object'] instanceof \Countable) {
-                        $meta['count'] = count($meta['object']);
-                    }
-                } else {
-                    ++$meta['pos'];
-                    $meta['is_first'] = false;
-
-                    if (!is_null($meta['count']) && $meta['pos'] == ($meta['count'] - 1)) {
-                        $meta['is_last'] = true;
-                    }
-                }
-
-                return array(
-                    'key'       => $meta['iterator']->key(),
-                    'pos'       => $meta['pos'],
-                    'count'     => $meta['count'],
-                    'is_first'  => $meta['is_first'],
-                    'is_last'   => $meta['is_last']
-                );
-            };
-
-            if (!isset($this->meta[$id])) {
-                $this->meta[$id] = array(
-                    'iterator' => ($object instanceof \IteratorAggregate
-                                    ? $object->getIterator()
-                                    : $object),
-                    'object'   => $object,
-                    'key'      => null,
-                    'pos'      => null,
-                    'count'    => null,
-                    'is_first' => false,
-                    'is_last'  => false
-                );
-            }
-
-            if (($return = $this->meta[$id]['iterator']->valid())) {
-                $ctrl = $this->meta[$id]['iterator']->current();
-                $meta = $getMeta();
-
-                $this->meta[$id]['iterator']->next();
+                $iterator->next();
             } else {
-                $this->meta[$id]['iterator']->rewind();
+                $iterator->rewind();
 
-                if ($this->meta[$id]['iterator']->valid()) {
-                    $ctrl = $this->meta[$id]['iterator']->current();
-                    $meta = $getMeta(true);
-                } else {
-                    $ctrl = null;
-                    $meta = array(
-                        'key'       => null,
-                        'pos'       => null,
-                        'count'     => 0,
-                        'is_first'  => false,
-                        'is_last'   => false
-                    );
-                }
-            }
-
-            if (!is_scalar($ctrl) && !(is_object($ctrl) && $ctrl instanceof \Traversable)) {
-                $ctrl = new \org\octris\core\type\collection($ctrl);
+                $ctrl = null;
+                $meta = array(
+                    'key'       => null,
+                    'pos'       => null,
+                    'count'     => null,
+                    'is_first'  => false,
+                    'is_last'   => false
+                );
             }
 
             return $return;
@@ -397,56 +346,6 @@ namespace org\octris\core\tpl {
             $current = time();
 
             return (($start <= $current && $end >= $current) || $end == 0);
-        }
-
-        /**
-         * Implementation for '#loop' block function.
-         *
-         * @octdoc  m:sandbox/loop
-         * @param   string      $id         Uniq identifier for loop.
-         * @param   mixed       $ctrl       Control variable for loop.
-         * @param   int         $from       Value to start loop at.
-         * @param   int         $to         Value to end loop at.
-         * @param   array       $meta       Optional control value for meta data.
-         * @return  bool                    Returns true as long as loop did not reach the end.
-         */
-        public function loop($id, &$ctrl, $from, $to, &$meta = null)
-        /**/
-        {
-            $id = 'loop:' . $id . ':' . crc32("$from:$to");
-
-            if (!isset($this->meta[$id])) {
-                $this->meta[$id] = array(
-                    'from'  => $from,
-                    'to'    => $to,
-                    'step'  => $from,
-                    'incr'  => ($from > $to ? -1 : 1)
-                );
-            } else {
-                $this->meta[$id]['step'] += $this->meta[$id]['incr'];
-            }
-
-            if ($from > $to) {
-                $ret = ($this->meta[$id]['step'] > $to);
-            } else {
-                $ret = ($this->meta[$id]['step'] < $to);
-            }
-
-            if (!$ret) {
-                $ctrl = $to;
-                $this->meta[$id]['step'] = $this->meta[$id]['from'] - $this->meta[$id]['incr'];
-            } else {
-                $ctrl = $this->meta[$id]['step'];
-            }
-
-            $meta = array(
-                'key'      => $this->meta[$id]['step'],
-                'pos'      => $this->meta[$id]['step'],
-                'is_first' => ($this->meta[$id]['step'] == $this->meta[$id]['from']),
-                'is_last'  => ($this->meta[$id]['step'] == $this->meta[$id]['to'])
-            );
-
-            return $ret;
         }
 
         /**

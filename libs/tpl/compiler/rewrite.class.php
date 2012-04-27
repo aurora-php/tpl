@@ -30,13 +30,14 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $inline = array(
             // blocks
-            '#if'       => array('min' => 1, 'max' => 1),
-            '#foreach'  => array('min' => 2, 'max' => 3),
+            '#bench'    => array('min' => 1, 'max' => 1),
             '#cache'    => array('min' => 2, 'max' => 2),
             '#copy'     => array('min' => 1, 'max' => 1),
             '#cron'     => array('min' => 1, 'max' => 2),
             '#cut'      => array('min' => 1, 'max' => 1),
-            '#loop'     => array('min' => 3, 'max' => 4),
+            '#if'       => array('min' => 1, 'max' => 1),
+            '#foreach'  => array('min' => 2, 'max' => 3),
+            '#loop'     => array('min' => 4, 'max' => 5),
             '#onchange' => array('min' => 1, 'max' => 1),
             '#trigger'  => array('min' => 0, 'max' => 3),
             
@@ -288,20 +289,28 @@ namespace org\octris\core\tpl\compiler {
         /*
          * inline block functions, that can be converted directly
          */
-        protected static function __if($args) {
+        protected static function __bench($args) {
+            $var1 = '$_' . self::getUniqId();
+            $var2 = '$_' . self::getUniqId();
+
             return array(
-                'if (' . implode('', $args) . ') {',
-                '}'
+                sprintf(
+                    '%s = microtime(true); ' .
+                    'for (%s = 0; %s < abs(%s); ++%s) { ' .
+                    'if (%s == 1) ob_start();',
+                    $var1,
+                    $var2, $var2, $args[0], $var2,
+                    $var2
+                ),
+                sprintf(
+                    '} %s = microtime(true) - %s; ' .
+                    'if (abs(%s) > 0) ob_end_clean(); ' .
+                    'printf("[benchmark iterations: %%s, time: %%1.6f]", abs(%s), %s);',
+                    $var1, $var1, $args[0], $args[0], $var1
+                )
             );
         }
 
-        protected static function __foreach($args) {
-            return array(
-                'while ($this->each("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {', 
-                '}'
-            );
-        }
-        
         protected static function __cache($args) {
             return array(
                 'if ($this->cache(' . implode(', ', $args) . ')) {', 
@@ -330,9 +339,43 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
-        protected static function __loop($args) {
+        protected static function __foreach($args) {
+            $var = self::getUniqId();
+            $arg = $args[1];
+            unset($args[1]);
+
             return array(
-                'while ($this->loop("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
+                sprintf(
+                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    'return new \org\octris\core\tpl\sandbox\eachiterator(%s);' . 
+                    '}); ' .
+                    'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var, $arg, $var
+                ),
+                '}'
+            );
+        }
+        
+        protected static function __loop($args) {
+            $var = self::getUniqId();
+            
+            $start = $args[1];
+            $end   = $args[2];
+            $step  = $args[3];
+
+            unset($args[1]);
+            unset($args[2]);
+            unset($args[3]);
+
+            return array(
+                sprintf(
+                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    'return new \org\octris\core\tpl\sandbox\eachiterator(' .
+                    'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
+                    '); }); ' . 
+                    'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var, $start, $end, $step, $var
+                ),
                 '}'
             );
         }
