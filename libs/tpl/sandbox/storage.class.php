@@ -73,8 +73,6 @@ namespace org\octris\core\tpl\sandbox {
         public function __get($name)
         /**/
         {
-            print "init";
-
             if (!isset($this->init[$name])) {
                 throw new \Exception('Unknown propety "' . $name . '".');
             }
