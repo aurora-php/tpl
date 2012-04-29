@@ -84,6 +84,15 @@ namespace org\octris\core\tpl {
         /**/
 
         /**
+         * Instance of caching backend for template snippets.
+         *
+         * @octdoc  p:sandbox/$cache
+         * @var     \org\octris\core\cache|null
+         */
+        protected $cache = null;
+        /**/
+
+        /**
          * Constructor
          *
          * @octdoc  m:sandbox/__construct
@@ -200,6 +209,18 @@ namespace org\octris\core\tpl {
             } else {
                 $this->data[$name] = new \org\octris\core\type\collection($value);
             }
+        }
+
+        /**
+         * Set cache for template snippets.
+         *
+         * @octdoc  m:sandbox/setSnippetCache
+         * @param   \org\octris\core\cache      $cache          Caching instance.
+         */
+        public function setSnippetCache(\org\octris\core\cache $cache)
+        /**/
+        {
+            $this->cache = $cache;
         }
 
         /**
