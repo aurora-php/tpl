@@ -308,8 +308,29 @@ namespace org\octris\core\tpl {
 
         /**
          * Implementation for '#cache' block function. Starts a cache buffer. Returns cache contents by
-         * by specified key or generates cached content, if cache content is not available. As second
-         * a cache timeout is required. The cache timeout can have one of the following values:
+         * by specified key or generates cached content, if cache content is not available. An optional
+         * escaping method may be specified.
+         *
+         * @octdoc  m:sandbox/cacheLookup
+         * @param   string      $key            Cache-key to lookup.
+         * @param   string      $escape         Optional escaping to use for output.
+         * @return  bool                        Returns true, if key was available in cache.
+         */
+        public function cacheLookup($key, $escape = \org\octris\core\tpl::T_ESC_NONE)
+        /**/
+        {
+            if (!($return = is_null($this->cache))) {
+                if (($return = $this->cache->exists($key))) {
+                    $this->write($this->cache->fetch($key), $escape);
+                }
+            }
+
+            return $return;
+        }
+
+        /**
+         * Store date in the cache. A cache timeout is required. The cache timeout can have
+         * one of the following values:
          *
          * - int: relative timeout in seconds.
          * - int: an absolute unix timestamp. Note, that if $timeout contains an integer that is bigger than
@@ -318,26 +339,17 @@ namespace org\octris\core\tpl {
          * - 0: no cache.
          * - -1: cache never expires.
          *
-         * @octdoc  m:sandbox/cacheStart
-         * @param   string      $key            Cache-key to use for buffer.
-         * @param   mixed       $timeout        Cache timeout.
-         * @return  bool                        Returns true if caching succeeded.
+         * @octdoc  m:sandbox/cacheStore
+         * @param   string      $key            Key to use for storing buffer in cache.
+         * @param   mixed       $data           Data to store in cache.
+         * @param   int         $timeout        Cache timeout.
          */
-        public function cacheStart($key, $timeout)
+        public function cacheStore($key, $data, $timeout)
         /**/
         {
-            // TODO
-        }
-
-        /**
-         * Stop caching output buffer.
-         *
-         * @octdoc  m:sandbox/cacheEnd
-         */
-        public function cacheEnd()
-        /**/
-        {
-            // TODO
+            if (!is_null($this->cache)) {
+                $this->cache->save($key, $data, $timeout);
+            }
         }
 
         /**
