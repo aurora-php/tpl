@@ -31,7 +31,7 @@ namespace org\octris\core\tpl\compiler {
         protected static $inline = array(
             // blocks
             '#bench'    => array('min' => 1, 'max' => 1),
-            '#cache'    => array('min' => 2, 'max' => 2),
+            '#cache'    => array('min' => 2, 'max' => 3),
             '#copy'     => array('min' => 1, 'max' => 1),
             '#cron'     => array('min' => 1, 'max' => 2),
             '#cut'      => array('min' => 1, 'max' => 1),
@@ -312,16 +312,27 @@ namespace org\octris\core\tpl\compiler {
         }
 
         protected static function __cache($args) {
+            $var = '$_' . self::getUniqId();
+            $key = $args[0];
+            $ttl = $args[1];
+            $esc = (isset($args[2]) ? $args[2] : \org\octris\core\tpl::T_ESC_NONE);
+
             return array(
-                'if ($this->cache(' . implode(', ', $args) . ')) {', 
-                '}'
+                sprintf(
+                    'if (!$this->cacheLookup(%s, "%s")) { $this->bufferStart(%s, false);',
+                    $key, $esc, $var
+                ),
+                sprintf(
+                    '$this->bufferEnd(); $this->cacheStore(%s, %s, %s); }', 
+                    $key, $var, $ttl
+                )
             );
         }
         
         protected static function __copy($args) {
             return array(
                 '$this->bufferStart(' . implode(', ', $args) . ', false);', 
-                '$this->bufferEnd(' . implode(', ', $args) . ');'
+                '$this->bufferEnd();'
             );
         }
         
@@ -335,7 +346,7 @@ namespace org\octris\core\tpl\compiler {
         protected static function __cut($args) {
             return array(
                 '$this->bufferStart(' . implode(', ', $args) . ', true);', 
-                '$this->bufferEnd(' . implode(', ', $args) . ');'
+                '$this->bufferEnd();'
             );
         }
         

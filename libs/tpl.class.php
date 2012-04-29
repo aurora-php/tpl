@@ -212,6 +212,18 @@ namespace org\octris\core {
         }
 
         /**
+         * Set cache for template snippets.
+         *
+         * @octdoc  m:tpl/setSnippetCache
+         * @param   \org\octris\core\cache      $cache          Caching instance.
+         */
+        public function setSnippetCache(\org\octris\core\cache $cache)
+        /**/
+        {
+            $this->sandbox->setSnippetCache($cache);
+        }
+
+        /**
          * Executes template toolchain -- compiler and compressors.
          *
          * @octdoc  m:tpl/process
