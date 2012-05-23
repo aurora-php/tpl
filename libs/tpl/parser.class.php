@@ -381,7 +381,7 @@ namespace org\octris\core\tpl {
             $nl  = substr($this->tpl, $offset + $length, 1);
             
             if ($nl == "\n" || $nl == "\r") {
-                $str .= $nl;
+                // $str .= $nl;
             }
 
             // replace template snippet
