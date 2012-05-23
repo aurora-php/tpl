@@ -1228,8 +1228,8 @@ namespace org\octris\core\tpl {
                     $code[] = implode(', ', array_pop($stack));
                     break;
                 case self::T_CONSTANT:
-                    $value = strtolower(substr($value, 1));
-                    $tmp   = comiler\constant::getConstant($value);
+                    $value = strtoupper(substr($value, 1));
+                    $tmp   = compiler\constant::getConstant($value);
                 
                     if (($err = compiler\constant::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
