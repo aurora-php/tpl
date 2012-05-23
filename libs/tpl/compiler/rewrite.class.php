@@ -367,6 +367,13 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
+        protected static function __if($args) {
+            return array(
+                'if (' . implode('', $args) . ') {',
+                '}'
+            );
+        }
+
         protected static function __loop($args) {
             $var = self::getUniqId();
             
