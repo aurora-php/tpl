@@ -529,7 +529,7 @@ namespace org\octris\core\tpl {
                 $val = \org\octris\core\tpl\escape::escapeAttribute($val);
                 break;
             case \org\octris\core\tpl::T_ESC_URI:
-                $val = \org\octris\core\tpl\escape::escapeUrl($val);
+                $val = \org\octris\core\tpl\escape::escapeUri($val);
                 break;
             }
 
