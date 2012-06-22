@@ -65,7 +65,7 @@ namespace org\octris\core\tpl\parser {
             
             self::T_ATTR_START      => '/(?<=\s)(_c_[a-f0-9]+_|(?i:[a-z:_][a-z:_.-]*))=\"/',
             self::T_ATTR_END        => '/(?!\\\\)\"/',
-            self::T_ATTR_COMMAND    => '/\b(_c_[a-f0-9]+_)\b/',
+            self::T_ATTR_COMMAND    => '/(_c_[a-f0-9]+_)/',
         
             self::T_COMMENT_OPEN    => '/<!--/',
             self::T_COMMENT_CLOSE   => '/-->/',
@@ -73,7 +73,7 @@ namespace org\octris\core\tpl\parser {
             self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
             self::T_CDATA_CLOSE     => '/\]\]>/',
         
-            self::T_COMMAND         => '/\b(_c_[a-f0-9]+_)\b/',
+            self::T_COMMAND         => '/(_c_[a-f0-9]+_)/',
         );
         /**/
     

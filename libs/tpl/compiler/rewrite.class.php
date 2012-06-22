@@ -146,6 +146,7 @@ namespace org\octris\core\tpl\compiler {
             'count'      => array('min' => 1, 'max' => 1),
 
             // misc functions
+            'isset'      => array('min' => 1, 'max' => 1),
             'jsonencode' => array('min' => 1, 'max' => 2, 'map' => 'json_encode'),
             'jsondecode' => array('min' => 1, 'max' => 4, 'map' => 'json_decode'),
         );
