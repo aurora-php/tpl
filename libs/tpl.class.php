@@ -1,244 +1,279 @@
 <?php
 
+/*
+ * This file is part of the 'org.octris.core' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace org\octris\core {
     use \org\octris\core\tpl\compiler as compiler;
-    
-    /****c* core/tpl
-     * NAME
-     *      tpl
-     * FUNCTION
-     *      template engine main class
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
-     */
 
-    class tpl {
-        /****v* tpl/$sandbox
-         * SYNOPSIS
+    /**
+     * Main class of template engine.
+     *
+     * @octdoc      c:core/tpl
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
+     */
+    class tpl
+    /**/
+    {
+        /**
+         * Escape types.
+         *
+         * @octdoc  d:tpl/T_ESC_NONE, T_ESC_AUTO, T_ESC_ATTR, T_ESC_CSS, T_ESC_HTML, T_ESC_JS, T_ESC_TAG, T_ESC_URI
+         */
+        const T_ESC_NONE = '';
+        const T_ESC_AUTO = 'auto';
+        const T_ESC_ATTR = 'attr';
+        const T_ESC_CSS  = 'css';
+        const T_ESC_HTML = 'html';
+        const T_ESC_JS   = 'js';
+        const T_ESC_TAG  = 'tag';
+        const T_ESC_URI  = 'uri';
+        /**/
+
+        /**
+         * Instance of sandbox for executing template in.
+         *
+         * @octdoc  p:tpl/$sandbox
+         * @var     \org\octris\core\tpl\sandbox
          */
         protected $sandbox;
-        /*
-         * FUNCTION
-         *      sandbox for executing template in
-         ****
-         */
-        
-        /****v* tpl/$use_cache
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Whether to fetch compiled template from cache.
+         *
+         * @octdoc  p:tpl/$use_cache
+         * @var     bool
          */
         protected $use_cache = false;
-        /*
-         * FUNCTION
-         *      whether to fetch compiled template from cache
-         ****
-         */
-        
-        /****v* tpl/$searchpath
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Stores pathes to look into when searching for template to load.
+         *
+         * @octdoc  p:tpl/$searchpath
+         * @var     array
          */
         protected $searchpath = array();
-        /*
-         * FUNCTION
-         *      path to look in for loading templates
-         ****
-         */
-        
-        /****v* tpl/$l10n
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Instance of locale class.
+         *
+         * @octdoc  p:tpl/$l10n
+         * @var     \org\octris\core\l10n
          */
         protected $l10n;
-        /*
-         * FUNCTION
-         *      instance of l10n
-         ****
-         */
-        
-        /****v* tpl/$path
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Output path for various file types.
+         *
+         * @octdoc  p:tpl/$path
+         * @var     array
          */
         protected $path = array(
             'tpl'   => '/tmp',      // output path for compiled templates
             'js'    => '/tmp',      // output path for compressed javascript
             'css'   => '/tmp'       // output path for compressed css
         );
-        /*
-         * FUNCTION
-         *      output path for various file types
-         ****
+        /**/
+
+        /**
+         * Resource pathes for various file types.
+         *
+         * @octdoc  p:tpl/$resources
+         * @var     array
          */
-        
-        /****m* tpl/__construct
-         * SYNOPSIS
+        protected $resources = array(
+            'tpl'   => '',
+            'js'    => '',
+            'css'   => ''
+        );
+        /**/
+
+        /**
+         * Constructor.
+         *
+         * @octdoc  m:tpl/__construct
          */
         public function __construct()
-        /*
-         * FUNCTION
-         *      constructor
-         ****
-         */
+        /**/
         {
             $this->sandbox = new tpl\sandbox();
         }
-        
-        /****m* tpl/setL10n
-         * SYNOPSIS
+
+        /**
+         * Set l10n dependency.
+         *
+         * @octdoc  m:tpl/setL10n
+         * @param   \org\octris\core\l10n       $l10n       Instance of l10n class.
          */
-        public function setL10n($l10n)
-        /*
-         * FUNCTION
-         *      set l10n dependency
-         * INPUTS
-         *      * $l10n (l10n) -- instance of l10n class
-         ****
-         */
+        public function setL10n(\org\octris\core\l10n $l10n)
+        /**/
         {
             $this->sandbox->setL10n($l10n);
             $this->l10n = $l10n;
         }
-        
-        /****m* tpl/setValues
-         * SYNOPSIS
+
+        /**
+         * Set values for multiple template variables.
+         *
+         * @octdoc  m:tpl/setValues
+         * @param   array       $array      Key/value array with values.
          */
         public function setValues($array)
-        /*
-         * FUNCTION
-         *      set values wort multiple variables
-         * INPUTS
-         *      * $array (array) -- key/value array with values
-         ****
-         */
+        /**/
         {
             $this->sandbox->setValues($array);
         }
-        
-        /****m* tpl/setValue
-         * SYNOPSIS
+
+        /**
+         * Set value for one template variable.
+         *
+         * @octdoc  m:tpl/setValue
+         * @param   string      $name       Name of template variable to set value of.
+         * @param   mixed       $value      Value to set for template variable.
          */
         public function setValue($name, $value)
-        /*
-         * FUNCTION
-         *      set template value
-         * INPUTS
-         *      * $name (string) -- name to set
-         *      * $value (mixed) -- value to set
-         ****
-         */
+        /**/
         {
             $this->sandbox->setValue($name, $value);
         }
 
-        /****m* sandbox/registerMethod
-         * SYNOPSIS
+        /**
+         * Register a custom template method.
+         *
+         * @octdoc  m:sandbox/registerMethod
+         * @param   string      $name       Name of template method to register.
+         * @param   mixed       $callback   Callback to map to template method.
+         * @param   array       $args       For specifying min/max number of arguments required for callback method.
          */
         public function registerMethod($name, $callback, array $args)
-        /*
-         * FUNCTION
-         *      register a custom template method
-         * INPUTS
-         *      * $name (string) -- name of macro to register
-         *      * $callback (mixed) -- callback to call when macro is executed
-         *      * $args (array) -- for testing arguments
-         ****
-         */
+        /**/
         {
             $this->sandbox->registerMethod($name, $callback, $args);
         }
-        
-        /****m* tpl/addSearchPath
-         * SYNOPSIS
+
+        /**
+         * Register pathname for looking up templates in.
+         *
+         * @octdoc  m:tpl/addSearchPath
+         * @param   mixed       $pathname       Name of path to register.
          */
-        public function addSearchPath($pathname) 
-        /*
-         * FUNCTION
-         *      register pathname to look for templates in
-         * INPUTS
-         *      * $pathname (mixed) -- name of path or array of path names to register
-         ****
-         */
+        public function addSearchPath($pathname)
+        /**/
         {
-            if (!in_array($pathname, $this->searchpath)) {
-                $this->searchpath[] = $pathname;
+            if (is_array($pathname)) {
+                foreach ($pathname as $path) $this->addSearchPath($path);
+            } else {
+                if (!in_array($pathname, $this->searchpath)) {
+                    $this->searchpath[] = $pathname;
+                }
             }
         }
-        
-        /****m* tpl/setOutputPath
-         * SYNOPSIS
+
+        /**
+         * Set path for a resource like stylesheets, images according to the
+         * specified extension.
+         *
+         * @octdoc  m:tpl/setResourcePath
+         * @param   string      $ext        Extension of file to set path for.
+         * @param   string      $pathname   Name of path to register.
+         */
+        public function setResourcePath($ext, $pathname)
+        /**/
+        {
+            if (array_key_exists($ext, $this->resources) && is_dir($pathname)) {
+                $this->resources[$ext] = rtrim($pathname, '/');
+            }
+        }
+
+        /**
+         * Set output path for compiled templates and compressed files.
+         *
+         * @octdoc  m:tpl/setOutputPath
+         * @param   string      $ext        Extension of file to set path for.
+         * @param   string      $pathname   Name of path to register.
          */
         public function setOutputPath($ext, $pathname)
-        /*
-         * FUNCTION
-         *      set output path for compiled templates / compressed files
-         * INPUTS
-         *      * $ext (string) -- extension of file (filetype)
-         *      * $pathname (string) -- pathname to set for extension
-         * OUTPUTS
-         *      
-         ****
-         */
+        /**/
         {
-            if (array_key_exists($type, $this->path) && is_writable($path)) {
-                $this->path[$type] = $path;
+            if (array_key_exists($ext, $this->path) && is_writable($pathname)) {
+                $this->path[$ext] = rtrim($pathname, '/');
             }
         }
-        
-        /****m* tpl/process
-         * SYNOPSIS
+
+        /**
+         * Set cache for template snippets.
+         *
+         * @octdoc  m:tpl/setSnippetCache
+         * @param   \org\octris\core\cache      $cache          Caching instance.
          */
-        protected function process($inp, $out)
-        /*
-         * FUNCTION
-         *      executes template compiler and css/javascript compressor
-         * INPUTS
-         *      * $inp (string) -- input filename
-         *      * $out (string) -- output filename
-         ****
+        public function setSnippetCache(\org\octris\core\cache $cache)
+        /**/
+        {
+            $this->sandbox->setSnippetCache($cache);
+        }
+
+        /**
+         * Executes template toolchain -- compiler and compressors.
+         *
+         * @octdoc  m:tpl/process
+         * @param   string      $inp        Input filename.
+         * @param   string      $out        Output filename.
+         * @param   string      $escape     Escaping to use.
          */
+        protected function process($inp, $out, $escape)
+        /**/
         {
             // tpl\compiler\constant::setConstants($this->constants);
             $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
-            $c->setL10n($this->l10n);
+            if (!is_null($this->l10n)) $c->setL10n($this->l10n);
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
-                $tpl = $c->process($filename);
-            
+                $tpl = $c->process($filename, $escape);
+
                 $c = new tpl\compress();
-                $tpl = $c->process($tpl, $this->path['js'], $this->path['css']);
-                
+                $tpl = $c->process($tpl, $this->path, $this->resources);
+                $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
+
                 file_put_contents($out, $tpl);
             } else {
                 die(sprintf(
-                    'unable to locate file "%s" in "%s"', 
+                    'unable to locate file "%s" in "%s"',
                     $inp,
                     implode(':', $this->searchpath)
                 ));
             }
-            
+
             return $out;
         }
-        
-        /****m* tpl/compile
-         * SYNOPSIS
+
+        /**
+         * Compile template and return compiled template as string.
+         *
+         * @octdoc  m:tpl/compile
+         * @param   string      $filename       Name of template file to compile.
+         * @param   string      $escape         Optional escaping to use.
+         * @return  string                      Compiled template.
          */
-        public function compile($filename)
-        /*
-         * FUNCTION
-         *      compile template and return compiled template
-         * INPUTS
-         *      * filename (string) -- name of template file to compile
-         * OUTPUTS
-         *      (string) -- compiled template
-         ****
-         */
+        public function compile($filename, $escape = self::T_ESC_HTML)
+        /**/
         {
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $tpl = '';
-            
+
             $sandbox = $this->sandbox;
 
             $c = new tpl\compiler();
@@ -246,29 +281,27 @@ namespace org\octris\core {
             $c->addSearchPath($this->searchpath);
 
             if (($filename = $c->findFile($inp)) !== false) {
-                $tpl = $c->process($filename);
+                $tpl = $c->process($filename, $escape);
             } else {
                 die(sprintf(
-                    'unable to locate file "%s" in "%s"', 
+                    'unable to locate file "%s" in "%s"',
                     $inp,
                     implode(':', $this->searchpath)
                 ));
             }
-            
+
             return $tpl;
         }
-        
-        /****m* tpl/render
-         * SYNOPSIS
+
+        /**
+         * Render a template and send output to stdout.
+         *
+         * @octdoc  m:tpl/render
+         * @param   string      $filename       Filename of template to render.
+         * @param   string      $escape         Optional escaping to use.
          */
-        public function render($filename)
-        /*
-         * FUNCTION
-         *      render a template and send output to stdout
-         * INPUTS
-         *      * $filename (string) -- filename of template to render
-         ****
-         */
+        public function render($filename, $escape = self::T_ESC_HTML)
+        /**/
         {
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
@@ -276,29 +309,26 @@ namespace org\octris\core {
             if (!$this->use_cache) {
                 // do not use cache -- first process template using
                 // template compiler and javascript/css compressor
-                $out = $this->process($inp, $out);
+                $out = $this->process($inp, $out, $escape);
             }
 
-            $this->sandbox->render($out, tpl\sandbox::T_CONTEXT_HTML);
+            $this->sandbox->render($out);
         }
-        
-        /****m* tpl/fetch
-         * SYNOPSIS
+
+        /**
+         * Render a template and return output as string.
+         *
+         * @octdoc  m:tpl/fetch
+         * @param   string      $filename       Filename of template to render.
+         * @param   string      $escape         Optional escaping to use.
+         * @return  string                      Rendered template.
          */
-        public function fetch($filename) 
-        /*
-         * FUNCTION
-         *      render a template and return it as string
-         * INPUTS
-         *      * $filename (string) -- filename of template to render
-         * OUTPUTS
-         *      (string) -- rendered template
-         ****
-         */
+        public function fetch($filename, $escape = self::T_ESC_HTML)
+        /**/
         {
             ob_start();
 
-            $this->render($filename);
+            $this->render($filename, $escape);
 
             $return = ob_get_contents();
             ob_end_clean();
@@ -306,20 +336,18 @@ namespace org\octris\core {
             return $return;
         }
 
-        /****m* tpl/save
-         * SYNOPSIS
+        /**
+         * Render a template and save output to a file.
+         *
+         * @octdoc  m:tpl/save
+         * @param   string      $savename       Filename to save output to.
+         * @param   string      $filename       Filename of template to render.
+         * @param   string      $escape         Optional escaping to use.
          */
-        function save($filename, $savename)
-        /*
-         * FUNCTION
-         *      render a template and write it into a file
-         * INPUTS
-         *      * $filename (string) -- filename of template to render
-         *      * $savename (string) -- savename
-         ****
-         */
+        public function save($savename, $filename, $escape = self::T_ESC_HTML)
+        /**/
         {
-            file_put_contents($savename, $this->fetch($filename));
+            file_put_contents($savename, $this->fetch($filename, $escape));
         }
     }
 }

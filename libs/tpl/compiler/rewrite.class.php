@@ -1,34 +1,43 @@
 <?php
 
-namespace org\octris\core\tpl\compiler {
-    /****c* compiler/rewrite
-     * NAME
-     *      rewrite
-     * FUNCTION
-     *      Rewrite template code. Rewrite inline function calls, and rewrite
-     *      function calls according to if they are allowed php function calls
-     *      or calls to functions that have to be registered to sandbox on
-     *      template rendering. This is a static class.
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
-     */
+/*
+ * This file is part of the 'org.octris.core' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    class rewrite {
-        /****v* rewrite/$inline
-         * SYNOPSIS
+namespace org\octris\core\tpl\compiler {
+    /**
+     * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
+     * if they are allowed php function calls or calls to functions that have to be registered to 
+     * sandbox on template rendering.
+     *
+     * @octdoc      c:compiler/rewrite
+     * @copyright   copyright (c) 2010-2011 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
+     */
+    class rewrite
+    /**/
+    {
+        /**
+         * Inline method rewrite.
+         *
+         * @octdoc  p:rewrite/$inline
+         * @var     array
          */
         protected static $inline = array(
             // blocks
-            '#if'       => array('min' => 1, 'max' => 1),
-            '#foreach'  => array('min' => 2, 'max' => 3),
-            '#cache'    => array('min' => 2, 'max' => 2),
+            '#bench'    => array('min' => 1, 'max' => 1),
+            '#cache'    => array('min' => 2, 'max' => 3),
             '#copy'     => array('min' => 1, 'max' => 1),
             '#cron'     => array('min' => 1, 'max' => 2),
             '#cut'      => array('min' => 1, 'max' => 1),
-            '#loop'     => array('min' => 3, 'max' => 4),
+            '#if'       => array('min' => 1, 'max' => 1),
+            '#foreach'  => array('min' => 2, 'max' => 3),
+            '#loop'     => array('min' => 4, 'max' => 5),
             '#onchange' => array('min' => 1, 'max' => 1),
             '#trigger'  => array('min' => 0, 'max' => 3),
             
@@ -57,10 +66,11 @@ namespace org\octris\core\tpl\compiler {
             'ge'    => array('min' => 2, 'max' => 2),   // ... >= ...
             'ne'    => array('min' => 2, 'max' => 2),   // ... != ...
 
-            'bool'   => array('min' => 1, 'max' => 1),  // (bool)...
-            'int'    => array('min' => 1, 'max' => 1),  // (int)...
-            'float'  => array('min' => 1, 'max' => 1),  // (float)...
-            'string' => array('min' => 1, 'max' => 1),  // (string)...
+            'bool'       => array('min' => 1, 'max' => 1),  // (bool)...
+            'int'        => array('min' => 1, 'max' => 1),  // (int)...
+            'float'      => array('min' => 1, 'max' => 1),  // (float)...
+            'string'     => array('min' => 1, 'max' => 1),  // (string)...
+            'collection' => array('min' => 1, 'max' => 1),
 
             'now'       => array('min' => 0, 'max' => 0),
             'uniqid'    => array('min' => 0, 'max' => 0),
@@ -68,69 +78,144 @@ namespace org\octris\core\tpl\compiler {
             'dump'      => array('min' => 1, 'max' => 1),
             'error'     => array('min' => 1, 'max' => 1),
             
-            'include'   => array('min' => 1, 'max' => 1)
+            'include'   => array('min' => 1, 'max' => 1),
+            
+            // string functions
+            'explode'   => array('min' => 2, 'max' => 2),
+            'implode'   => array('min' => 2, 'max' => 2),
+            'lpad'      => array('min' => 2, 'max' => 3),
+            'rpad'      => array('min' => 2, 'max' => 3),
+            'totitle'   => array('min' => 1, 'max' => 1),
+            'concat'    => array('min' => 2),
+            
+            // array functions
+            'array'     => array('min' => 1),
+            'cycle'     => array('min' => 1, 'max' => 3),
+
+            // misc functions
+            'escape'    => array('min' => 2, 'max' => 2),
+
+            // localisation functions
+            'comify'    => array('min' => 2, 'max' => 4),
+            'enum'      => array('min' => 2, 'max' => 5),
+            'monf'      => array('min' => 1, 'max' => 2),
+            'numf'      => array('min' => 1, 'max' => 2),
+            'perf'      => array('min' => 1, 'max' => 2),
+            'datef'     => array('min' => 1, 'max' => 2),
+            'gender'    => array('min' => 1, 'max' => 2),
+            'quant'     => array('min' => 2, 'max' => 5),
+            'yesno'     => array('min' => 2, 'max' => 4),
         );
-        /*
-         * FUNCTION
-         *      inline method rewrite
-         ****
-         */
-        
-        /****v* rewrite/$phpfunc
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Allowed PHP functions and optional mapping to an PHP or framework internal name.
+         *
+         * @octdoc  p:rewrite/$phpfunc
+         * @var     array
          */
         protected static $phpfunc = array(
-            'substr'    => array('min' => 2, 'max' => 3)
+            // string functions
+            'chunk'      => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
+            'chunk_id'   => array('min' => 1, 'max' => 5, 'map' => '\org\octris\core\type\string::chunk_id'),
+            'cut'        => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::cut'),
+            'lcfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
+            'ltrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
+            'obliterate' => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::obliterate'),
+            'repeat'     => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
+            'replace'    => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::str_replace'),
+            'rtrim'      => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::rtrim'),
+            'shorten'    => array('min' => 1, 'max' => 3, 'map' => '\org\octris\core\type\string::shorten'),
+            'sprintf'    => array('min' => 1,             'map' => '\org\octris\core\type\string::sprintf'),
+            'substr'     => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
+            'tolower'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtolower'),
+            'toupper'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtoupper'),
+            'trim'       => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::trim'),
+            'ucfirst'    => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::ucfirst'),
+            'vsprintf'   => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string::vsprintf'),
+            
+            // numeric functions
+            'abs'        => array('min' => 1, 'max' => 1),
+            'ceil'       => array('min' => 1, 'max' => 1),
+            'floor'      => array('min' => 1, 'max' => 1),
+            'max'        => array('min' => 2),
+            'min'        => array('min' => 2),
+            'round'      => array('min' => 1, 'max' => 2),
+
+            // array functions
+            'count'      => array('min' => 1, 'max' => 1),
+
+            // misc functions
+            'isset'      => array('min' => 1, 'max' => 1),
+            'jsonencode' => array('min' => 1, 'max' => 2, 'map' => 'json_encode'),
+            'jsondecode' => array('min' => 1, 'max' => 4, 'map' => 'json_decode'),
         );
-        /*
-         * FUNCTION
-         *      allowed php functions
-         ****
-         */
-        
-        /****v* rewrite/$forbidden
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Forbidden function names.
+         *
+         * @octdoc  p:rewrite/$forbidden
+         * @var     array
          */
         protected static $forbidden = array(
             'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
-            '__construct', '__call', 'registermethod', 'render'
+            '__construct', '__call', 'registermethod', 'render', 'write'
         );
-        /*
-         * FUNCTION
-         *      forbidden function names
-         ****
-         */
+        /**/
         
-        /****v* rewrite/$last_error
-         * SYNOPSIS
+        /**
+         * Last error occured.
+         *
+         * @octdoc  p:rewrite/$last_error
+         * @var     string
          */
         protected static $last_error = '';
-        /*
-         * FUNCTION
-         *      last error message
-         ****
-         */
-        
-        /*
-         * static class cannot be instantiated
+        /**/
+
+        /**
+         * Constructor and clone magic method are protected to prevent instantiating of class.
+         *
+         * @octdoc  m:rewrite/__construct, __clone
          */
         protected function __construct() {}
         protected function __clone() {}
+        /**/
         
-        /****m* rewrite/__callStatic
-         * SYNOPSIS
+        /**
+         * Return last occured error.
+         *
+         * @octdoc  m:rewrite/getError
+         * @return  string                  Last occured error.
+         */
+        public static function getError()
+        /**/
+        {
+            return self::$last_error;
+        }
+
+        /**
+         * Set error.
+         *
+         * @octdoc  m:rewrite/setError
+         * @param   string      $name       Name of constant the error occured for.
+         * @param   string      $msg        Additional error message.
+         */
+        protected static function setError($name, $msg)
+        /**/
+        {
+            self::$last_error = sprintf('"%s" -- %s', $name, $msg);
+        }
+
+        /**
+         * Wrapper for methods that can be rewritten.
+         *
+         * @octdoc  m:rewrite/__callStatic
+         * @param   string      $name       Name of method to rewrite.
+         * @param   array       $args       Arguments for method.
          */
         public static function __callStatic($name, $args)
-        /*
-         * FUNCTION
-         *      wrapper for methods that can be optimized
-         * INPUTS
-         *      * $name (string) -- name of method
-         *      * $args (array) -- arguments for method
-         * OUTPUTS
-         *      
-         ****
-         */
+        /**/
         {
             self::$last_error = '';
            
@@ -139,8 +224,29 @@ namespace org\octris\core\tpl\compiler {
             
             if (in_array($name, self::$forbidden)) {
                 self::setError($name, 'access denied');
-            } elseif (($is_php = isset(self::$phpfunc[$name])) || isset(self::$inline[$name])) {
-                // known method
+            } elseif (isset(self::$phpfunc[$name])) {
+                // call to allowed PHP function
+                $cnt = count($args);
+                
+                if (isset(self::$phpfunc[$name]['min'])) {
+                    if ($cnt < self::$phpfunc[$name]['min']) {
+                        self::setError($name, 'not enough arguments');
+                    }
+                }
+                if (isset(self::$phpfunc[$name]['max'])) {
+                    if ($cnt > self::$phpfunc[$name]['max']) {
+                        self::setError($name, 'too many arguments');
+                    }
+                }
+                
+                if (isset(self::$phpfunc[$name]['map'])) {
+                    // resolve 'real' PHP method name
+                    $name = self::$phpfunc[$name]['map'];
+                }
+                
+                return $name . '(' . implode(', ', $args) . ')';
+            } elseif (isset(self::$inline[$name])) {
+                // inline function rewrite
                 $cnt = count($args);
                 
                 if (isset(self::$inline[$name]['min'])) {
@@ -150,19 +256,13 @@ namespace org\octris\core\tpl\compiler {
                 }
                 if (isset(self::$inline[$name]['max'])) {
                     if ($cnt > self::$inline[$name]['max']) {
-                        self::setError($name, 'to many arguments');
+                        self::setError($name, 'too many arguments');
                     }
                 }
                 
-                if ($is_php) {
-                    // call to allowed PHP function
-                    return $name . '(' . implode(', ', $args) . ')';
-                } else {
-                    // inline function rewrite
-                    $name = '_' . str_replace('#', '_', $name);
+                $name = '_' . str_replace('#', '_', $name);
 
-                    return self::$name($args);
-                }
+                return self::$name($args);
             } elseif (substr($name, 0, 1) == '#') {
                 // unknown block function
                 self::setError($name, 'unknown block type');
@@ -175,48 +275,14 @@ namespace org\octris\core\tpl\compiler {
             }
         }
         
-        /****m* rewrite/getError
-         * SYNOPSIS
-         */
-        public static function getError()
-        /*
-         * FUNCTION
-         *      return last occured error message
-         * OUTPUTS
-         *      (string) -- error message
-         ****
-         */
-        {
-            return self::$last_error;
-        }
-
-        /****m* rewrite/setError
-         * SYNOPSIS
-         */
-        protected static function setError($func, $msg)
-        /*
-         * FUNCTION
-         *      set an error message
-         * INPUTS
-         *      * $func (string) -- name of function the error occured for
-         *      * $msg (string) -- additional error message
-         ****
-         */
-        {
-            self::$last_error = sprintf('"%s" -- %s', $func, $msg);
-        }
-
-        /****m* rewrite/getUniqId
-         * SYNOPSIS
+        /**
+         * Helper function to create a uniq identifier required by several functions.
+         *
+         * @octdoc  m:rewrite/getUniqId
+         * @return  string                  Uniq identifier
          */
         protected static function getUniqId()
-        /*
-         * FUNCTION
-         *      uniq identifier generator
-         * OUTPUTS
-         *      (string) -- uniq identifier
-         ****
-         */
+        /**/
         {
             return md5(uniqid());
         }
@@ -224,31 +290,50 @@ namespace org\octris\core\tpl\compiler {
         /*
          * inline block functions, that can be converted directly
          */
-        protected static function __if($args) {
+        protected static function __bench($args) {
+            $var1 = '$_' . self::getUniqId();
+            $var2 = '$_' . self::getUniqId();
+
             return array(
-                'if (' . implode('', $args) . ') {',
-                '}'
+                sprintf(
+                    '%s = microtime(true); ' .
+                    'for (%s = 0; %s < abs(%s); ++%s) { ' .
+                    'if (%s == 1) ob_start();',
+                    $var1,
+                    $var2, $var2, $args[0], $var2,
+                    $var2
+                ),
+                sprintf(
+                    '} %s = microtime(true) - %s; ' .
+                    'if (abs(%s) > 0) ob_end_clean(); ' .
+                    'printf("[benchmark iterations: %%s, time: %%1.6f]", abs(%s), %s);',
+                    $var1, $var1, $args[0], $args[0], $var1
+                )
             );
         }
 
-        protected static function __foreach($args) {
-            return array(
-                'while ($this->each("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {', 
-                '}'
-            );
-        }
-        
         protected static function __cache($args) {
+            $var = '$_' . self::getUniqId();
+            $key = $args[0];
+            $ttl = $args[1];
+            $esc = (isset($args[2]) ? $args[2] : \org\octris\core\tpl::T_ESC_NONE);
+
             return array(
-                'if ($this->cache(' . implode(', ', $args) . ')) {', 
-                '}'
+                sprintf(
+                    'if (!$this->cacheLookup(%s, "%s")) { $this->bufferStart(%s, false);',
+                    $key, $esc, $var
+                ),
+                sprintf(
+                    '$this->bufferEnd(); $this->cacheStore(%s, %s, %s); }', 
+                    $key, $var, $ttl
+                )
             );
         }
         
         protected static function __copy($args) {
             return array(
                 '$this->bufferStart(' . implode(', ', $args) . ', false);', 
-                '$this->bufferEnd(' . implode(', ', $args) . ');'
+                '$this->bufferEnd();'
             );
         }
         
@@ -262,13 +347,54 @@ namespace org\octris\core\tpl\compiler {
         protected static function __cut($args) {
             return array(
                 '$this->bufferStart(' . implode(', ', $args) . ', true);', 
-                '$this->bufferEnd(' . implode(', ', $args) . ');'
+                '$this->bufferEnd();'
             );
         }
         
-        protected static function __loop($args) {
+        protected static function __foreach($args) {
+            $var = self::getUniqId();
+            $arg = $args[1];
+            unset($args[1]);
+
             return array(
-                'while ($this->loop("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
+                sprintf(
+                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    'return new \org\octris\core\tpl\sandbox\eachiterator(%s);' . 
+                    '}); ' .
+                    'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var, $arg, $var
+                ),
+                '}'
+            );
+        }
+        
+        protected static function __if($args) {
+            return array(
+                'if (' . implode('', $args) . ') {',
+                '}'
+            );
+        }
+
+        protected static function __loop($args) {
+            $var = self::getUniqId();
+            
+            $start = $args[1];
+            $end   = $args[2];
+            $step  = $args[3];
+
+            unset($args[1]);
+            unset($args[2]);
+            unset($args[3]);
+
+            return array(
+                sprintf(
+                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    'return new \org\octris\core\tpl\sandbox\eachiterator(' .
+                    'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
+                    '); }); ' . 
+                    'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
+                    $var, $var, $start, $end, $step, $var
+                ),
                 '}'
             );
         }
@@ -365,7 +491,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _ne($args) {
-            return '(' . implode(' == ', $args) . ')';
+            return '(' . implode(' != ', $args) . ')';
         }
         
         protected static function _bool($args) {
@@ -382,6 +508,10 @@ namespace org\octris\core\tpl\compiler {
         
         protected static function _string($args) {
             return '((string)' . $args[0] . ')';
+        }
+        
+        protected static function _collection($args) {
+            return '\\org\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
         }
         
         protected static function _now() {
@@ -405,7 +535,79 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _include($args) {
-            return '$this->include(' . implode('', $args) . ')';
+            return '$this->includetpl(' . implode('', $args) . ')';
+        }
+        
+        // string functions
+        protected static function _explode($args) {
+            return 'new \\org\\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
+        }
+        
+        protected static function _implode($args) {
+            return '(implode(' . $args[0] . ', \\org\\octris\\core\\type::settype(' . $args[1] . ', "array")))';
+        }
+        
+        protected static function _lpad($args) {
+            $args = $args + array(null, null, ' ');
+            
+            return '(str_pad(' . implode(', ', $args) . ', STR_PAD_LEFT))';
+        }
+        
+        protected static function _rpad($args) {
+            $args = $args + array(null, null, ' ');
+            
+            return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
+        }
+        
+        protected static function _totitle($args) {
+            return '\\org\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+        }
+
+        protected static function _concat($args) {
+            return '(' . implode(' . ', $args) . ')';
+        }
+        
+        // array functions
+        protected static function _array($args) {
+            return 'new \\org\\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
+        }
+        
+        protected static function _cycle($args) {
+            return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
+        }
+
+        // misc functions
+        protected static function _escape($args) {
+            return '($this->escape(' . implode(', ', $args) . '))';
+        }
+
+        // localization functions
+        protected static function _comify($args) {
+            // TODO: implementation
+        }
+        protected static function _enum($args) {
+            // TODO: implementation
+        }        
+        protected static function _monf($args) {
+            // TODO: implementation
+        }
+        protected static function _numf($args) {
+            // TODO: implementation
+        }
+        protected static function _perf($args) {
+            // TODO: implementation
+        }
+        protected static function _datef($args) {
+            // TODO: implementation
+        }
+        protected static function _gender($args) {
+            // TODO: implementation
+        }
+        protected static function _quant($args) {
+            // TODO: implementation
+        }
+        protected static function _yesno($args) {
+            // TODO: implementation
         }
     }
 }

@@ -1,23 +1,29 @@
 <?php
 
-namespace org\octris\core\tpl {
-    use \org\octris\core\tpl\compiler as compiler;
-    
-    /****c* tpl/compiler
-     * NAME
-     *      compiler
-     * FUNCTION
-     *      template compiler
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
-     */
+/*
+ * This file is part of the 'org.octris.core' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    class compiler {
-        /****d* compiler/T_...
-         * SYNOPSIS
+namespace org\octris\core\tpl {
+    /**
+     * Implementation of template compiler.
+     *
+     * @octdoc      c:tpl/compiler
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
+     */
+    class compiler
+    /**/
+    {
+        /**
+         * Parser tokens.
+         * 
+         * @octdoc  d:compiler/T_...
          */
         const T_START           = 1;
         const T_END             = 2;
@@ -36,6 +42,7 @@ namespace org\octris\core\tpl {
         const T_CONSTANT        = 23;
         const T_MACRO           = 24;
         const T_GETTEXT         = 25;
+        const T_ESCAPE          = 26;
     
         const T_STRING          = 30;
         const T_NUMBER          = 31;
@@ -43,14 +50,13 @@ namespace org\octris\core\tpl {
         
         const T_WHITESPACE      = 40;
         const T_NEWLINE         = 41;
-        /*
-         * FUNCTION
-         *      tokens
-         ****
-         */
+        /**/
 
-        /****v* compiler/$tokens
-         * SYNOPSIS
+        /**
+         * Regular expression patterns for parser tokens.
+         *
+         * @octdoc  p:compiler/$tokens
+         * @var     array
          */
         private static $tokens = array(
             self::T_IF_OPEN     => '#if',
@@ -63,8 +69,10 @@ namespace org\octris\core\tpl {
             self::T_BRACE_CLOSE => '\)',
             self::T_PSEPARATOR  => '\,',
 
+            self::T_ESCAPE      => 'escape',
             self::T_LET         => 'let',
             self::T_GETTEXT     => '_',
+            self::T_BOOL        => '(true|false)',
             self::T_METHOD      => '[a-z_][a-z0-9_]*',
             self::T_VARIABLE    => '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+',
             self::T_CONSTANT    => "%[_a-z][_a-z0-9]*",
@@ -72,19 +80,18 @@ namespace org\octris\core\tpl {
         
             self::T_STRING      => "([\"']).*?(?!\\\\)\\2",
             self::T_NUMBER      => '[+-]?[0-9]+(\.[0-9]+|)',
-            self::T_BOOL        => '(true|false)',
             
             self::T_WHITESPACE  => '\s+',
             self::T_NEWLINE     => '\n+',
         );
-        /*
-         * FUNCTION
-         *      token patterns for tokenizer
-         ****
-         */
+        /**/
 
-        /****v* compiler/$rules
-         * SYNOPSIS
+        /**
+         * Template analyzer rules.
+         *
+         * @octdoc  p:compiler/$rules
+         * @octdoc  private static $rules = array(...);
+         * @var     array
          */
         private static $rules = array(
             self::T_START   => array(
@@ -323,6 +330,48 @@ namespace org\octris\core\tpl {
                     )
                 ),
         
+                // escape : escape(..., ...)
+                self::T_ESCAPE => array(
+                    self::T_BRACE_OPEN  => array(
+                        self::T_VARIABLE    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                        self::T_CONSTANT    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                        self::T_STRING      => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                        self::T_VARIABLE    => array(
+                            self::T_PSEPARATOR  => array(
+                                self::T_STRING      => array(
+                                    self::T_BRACE_CLOSE => array(
+                                        self::T_END => NULL,
+                                    )
+                                ),
+                            ),
+                        ), 
+                    )
+                ),
+
                 // let : let($..., ...)
                 self::T_LET  => array(
                     self::T_BRACE_OPEN  => array(
@@ -719,113 +768,96 @@ namespace org\octris\core\tpl {
                 )
             )
         );
-        /*
-         * FUNCTION
-         *      analyzer rules
-         ****
-         */
+        /**/
         
-        /****v* compiler/$tokennames
-         * SYNOPSIS
+        /**
+         * Names of tokens. This array gets build the first time the constructor is called.
+         *
+         * @octdoc  p:compiler/$tokennames
+         * @var     array
          */
         private static $tokennames = NULL;
-        /*
-         * FUNCTION
-         *      names of tokens to be filled by constructor
-         ****
-         */
-        
-        /****v* compiler/$filename
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Name of file currently compiled.
+         *
+         * @octdoc  p:compiler/$filename
+         * @var     string
          */
         protected $filename = '';
-        /*
-         * FUNCTION
-         *      name of file currently compiled
-         ****
-         */
-        
-        /****v* compiler/$searchpath
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Stores pathes to look into when searching for template to load.
+         *
+         * @octdoc  p:compiler/$searchpath
+         * @var     array
          */
         protected $searchpath = array();
-        /*
-         * FUNCTION
-         *      path to look in for loading templates
-         ****
-         */
+        /**/
 
-        /****v* compiler/$l10n
-         * SYNOPSIS
+        /**
+         * Instance of locale class.
+         *
+         * @octdoc  p:compiler/$l10n
+         * @var     \org\octris\core\l10n
          */
         protected $l10n;
-        /*
-         * FUNCTION
-         *      instance of l10n
-         ****
-         */
+        /**/
 
-        /****m* compiler/__construct
-         * SYNOPSIS
+        /**
+         * Constructor.
+         *
+         * @octdoc  m:compiler/__construct
          */
         public function __construct()
-        /*
-         * FUNCTION
-         *      constructor
-         ****
-         */
+        /**/
         {
             if (is_null(self::$tokennames)) {
                 $class = new \ReflectionClass($this);
                 self::$tokennames = array_flip($class->getConstants());
             }
         }
-        
-        /****m* compiler/setL10n
-         * SYNOPSIS
+
+        /**
+         * Set l10n dependency.
+         *
+         * @octdoc  m:compiler/setL10n
+         * @param   \org\octris\core\l10n       $l10n       Instance of l10n class.
          */
-        public function setL10n($l10n)
-        /*
-         * FUNCTION
-         *      set l10n dependency
-         * INPUTS
-         *      * $l10n (l10n) -- instance of l10n class
-         ****
-         */
+        public function setL10n(\org\octris\core\l10n $l10n)
+        /**/
         {
             $this->l10n = $l10n;
         }
-        
-        /****m* compiler/addSearchPath
-         * SYNOPSIS
+
+        /**
+         * Register pathname for looking up templates in.
+         *
+         * @octdoc  m:compiler/addSearchPath
+         * @param   mixed       $pathname       Name of path to register.
          */
-        public function addSearchPath($path)
-        /*
-         * FUNCTION
-         *      add path to lookup templates in
-         * INPUTS
-         *      * $path (mixed) -- path to add, string or array of strings
-         ****
-         */
+        public function addSearchPath($pathname)
+        /**/
         {
-            if (!is_array($path)) $path = array($path);
-            
-            $this->searchpath = array_unique(array_merge($this->searchpath, $path));
+            if (is_array($pathname)) {
+                foreach ($pathname as $path) $this->addSearchPath($path);
+            } else {
+                if (!in_array($pathname, $this->searchpath)) {
+                    $this->searchpath[] = $pathname;
+                }
+            }
         }
         
-        /****m* compiler/findFile
-         * SYNOPSIS
+        /**
+         * Lookup a template file in the configured searchpathes.
+         *
+         * @octdoc  m:compiler/findFile
+         * @param   string      $filename       Name of file to lookup.
          */
         public function findFile($filename)
-        /*
-         * FUNCTION
-         *      lookup a file in the searchpath 
-         * INPUTS
-         *      * $filename (string) -- name of file to lookup
-         * OUTPUTS
-         *      (mixed) -- returns full path of file or false, if file could not be located
-         ****
-         */
+        /**/
         {
             $return = false;
             
@@ -846,38 +878,30 @@ namespace org\octris\core\tpl {
             return $return;
         }
 
-        /****m* compiler/getTokenName
-         * SYNOPSIS
+        /**
+         * Return name of token.
+         *
+         * @octdoc  m:compiler/getTokenName
+         * @param   int     $token      ID of token.
+         * @return  string              Name of token.
          */
         protected function getTokenName($token)
-        /*
-         * FUNCTION
-         *      return name of token
-         * INPUTS
-         *      * $token (int) -- ID of token
-         * OUTPUTS
-         *      (string) -- name of token
-         ****
-         */
+        /**/
         {
             return (isset(self::$tokennames[$token])
                     ? self::$tokennames[$token]
                     : 'T_UNKNOWN');
         }
-        
-        /****m* compiler/getTokenName
-         * SYNOPSIS
+
+        /**
+         * Return names of multiple tokens.
+         *
+         * @octdoc  m:compiler/getTokenNames
+         * @param   array       $tokens     Array of token IDs.
+         * @return  array                   Names of tokens.
          */
         protected function getTokenNames(array $tokens)
-        /*
-         * FUNCTION
-         *      return names for tokens
-         * INPUTS
-         *      * $tokens (array) -- array of tokens
-         * OUTPUTS
-         *      (string) -- name of token
-         ****
-         */
+        /**/
         {
             $return = array();
             
@@ -886,26 +910,22 @@ namespace org\octris\core\tpl {
             return $return;
         }
         
-        /****m* compiler/error
-         * SYNOPSIS
+        /**
+         * Trigger an error and halt execution.
+         *
+         * @octdoc  m:compiler/error
+         * @param   string      $type       Type of error to trigger.
+         * @param   int         $cline      Line in compiler class error was triggered from.
+         * @param   int         $line       Line in template the error was triggered for.
+         * @param   int         $token      ID of token that triggered the error.
+         * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
         protected function error($type, $cline, $line, $token, $payload = NULL)
-        /*
-         * FUNCTION
-         *      trigger an error
-         * INPUTS
-         *      * $type (string) -- type of error to trigger
-         *      * $cline (int) -- error occurred in this line of compiler class
-         *      * $line (int) -- error occurred in this line of the template
-         *      * $token (int) -- ID of token, that triggered the error
-         *      * $payload (mixed) -- (optional) additional information -- either an array of expected token IDs, or an additional 
-         *        message
-         ****
-         */
+        /**/
         {
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
-            printf("   file:     %s\n", $this->filename);
+            printf("   file :    %s\n", $this->filename);
             printf("   token:    %s\n", $this->getTokenName($token));
             
             if (is_array($payload)) {
@@ -916,21 +936,17 @@ namespace org\octris\core\tpl {
          
             die();
         }
-        
-        /****m* compiler/tokenize
-         * SYNOPSIS
+
+        /**
+         * Tokenizer converts template snippets to tokens.
+         *
+         * @octdoc  m:compiler/tokenize
+         * @param   string      $in         Template snippet to tokenize.
+         * @param   int         $line       Line number of template the snippet was taken from.
+         * @return  array                   Tokens parsed from snippet.
          */
         protected function tokenize($in, $line)
-        /*
-         * FUNCTION
-         *      tokenizer converts template snippet to tokens
-         * INPUTS
-         *      * $in (string) -- template snippet to tokenize
-         *      * $line (int) -- line number of snippet in template 
-         * OUTPUTS
-         *      (array) -- tokens
-         ****
-         */
+        /**/
         {
             $out = array();
             $in  = stripslashes($in);
@@ -974,21 +990,17 @@ namespace org\octris\core\tpl {
             return $out;
         }
 
-        /****m* compiler/analyze
-         * SYNOPSIS
+        /**
+         * Token analyzer. The analyzer applies rulesets to tokens and checks if
+         * the rules are fulfilled.
+         *
+         * @octdoc  m:compiler/analyze
+         * @param   array       $tokens     Tokens to analyze.
+         * @param   array       $blocks     Block information required by analyzer / compiler.
+         * @return  bool                    Returns true if token analysis succeeded.
          */
         protected function analyze(array $tokens, array &$blocks)
-        /*
-         * FUNCTION
-         *      token analyzer -- applies rulesets to tokens and check if the
-         *      rules are fulfilled
-         * INPUTS
-         *      * $tokens (array) -- tokens to analyz
-         *      * $blocks (array) -- block information required by analyzer / compiler
-         * OUTPUTS
-         *      (array) -- errors
-         ****
-         */
+        /**/
         {
             $braces  = 0;               // brace level
             $current = null;            // current token
@@ -1058,7 +1070,7 @@ namespace org\octris\core\tpl {
                     break;
                 case self::T_IF_ELSE:
                     // else is only allowed within an 'if' block
-                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] == self::T_IF_OPEN) || $cnt == 0) {
+                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != self::T_IF_OPEN)) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
                         $blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
@@ -1076,19 +1088,15 @@ namespace org\octris\core\tpl {
             return true;
         }
 
-        /****m* compiler/gettext
-         * SYNOPSIS
+        /**
+         * Implementation of gettext compiler.
+         *
+         * @octdoc  m:compiler/gettext
+         * @param   array       $args       Arguments for gettext.
+         * @return  string                  Compiled code for gettext.
          */
         protected function gettext($args)
-        /*
-         * FUNCTION
-         *      gettext compiler
-         * INPUTS
-         *      * $args (array) -- arguments for gettext
-         * OUTPUTS
-         *      (string) -- compiled code for gettext
-         ****
-         */
+        /**/
         {
             if (preg_match('/^(["\'])(.*?)\1$/', $args[0], $match)) {
                 $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/s';
@@ -1128,20 +1136,17 @@ namespace org\octris\core\tpl {
             return $return;
         }
         
-        /****m* compiler/compile
-         * SYNOPSIS
+        /**
+         * Compile tokens to PHP code.
+         *
+         * @octdoc  m:compiler/compile
+         * @param   array       $tokens     Array of tokens to compile.
+         * @param   array       $blocks     Block information required by analyzer / compiler.
+         * @param   string      $escape     Escaping to use.
+         * @return  string                  Generated PHP code.
          */
-        protected function compile(&$tokens, &$blocks)
-        /*
-         * FUNCTION
-         *      compile tokens to php code
-         * INPUTS
-         *      * $tokens (array) -- array of tokens to compile
-         *      * $blocks (array) -- block information required by analyzer / compiler
-         * OUTPUTS
-         *      (string) -- generated php code
-         ****
-         */
+        protected function compile(&$tokens, &$blocks, $escape)
+        /**/
         {
             $stack = array();
             $code  = array();
@@ -1197,6 +1202,7 @@ namespace org\octris\core\tpl {
                     // gettext handling
                     $code = array($this->gettext(array_reverse($code)));
                     break;
+                case self::T_ESCAPE:
                 case self::T_LET:
                 case self::T_METHOD:
                     // replace/rewrite method call
@@ -1222,8 +1228,8 @@ namespace org\octris\core\tpl {
                     $code[] = implode(', ', array_pop($stack));
                     break;
                 case self::T_CONSTANT:
-                    $value = strtolower(substr($value, 1));
-                    $tmp   = comiler\constant::getConstant($value);
+                    $value = strtoupper(substr($value, 1));
+                    $tmp   = compiler\constant::getConstant($value);
                 
                     if (($err = compiler\constant::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
@@ -1232,11 +1238,15 @@ namespace org\octris\core\tpl {
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
                     break;
                 case self::T_VARIABLE:
-                    $code[] = sprintf(
+                    $tmp = sprintf(
                         '$this->data["%s"]', 
                         implode('"]["', explode(':', strtolower(substr($value, 1))))
                     );
+                    
+                    // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
+                    $code[] = $tmp;
                     break;
+                case self::T_BOOL:
                 case self::T_STRING:
                 case self::T_NUMBER:
                     $code[] = $value;
@@ -1249,7 +1259,12 @@ namespace org\octris\core\tpl {
                     } elseif (in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
                         $code = array(implode('', $code));
                     } elseif (!in_array($last_token, array(self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE))) {
-                        $code = array('<?php $this->write(' . implode('', $code) . '); ?>');
+                        if ($last_token == self::T_ESCAPE) {
+                            // no additional escaping, when 'escape' method was used
+                            $code = array('<?php $this->write(' . implode('', $code) . '); ?>');
+                        } else {
+                            $code = array('<?php $this->write(' . implode('', $code) . ', "' . $escape . '"); ?>');
+                        }
                     } else {
                         $code = array('<?php ' . implode('', $code) . ' ?>');
                     }
@@ -1268,21 +1283,18 @@ namespace org\octris\core\tpl {
             return $code;
         }
         
-        /****m* compiler/toolchain
-         * SYNOPSIS
+        /**
+         * Execute compiler toolchain for a template snippet.
+         *
+         * @octdoc  m:compiler/toolchain
+         * @param   string      $snippet        Template snippet to process.
+         * @param   int         $line           Line in template processed.
+         * @param   array       $blocks         Block information required by analyzer / compiler.
+         * @param   string      $escape         Escaping to use.
+         * @return  string                      Processed / compiled snippet.
          */
-        protected function toolchain($snippet, $line, array &$blocks)
-        /*
-         * FUNCTION
-         *      execute compiler toolchain for a template snippet
-         * INPUTS
-         *      * $snippet (string) -- template snippet to process
-         *      * $line (int) -- line template to process
-         *      * $blocks (array) -- block information required by analyzer / compiler
-         * OUTPUTS
-         *      (string) -- processed / compiled snippet
-         ****
-         */
+        protected function toolchain($snippet, $line, array &$blocks, $escape)
+        /**/
         {
             $tokens = $this->tokenize($snippet, $line);
             $code   = '';
@@ -1290,44 +1302,45 @@ namespace org\octris\core\tpl {
             if (count($tokens) > 0) {
                 if ($this->analyze($tokens, $blocks) !== false) {
                     $tokens = array_reverse($tokens);
-                    $code   = implode('', $this->compile($tokens, $blocks));
+                    $code   = implode('', $this->compile($tokens, $blocks, $escape));
                 }
             }
             
             return $code;
         }
         
-        /****m* compiler/parse
-         * SYNOPSIS
+        /**
+         * Parse template and extract all template functionality to compile.
+         *
+         * @octdoc  m:compiler/parse
+         * @param   string      $escape         Escaping to use.
+         * @return  string                      Processed / compiled template.
          */
-        protected function parse($filename)
-        /*
-         * FUNCTION
-         *      parse template and extract all template functionality to compile
-         * INPUTS
-         *      * $filename (string) -- name of file to process
-         * OUTPUTS
-         *      (string) -- processed template
-         ****
-         */
+        protected function parse($escape)
+        /**/
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
-            $tpl = file_get_contents($filename);
+            if ($escape == \org\octris\core\tpl::T_ESC_HTML) {
+                // parser for auto-escaping turned on
+                $parser = new \org\octris\core\tpl\parser\html($this->filename);
+            } else {
+                $parser = new \org\octris\core\tpl\parser($this->filename);
+                $parser->setFilter(function($command) use ($escape) {
+                    $command['escape'] = $escape;
 
-            $pattern = '/(\{\{(.*?)\}\})/s';
+                    return $command;
+                });
+            }
 
-            while (preg_match($pattern, $tpl, $m, PREG_OFFSET_CAPTURE)) {
-                $crc  = crc32($tpl);
-                $line = substr_count(substr($tpl, 0, $m[2][1]), "\n") + 1;
-                $tpl  = substr_replace($tpl, $this->toolchain(trim($m[2][0]), $line, $blocks), $m[1][1], strlen($m[1][0]));
+            foreach ($parser as $command) {
+                $snippet = $this->toolchain($command['snippet'], $command['line'], $blocks, $command['escape']);
 
-                if ($crc == crc32($tpl)) {
-                    $this->error(__FUNCTION__, __LINE__, $line, 0, 'endless loop detected');
-                }
+                $parser->replaceSnippet($snippet);
             }
 
             if (count($blocks['analyzer']) > 0) {
+                // all block-commands in a template have to be closed
                 $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
@@ -1335,27 +1348,41 @@ namespace org\octris\core\tpl {
                     }, array_reverse($blocks['analyzer'])))
                 ));
             }
+
+            $tpl = $parser->getTemplate();
             
             return $tpl;
         }
         
-        /****m* compiler/process
-         * SYNOPSIS
+        /**
+         * Process a template.
+         *
+         * @octdoc  m:compiler/process
+         * @param   string      $filename       Name of template file to process.
+         * @param   string      $escape         Escaping to use.
+         * @return  string                      Compiled template.
          */
-        public function process($filename)
-        /*
-         * FUNCTION
-         *      start compiler
-         * INPUTS
-         *      * $filename (string) -- name of file to process
-         * OUTPUTS
-         *      (string) -- compiled template
-         ****
-         */
+        public function process($filename, $escape)
+        /**/
         {
             $this->filename = $filename;
 
-            return $this->parse($filename);
+            if ($escape == \org\octris\core\tpl::T_ESC_AUTO) {
+                // auto-escaping, try to determine escaping from file extension
+                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+                if ($ext == 'html' || $ext == 'htm') {
+                    $escape = \org\octris\core\tpl::T_ESC_HTML;
+                } elseif ($ext == 'css') {
+                    $escape = \org\octris\core\tpl::T_ESC_CSS;
+                } elseif ($ext == 'js') {
+                    $escape = \org\octris\core\tpl::T_ESC_JS;
+                } else {
+                    $escape = \org\octris\core\tpl::T_ESC_NONE;
+                }
+            }
+
+            return $this->parse($escape);
         }
     }
 }

@@ -1,143 +1,130 @@
 <?php
 
-namespace org\octris\core\tpl {
-    /****c* tpl/sandbox
-     * NAME
-     *      sandbox
-     * FUNCTION
-     *      sandbox to execute templates in
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
-     */
+/*
+ * This file is part of the 'org.octris.core' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    class sandbox {
-        /****d* sandbox/T_CONTEXT_HTML, T_CONTEXT_JAVASCRIPT, T_CONTEXT_TEXT, T_CONTEXT_XML
-         * SYNOPSIS
-         */
-        const T_CONTEXT_HTML       = 1; 
-        const T_CONTEXT_JAVASCRIPT = 2; 
-        const T_CONTEXT_TEXT       = 3;
-        const T_CONTEXT_XML        = 4;
-        /*
-         * FUNCTION
-         *      contexts
-         ****
-         */
-        
-        /****v* sandbox/$data
-         * SYNOPSIS
+namespace org\octris\core\tpl {
+    /**
+     * Sandbox to execute templates in.
+     *
+     * @octdoc      c:tpl/sandbox
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
+     */
+    class sandbox
+    /**/
+    {
+        /**
+         * Template data.
+         *
+         * @octdoc  p:sandbox/$data
+         * @var     array
          */
         public $data = array();
-        /*
-         * FUNCTION
-         *      template data
-         ****
-         */
+        /**/
 
-        /****v* sandbox/$meta
-         * SYNOPSIS
+        /**
+         * Storage for sandbox internal data objects.
+         *
+         * @octdoc  p:sandbox/$storage
+         * @var     \org\octris\core\tpl\sandbox\storage
+         */
+        protected $storage;
+        /**/
+
+        /**
+         * Internal storage for meta data required for block functions.
+         *
+         * @octdoc  p:sandbox/$meta
+         * @var     array
          */
         protected $meta = array();
-        /*
-         * FUNCTION
-         *      various meta data for block functions
-         ****
-         */
+        /**/
 
-        /****v* sandbox/$pastebin
-         * SYNOPSIS
+        /**
+         * Internal storage for cut/copied buffers.
+         *
+         * @octdoc  p:sandbox/$pastebin
+         * @var     array
          */
         protected $pastebin = array();
-        /*
-         * FUNCTION
-         *      pastebin for cut/copied buffers
-         ****
-         */
-        
-        /****v* sandbox/$registry
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Function registry.
+         *
+         * @octdoc  p:sandbox/$registry
+         * @var     array
          */
         protected $registry = array();
-        /*
-         * FUNCTION
-         *      function registry
-         ****
-         */
-        
-        /****v* sandbox/$context
-         * SYNOPSIS
-         */
-        protected $context;
-        /*
-         * FUNCTION
-         *      context to use for autoescaping
-         ****
-         */
-        
-        /****v* sandbox/$filename
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Name of file that is rendered by the sandbox instance.
+         *
+         * @octdoc  p:sandbox/$filename
+         * @var     string
          */
         protected $filename = '';
-        /*
-         * FUNCTION
-         *      name of file that rendered through the sandbox
-         ****
-         */
-        
-        /****v* sandbox/$l10n
-         * SYNOPSIS
+        /**/
+
+        /**
+         * Instance of locale class.
+         *
+         * @octdoc  p:compiler/$l10n
+         * @var     \org\octris\core\l10n
          */
         protected $l10n;
-        /*
-         * FUNCTION
-         *      l10n dependency
-         ****
+        /**/
+
+        /**
+         * Instance of caching backend for template snippets.
+         *
+         * @octdoc  p:sandbox/$cache
+         * @var     \org\octris\core\cache|null
          */
-        
-        /****m* sandbox/__construct
-         * SYNOPSIS
+        protected $cache = null;
+        /**/
+
+        /**
+         * Constructor
+         *
+         * @octdoc  m:sandbox/__construct
          */
         public function __construct()
-        /*
-         * FUNCTION
-         *      constructor
-         ****
-         */
+        /**/
         {
+            $this->storage = \org\octris\core\tpl\sandbox\storage::getInstance();
         }
-        
-        /****m* sandbox/setL10n
-         * SYNOPSIS
+
+        /**
+         * Set l10n dependency.
+         *
+         * @octdoc  m:compiler/setL10n
+         * @param   \org\octris\core\l10n       $l10n       Instance of l10n class.
          */
-        public function setL10n($l10n)
-        /*
-         * FUNCTION
-         *      set l10n dependency
-         * INPUTS
-         *      * $l10n (l10n) -- l10n instance to set as dependency
-         ****
-         */
+        public function setL10n(\org\octris\core\l10n $l10n)
+        /**/
         {
             $this->l10n = $l10n;
         }
-        
-        /****m* sandbox/__call
-         * SYNOPSIS
+
+        /**
+         * Magic caller for registered template functions.
+         *
+         * @octdoc  m:sandbox/__call
+         * @param   string      $name       Name of function to call.
+         * @param   mixed       $args       Function arguments.
+         * @return  mixed                   Return value of called function.
          */
         public function __call($name, $args)
-        /*
-         * FUNCTION
-         *      magic caller for registered template functions
-         * INPUTS
-         *      * $name (string) -- name of function to call
-         *      * $args (mixed) -- function arguments
-         * OUTPUTS
-         *      (mixed) -- output of the registered function
-         ****
-         */
+        /**/
         {
             if (!isset($this->registry[$name])) {
                 $this->error(sprintf('"%s" -- unknown function', $name), 0, __LINE__);
@@ -151,160 +138,147 @@ namespace org\octris\core\tpl {
                 return call_user_func_array($this->registry[$name]['callback'], $args);
             }
         }
-        
-        /****m* sandbox/error
-         * SYNOPSIS
+
+        /**
+         * Trigger an error and stop processing template.
+         *
+         * @octdoc  m:sandbox/error
+         * @param   string      $msg        Additional error message.
+         * @param   int         $line       Line in template the error occured (0, if it's in the class library).
+         * @param   int         $cline      Line in the class that triggered the error.
          */
         public function error($msg, $line = 0, $cline = __LINE__)
-        /*
-         * FUNCTION
-         *      trigger an error and stop processing template
-         * INPUTS
-         *      * $msg (string) -- additional error message
-         *      * $line (int) -- line in template the error occured (0, if it's in the class lib)
-         *      * $cline (int) -- line in the class that triggered the error
-         ****
-         */
+        /**/
         {
             printf("\n** ERROR: sandbox(%d)**\n", $cline);
             printf("   line :    %d\n", $line);
             printf("   file:     %s\n", $this->filename);
             printf("   message:  %s\n", $msg);
-            
+
             die();
         }
-        
-        /****m* sandbox/registerMethod
-         * SYNOPSIS
+
+        /**
+         * Register a custom template method.
+         *
+         * @octdoc  m:sandbox/registerMethod
+         * @param   string      $name       Name of template method to register.
+         * @param   mixed       $callback   Callback to map to template method.
+         * @param   array       $args       For specifying min/max number of arguments required for callback method.
          */
         public function registerMethod($name, $callback, array $args)
-        /*
-         * FUNCTION
-         *      register a custom template method
-         * INPUTS
-         *      * $name (string) -- name of macro to register
-         *      * $callback (mixed) -- callback to call when macro is executed
-         *      * $args (array) -- for testing arguments
-         ****
-         */
+        /**/
         {
             $name = strtolower($name);
-            
+
             $this->registry[$name] = array(
                 'callback' => $callback,
                 'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
             );
         }
-        
-        /****m* tpl/setValues
-         * SYNOPSIS
+
+        /**
+         * Set values for multiple template variables.
+         *
+         * @octdoc  m:tpl/setValues
+         * @param   array       $array      Key/value array with values.
          */
         public function setValues($array)
-        /*
-         * FUNCTION
-         *      set values wort multiple variables
-         * INPUTS
-         *      * $array (array) -- key/value array with values
-         ****
-         */
+        /**/
         {
             foreach ($array as $k => $v) $this->setValue($k, $v);
         }
-        
-        /****m* sandbox/setValue
-         * SYNOPSIS
+
+        /**
+         * Set value for one template variable. Note, that resources are not allowed as values.
+         * Values of type 'array' and 'object' will be casted to '\org\octris\core\type\collection'
+         * unless an 'object' implements the interface '\Traversable'. Traversable objects will
+         * be used without casting.
+         *
+         * @octdoc  m:tpl/setValue
+         * @param   string      $name       Name of template variable to set value of.
+         * @param   mixed       $value      Value to set for template variable.
          */
         public function setValue($name, $value)
-        /*
-         * FUNCTION
-         *      set value for sandbox
-         * INPUTS
-         *      * $name (string) -- name of variable to set
-         *      * $value (mixed) -- value of variable
-         ****
-         */
+        /**/
         {
-            if (is_scalar($value)) {
+            if (is_scalar($value) || (is_object($value) && $value instanceof \Traversable)) {
                 $this->data[$name] = $value;
+            } elseif (is_resource($value)) {
+                $this->error(sprintf('"%s" -- type resource is not allowed', $name), 0, __LINE__);
             } else {
-                $this->data[$name] = new type\collection($value);
+                $this->data[$name] = new \org\octris\core\type\collection($value);
             }
         }
-        
-        /****m* sandbox/gettext
-         * SYNOPSIS
+
+        /**
+         * Set cache for template snippets.
+         *
+         * @octdoc  m:sandbox/setSnippetCache
+         * @param   \org\octris\core\cache      $cache          Caching instance.
+         */
+        public function setSnippetCache(\org\octris\core\cache $cache)
+        /**/
+        {
+            $this->cache = $cache;
+        }
+
+        /**
+         * Gettext implementation.
+         *
+         * @octdoc  m:sandbox/gettext
+         * @param   string      $msg        Message to translate.
+         * @return  string                  Translated message.
          */
         public function gettext($msg)
-        /*
-         * FUNCTION
-         *      gettext
-         * INPUTS
-         *      * $msg (string) -- message to translate
-         * OUTPUTS
-         *      (string) -- translated message
-         ****
-         */
+        /**/
         {
             return $this->l10n->gettext($msg);
         }
-        
-        /****m* sandbox/each
-         * SYNOPSIS
+
+        /**
+         * Implementation for '#foreach' block function. Iterates over an array and repeats an enclosed
+         * template block.
+         *
+         * @octdoc  m:sandbox/each
+         * @param   \org\octris\core\tpl\sandbox\eachiterator   $iterator       Iterator to use.
+         * @param   mixed                                       $ctrl           Control variable is overwritten and used by this method.
+         * @param   array                                       $meta           Optional variable for meta information storage.
+         * @return  bool                                                        Returns 'true' as long as iterator did not reach end of array.
          */
-        public function each($id, &$ctrl, $array, &$meta = NULL)
-        /*
-         * FUNCTION
-         *      handles '#foreach' block -- iterates over an array and repeats an enclosed template block
-         * INPUTS
-         *      * $id (string) -- uniq identifier for loop
-         *      * $ctrl (mixed) -- control variable is overwritten and used by this method
-         *      * $array (array) -- array to use for iteration
-         *      * $meta (array) -- (optional) control variable for meta information
-         * OUTPUTS
-         *      (bool) -- returns ~true~ as long is iterator is running and ~false~ if iterator reached his end
-         ****
-         */
+        public function each(\org\octris\core\tpl\sandbox\eachiterator $iterator, &$ctrl, &$meta = null)
+        /**/
         {
-            $id = 'each:' . $id . ':' . crc32(serialize($array->getArrayCopy()));
-            
-            if (!isset($this->meta[$id])) {
-                $this->meta[$id] = $array->getIterator();
-            }
-            
-            if (($return = $this->meta[$id]->valid())) {
-                $item = $this->meta[$id]->current();
-                
-                $this->meta[$id]->next();
+            if (($return = $iterator->valid())) {
+                $ctrl = $iterator->current();
+                $meta = $iterator->getMeta();
+
+                $iterator->next();
             } else {
-                // $value = '';
-                $this->meta[$id]->rewind();
-                $item = $this->meta[$id]->current();
+                $iterator->rewind();
+
+                $ctrl = null;
+                $meta = array(
+                    'key'       => null,
+                    'pos'       => null,
+                    'count'     => null,
+                    'is_first'  => false,
+                    'is_last'   => false
+                );
             }
-            
-            $ctrl = $item->item;
-            $meta = array(
-                'key'       => $item->key,
-                'pos'       => $item->pos,
-                'count'     => $item->count,
-                'is_first'  => $item->is_first,
-                'is_last'   => $item->is_last
-            );
 
             return $return;
         }
-        
-        /****m* sandbox/bufferStart
-         * SYNOPSIS
+
+        /**
+         * Implementation for '#cut' and '#copy' block functions. Starts output buffer.
+         *
+         * @octdoc  m:sandbox/bufferStart
+         * @param   mixed       $ctrl       Control variable to store buffer data in.
+         * @param   bool        $cut        Optional flag that indicates if buffer should be cut or copied.
          */
         public function bufferStart(&$ctrl, $cut = true)
-        /*
-         * FUNCTION
-         *      start output buffer
-         * INPUTS
-         *      * $ctrl (mixed) -- control variable to store buffer data in
-         *      * $cut (bool) -- (optional) whether to cut or to copy to buffer
-         ****
-         */
+        /**/
         {
             array_push($this->pastebin, array(
                 'buffer' => &$ctrl,
@@ -314,79 +288,80 @@ namespace org\octris\core\tpl {
             ob_start();
         }
 
-        /****m* sandbox/bufferEnd
-         * SYNOPSIS
+        /**
+         * Stop output buffer.
+         *
+         * @octdoc  m:sandbox/bufferEnd
          */
         public function bufferEnd()
-        /*
-         * FUNCTION
-         *      stop output buffer
-         ****
-         */
+        /**/
         {
             $buffer = array_pop($this->pastebin);
             $buffer['buffer'] = ob_get_contents();
-            
+
             if ($buffer['cut']) {
                 ob_end_clean();
             } else {
                 ob_end_flush();
             }
         }
-        
-        /****m* sandbox/cacheStart
-         * SYNOPSIS
+
+        /**
+         * Implementation for '#cache' block function. Starts a cache buffer. Returns cache contents by
+         * by specified key or generates cached content, if cache content is not available. An optional
+         * escaping method may be specified.
+         *
+         * @octdoc  m:sandbox/cacheLookup
+         * @param   string      $key            Cache-key to lookup.
+         * @param   string      $escape         Optional escaping to use for output.
+         * @return  bool                        Returns true, if key was available in cache.
          */
-        public function cacheStart($key, $timeout) 
-        /*
-         * FUNCTION
-         *      handles #cache block -- starts a cache buffer. returns cache contents by specified key or generates
-         *      cached content, if cache content is not available. as second parameter a cache timeout is required. the 
-         *      cache timeout can have one of the following values:
-         *      * (int) -- relative timeout in seconds
-         *      * (int) -- a absolute unix timestamp. note, that if $timeout contains an integer > current timestamp, 
-         *        it's guessed, that the value is not ment to be a relative timeout in seconds
-         *      * (string) -- a datetime string as absolute timeout
-         *      * 0 -- no cache
-         *      * -1 -- cache never expires     
-         * INPUTS
-         *      * $key (string) -- cache-key to use for buffer
-         *      * $timeout (mixed) -- cache timeout
-         * OUTPUTS
-         *      (bool) -- returns true, if caching succeeded
-         ****
-         */
+        public function cacheLookup($key, $escape = \org\octris\core\tpl::T_ESC_NONE)
+        /**/
         {
-            // TODO
+            if (!($return = is_null($this->cache))) {
+                if (($return = $this->cache->exists($key))) {
+                    $this->write($this->cache->fetch($key), $escape);
+                }
+            }
+
+            return $return;
         }
 
-        /****m* sandbox/cacheEnd
-         * SYNOPSIS
+        /**
+         * Store date in the cache. A cache timeout is required. The cache timeout can have
+         * one of the following values:
+         *
+         * - int: relative timeout in seconds.
+         * - int: an absolute unix timestamp. Note, that if $timeout contains an integer that is bigger than
+         *   the current timestamp, it's guessed to be not ment as a relative timeout but the absolute timestamp.
+         * - string: a datetime string as absolute timeout.
+         * - 0: no cache.
+         * - -1: cache never expires.
+         *
+         * @octdoc  m:sandbox/cacheStore
+         * @param   string      $key            Key to use for storing buffer in cache.
+         * @param   mixed       $data           Data to store in cache.
+         * @param   int         $timeout        Cache timeout.
          */
-        public function cacheEnd() 
-        /*
-         * FUNCTION
-         *      stop caching output buffer
-         ****
-         */
+        public function cacheStore($key, $data, $timeout)
+        /**/
         {
-            // TODO
+            if (!is_null($this->cache)) {
+                $this->cache->save($key, $data, $timeout);
+            }
         }
 
-        /****m* sandbox/cron
-         * SYNOPSIS
+        /**
+         * Implementation for '#cron' block function. Display block for a period of time.
+         *
+         * @octdoc  m:sandbox/cron
+         * @param   mixed       $start          Start date/time as string or unix timestamp.
+         * @param   mixed       $end            Optional end date/time as string or unix timestamp.
+         * @return  bool                        Returns true if cron block creation succeeded.
          */
-        public function cron($start, $end = 0) 
-        /*
-         * FUNCTION
-         *      handles #cron block -- display block for a period of time
-         * INPUTS
-         *      * $start (mixed) -- start date/time as string or unix timestamp
-         *      * $end (mixed) -- (optional) end date/time as string or unix timestamp
-         * OUTPUTS
-         *      (bool) -- returns true, if cron block creation succeeded
-         ****
-         */
+        public function cron($start, $end = 0)
+        /**/
         {
             if (!ctype_digit($start)) {
                 $start = (int)strtotime($start);
@@ -406,77 +381,19 @@ namespace org\octris\core\tpl {
             return (($start <= $current && $end >= $current) || $end == 0);
         }
 
-        /****m* sandbox/loop
-         * SYNOPSIS
+        /**
+         * Implementation for '#trigger' block function. The trigger can be used inside a block of type '#loop' or '#each'. An
+         * internal counter will be increased for each loop cycle. The trigger will return 'true' for very $steps steps.
+         *
+         * @octdoc  m:sandbox/trigger
+         * @param   string      $id         Uniq identifier of trigger.
+         * @param   int         $steps      Optional number of steps trigger should go until signal is raised.
+         * @param   int         $start      Optional step to start trigger at.
+         * @param   mixed       $reset      Optional trigger reset flag. The trigger is reset if value provided differs from stored reset value.
+         * @return  bool                    Returns true if trigger is raised.
          */
-        public function loop($id, &$ctrl, $from, $to, &$meta = NULL)
-        /*
-         * FUNCTION
-         *      handles #loop block -- creates something like a for loop
-         * INPUTS
-         *      * $id (string) -- uniq identifier for loop
-         *      * $ctrl (mixed) -- control variable for loop
-         *      * $from (int) -- value to start loop at
-         *      * $to (int) -- value to end loop at
-         *      * $meta (array) -- (optional) control variable for meta information
-         * OUTPUTS
-         *      (bool) -- returns true as long as loop did not reach the end
-         ****
-         */
-        {
-            $id = 'loop:' . $id . ':' . crc32("$from:$to");
-            
-            if (!isset($this->meta[$id])) {
-                $this->meta[$id] = array(
-                    'from'  => $from,
-                    'to'    => $to,
-                    'step'  => $from,
-                    'incr'  => ($from > $to ? -1 : 1)
-                );
-            } else {
-                $this->meta[$id]['step'] += $this->meta[$id]['incr'];
-            }
-
-            if ($from > $to) {
-                $ret = ($this->meta[$id]['step'] > $to);
-            } else {
-                $ret = ($this->meta[$id]['step'] < $to);
-            }
-
-            if (!$ret) {
-                $ctrl = $to;
-                $this->meta[$id]['step'] = $this->meta[$id]['from'] - $this->meta[$id]['incr'];
-            } else {
-                $ctrl = $this->meta[$id]['step'];
-            }
-
-            $meta = array(
-                'key'      => $this->meta[$id]['step'],
-                'pos'      => $this->meta[$id]['step'],
-                'is_first' => ($this->meta[$id]['step'] == $this->meta[$id]['from']),
-                'is_last'  => ($this->meta[$id]['step'] == $this->meta[$id]['to'])
-            );
-
-            return $ret;
-        }
-
-        /****m* sandbox/trigger
-         * SYNOPSIS
-         */
-        public function trigger($id, $steps = 2, $start = 0, $reset = 1) 
-        /*
-         * FUNCTION
-         *      handles #trigger block -- the trigger can be used inside a loop- or each-block. an internal 
-         *      counter will be increased for each loop cycle. the trigger will return true for every $steps steps
-         * INPUTS
-         *      * $id (string) -- uniq identifier of trigger
-         *      * $steps (int) -- (optional) number of steps trigger should go until signal is raised
-         *      * $start (int) -- (optional) step to start trigger at
-         *      * $reset (mixed) -- reset trigger. reset's trigger, if value provided differs from stored reset value
-         * OUTPUTS
-         *      (bool) -- returns true, if trigger raised
-         ****
-         */
+        public function trigger($id, $steps = 2, $start = 0, $reset = 1)
+        /**/
         {
             $id = 'trigger:' . $id . ':' . crc32("$steps:$start");
 
@@ -497,23 +414,19 @@ namespace org\octris\core\tpl {
             return ($ret == ($this->meta[$id]['total_steps'] - 1));
         }
 
-        /****m* sandbox/onchange
-         * SYNOPSIS
+        /**
+         * Implementation for '#onchange' block function. Triggers an event if the contents of a variable changes.
+         *
+         * @octdoc  m:sandbox/onchange
+         * @param   string      $id         Uniq identifier of event.
+         * @param   mixed       $value      Value of observed variable.
+         * @return  bool                    Returns true if variable value change was detected.
          */
         public function onchange($id, $value)
-        /*
-         * FUNCTION
-         *      handles #onchange block -- triggers an event, if the contents of a variable changes. 
-         * INPUTS
-         *      * $id (string) -- uniq identifier of event
-         *      * $value (mixed) -- value of observed variable
-         * OUTPUTS
-         *      (bool) -- returns true, if change was detected
-         ****
-         */
+        /**/
         {
             $id = 'onchange:' . $id;
-            
+
             if (!isset($this->meta[$id])) {
                 $this->meta[$id] = NULL;
             }
@@ -525,93 +438,166 @@ namespace org\octris\core\tpl {
             return $return;
         }
 
-        /****m* sandbox/write
-         * SYNOPSIS
+        /**
+         * Implementation for 'cycle' function. Cycle can be used inside a block of type '#loop' or '#each'. An
+         * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list
+         * according to the internal pointer position.
+         *
+         * @octdoc  m:sandbox/cycle
+         * @param   string      $id         Uniq identifier for cycle.
+         * @param   array       $array      List of elements to use for cycling.
+         * @param   bool        $pingpong   Optional flag indicates whether to start with first element or moving pointer
+         *                                  back and forth in case the pointer reached first (or last) element in the list.
+         * @param   mixed       $reset      Optional reset flag. The cycle pointer is reset if value provided differs from stored
+         *                                  reset value
+         * @return  mixed                   Current list item.
          */
-        public function write($val = '', $auto_escape = true)
-        /*
-         * FUNCTION
-         *      output a specified value
-         * INPUTS
-         *      * $val (string) -- (optional) value to output
-         *      * $auto_escape (bool) -- (optional) flag whether to auto-escape value
-         ****
-         */
+        public function cycle($id, $array, $pingpong = false, $reset = 1)
+        /**/
         {
-            if ($auto_escape) {
-                switch($this->context) {
-                case self::T_CONTEXT_HTML:
-                    $val = htmlspecialchars($val);
-                    break;
-                case self::T_CONTEXT_JAVASCRIPT:
-                    break;
-                case self::T_CONTEXT_TEXT:
-                default:
-                    break;
+            $id = 'cycle:' . $id;
+
+            if (!isset($this->meta[$id])) {
+                $this->meta[$id] = array(
+                    'iterator'    => $array,
+                    'direction'   => 1,
+                    'pingpong'    => !!$pingpong,
+                    'reset_value' => $reset
+                );
+
+                $this->meta[$id]['iterator']->rewind();
+            } elseif ($this->meta[$id]['reset_value'] !== $reset) {
+                $this->meta[$id]['reset_value'] = $reset;
+                $this->meta[$id]['direction']   = 1;
+
+                $this->meta[$id]['iterator']->rewind();
+            }
+
+            $return = '';
+
+            if (!$this->meta[$id]['iterator']->valid()) {
+                if ($this->meta[$id]['pingpong']) {
+                    if ($this->meta[$id]['direction'] == 1) {
+                        $this->meta[$id]['direction'] = -1;
+                        $this->meta[$id]['iterator']->prev();
+                    } else {
+                        $this->meta[$id]['direction'] = 1;
+                        $this->meta[$id]['iterator']->rewind();
+                    }
+                } else {
+                    $this->meta[$id]['iterator']->rewind();
                 }
             }
-            
+
+            if ($this->meta[$id]['iterator']->valid()) {
+                $return = $this->meta[$id]['iterator']->current()->item;
+
+                if ($this->meta[$id]['direction'] == 1) {
+                    $this->meta[$id]['iterator']->next();
+                } else {
+                    $this->meta[$id]['iterator']->prev();
+                }
+            }
+
+            return $return;
+        }
+
+        /**
+         * Escape a value according to the specified escaping context.
+         *
+         * @octdoc  m:sandbox/escape
+         * @param   string          $val            Value to escape.
+         * @param   string          $escape         Escaping to use.
+         */
+        public function escape($val, $escape)
+        /**/
+        {
+            switch ($escape) {
+            case \org\octris\core\tpl::T_ESC_ATTR:
+                $val = \org\octris\core\tpl\escape::escapeAttributeValue($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_CSS:
+                $val = \org\octris\core\tpl\escape::escapeCss($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_HTML:
+                $val = \org\octris\core\tpl\escape::escapeHtml($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_JS:
+                $val = \org\octris\core\tpl\escape::escapeJavascript($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_TAG:
+                $val = \org\octris\core\tpl\escape::escapeAttribute($val);
+                break;
+            case \org\octris\core\tpl::T_ESC_URI:
+                $val = \org\octris\core\tpl\escape::escapeUri($val);
+                break;
+            }
+
+            return $val;
+        }
+
+        /**
+         * Output specified value.
+         *
+         * @octdoc  m:sandbox/write
+         * @param   string          $val            Optional value to output.
+         * @param   string          $escape         Optional escaping to use.
+         */
+        public function write($val = '', $escape = '')
+        /**/
+        {
+            if ($escape !== \org\octris\core\tpl::T_ESC_NONE) {
+                $val = $this->escape($val, $escape);
+            }
+
             print $val;
         }
-        
-        /****m* sandbox/dump
-         * SYNOPSIS
+
+        /**
+         * Dump contents of variable and return it as string.
+         *
+         * @octdoc  m:sandbox/dump
+         * @param   mixed       $var            Variable to dump.
+         * @return  string                      Dumped variable contents as string.
          */
         public function dump($var)
-        /*
-         * FUNCTION
-         *      dump contents of variable
-         * INPUTS
-         *      * $var (mixed) -- variable to dump
-         ****
-         */
+        /**/
         {
             return var_export(
-                ((is_object($var) && 
-                 ($var instanceof \org\octris\core\type\collection || 
-                  $var instanceof \org\octris\core\type\collection\Iterator || 
-                  $var instanceof \ArrayIterator)) 
-                ? $var->getArrayCopy() 
-                : $var), 
+                ((is_object($var) &&
+                 ($var instanceof \ArrayIterator || $var instanceof \ArrayObject))
+                ? (array)$var
+                : $var),
                 true
             );
         }
-    
-        /****m* sandbox/include
-         * SYNOPSIS
+
+        /**
+         * Read a file and return it as string.
+         *
+         * @octdoc  m:sandbox/includetpl
+         * @param   string      $file       File to include.
+         * @return  string                  File contents.
          */
-        public function include($file)
-        /*
-         * FUNCTION
-         *      read a file and return it as string
-         * INPUTS
-         *      * $file (string) -- file to include
-         * OUTPUTS
-         *      (string) -- file contents
-         ****
-         */
+        public function includetpl($file)
+        /**/
         {
             return (is_readable($file)
                     ? file_get_contents($file)
                     : '');
         }
-    
-        /****m* sandbox/render
-         * SYNOPSIS
+
+        /**
+         * Render a template and output rendered template to stdout.
+         *
+         * @octdoc  m:sandbox/render
+         * @param   string      $filename       Filename of template to render.
          */
-        public function render($filename, $context)
-        /*
-         * FUNCTION
-         *      render a template
-         * INPUTS
-         *      * $filename (string) -- filename of template to render
-         *      * $context (string) -- context of files, required for auto-escaping
-         ****
-         */
+        public function render($filename)
+        /**/
         {
             $this->filename = $filename;
-            $this->context  = $context;
-            
+
             require($filename);
         }
     }

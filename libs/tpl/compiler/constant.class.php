@@ -1,120 +1,148 @@
 <?php
 
-namespace org\octris\core\tpl\compiler {
-    /****c* compiler/constant
-     * NAME
-     *      constant
-     * FUNCTION
-     *      Library for handling template constants. This is a static class.
-     * COPYRIGHT
-     *      copyright (c) 2010 by Harald Lapp
-     * AUTHOR
-     *      Harald Lapp <harald@octris.org>
-     ****
-     */
+/*
+ * This file is part of the 'org.octris.core' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    class constant {
-        /****v* constant/$registry
-         * SYNOPSIS
+namespace org\octris\core\tpl\compiler {
+    /**
+     * Library for handling template constants.
+     *
+     * @octdoc      c:compiler/constant
+     * @copyright   copyright (c) 2010-2012 by Harald Lapp
+     * @author      Harald Lapp <harald@octris.org>
+     */
+    class constant
+    /**/
+    {
+        /**
+         * Constant registry.
+         *
+         * @octdoc  p:constant/$registry
+         * @var     array
          */
-        protected static $registry = array();
-        /*
-         * FUNCTION
-         *      constant registry
-         ****
-         */
-        
-        /****v* constant/$last_error
-         * SYNOPSIS
+        protected static $registry = array(
+            // pre-defined constants for bool type
+            'TRUE'     => true,
+            'FALSE'    => false,
+
+            // pre-defined constants for escaping
+            'ESC_NONE' => '',
+            'ESC_ATTR' => 'attr',
+            'ESC_CSS'  => 'css', 
+            'ESC_JS'   => 'js',
+            'ESC_URI'  => 'uri',
+
+            // pre-defined constants for json_encode/json_decode
+            'JSON_HEX_QUOT'          => JSON_HEX_QUOT, 
+            'JSON_HEX_TAG'           => JSON_HEX_TAG, 
+            'JSON_HEX_AMP'           => JSON_HEX_AMP, 
+            'JSON_HEX_APOS'          => JSON_HEX_APOS, 
+            'JSON_NUMERIC_CHECK'     => JSON_NUMERIC_CHECK, 
+            'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING, 
+            'JSON_PRETTY_PRINT'      => JSON_PRETTY_PRINT, 
+            'JSON_UNESCAPED_SLASHES' => JSON_UNESCAPED_SLASHES, 
+            'JSON_FORCE_OBJECT'      => JSON_FORCE_OBJECT, 
+            'JSON_UNESCAPED_UNICODE' => JSON_UNESCAPED_UNICODE,
+            'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
+
+            // pre-defined constants for string functions
+            'CASE_UPPER'             => \org\octris\core\type\string::T_CASE_UPPER,
+            'CASE_LOWER'             => \org\octris\core\type\string::T_CASE_LOWER,
+            'CASE_TITLE'             => \org\octris\core\type\string::T_CASE_TITLE,
+            'CASE_UPPER_FIRST'       => \org\octris\core\type\string::T_CASE_UPPER_FIRST,
+            'CASE_LOWER_FIRST'       => \org\octris\core\type\string::T_CASE_LOWER_FIRST,
+        );
+        /**/
+
+        /**
+         * Last occured error.
+         *
+         * @octdoc  p:constant/$last_error
+         * @var     string
          */
         protected static $last_error = '';
-        /*
-         * FUNCTION
-         *      last occured error
-         ****
-         */
+        /**/
 
-        /*
-         * static class cannot be instantiated
+        /**
+         * Constructor and clone magic method are protected to prevent instantiating of class.
+         *
+         * @octdoc  m:constant/__construct, __clone
          */
         protected function __construct() {}
         protected function __clone() {}
+        /**/
         
-        /****m* constant/getError
-         * SYNOPSIS
+        /**
+         * Return last occured error.
+         *
+         * @octdoc  m:constant/getError
+         * @return  string                  Last occured error.
          */
         public static function getError()
-        /*
-         * FUNCTION
-         *      return last occured error
-         * OUTPUTS
-         *      (string) -- last occured error
-         ****
-         */
+        /**/
         {
             return self::$last_error;
         }
-        
-        /****m* constant/setError
-         * SYNOPSIS
+
+        /**
+         * Set error.
+         *
+         * @octdoc  m:constant/setError
+         * @param   string      $name       Name of constant the error occured for.
+         * @param   string      $msg        Additional error message.
          */
         protected static function setError($name, $msg)
-        /*
-         * FUNCTION
-         *      set error
-         * INPUTS
-         *      * $name (string) -- name of constant the error occured for
-         *      * $msg (string) -- additional error message
-         ****
-         */
+        /**/
         {
             self::$last_error = sprintf('"%s" -- %s', $name, $msg);
         }
-        
-        /****m* constant/setConstant
-         * SYNOPSIS
+
+        /**
+         * Set a constant.
+         *
+         * @octdoc  m:constant/setConstant
+         * @param   string      $name       Name of constant to set.
+         * @param   mixed       $value      Value of constant.
          */
         public static function setConstant($name, $value)
-        /*
-         * FUNCTION
-         *      set a constant
-         * INPUTS
-         *      * $name (string) -- name of constant to register
-         *      * $value (mixed) -- value of constant
-         ****
-         */
+        /**/
         {
-            self::$registry[$name] = $value;
+            if (isset(self::$registry[$name])) {
+                throw new \Exception("constant '$name' is already defined");
+            } else {
+                self::$registry[$name] = $value;
+            }
         }
-        
-        /****m* constant/setConstants
-         * SYNOPSIS
+
+        /**
+         * Set multiple constants.
+         *
+         * @octdoc  m:constant/setConstants
+         * @param   array       $constants  Key/value array defining constants.
          */
-        public static function setConstants($array)
-        /*
-         * FUNCTION
-         *      set multiple constants
-         * INPUTS
-         *      * $array (array) -- multiple constants to set
-         ****
-         */
+        public static function setConstants(array $constants)
+        /**/
         {
-            self::$registry[$name] = array_merge(self::$registry[$name], $array);
+            foreach ($constants as $name => $value) {
+                $this->setConstant($name, $value);
+            }
         }
-        
-        /****m* constant/getConstant
-         * SYNOPSIS
+
+        /**
+         * Return value of a constant. An error will be set if the requested constant is not defined.
+         *
+         * @octdoc  m:constant/getConstant
+         * @param   string      $name       Name of constant to return value of.
+         * @return  mixed                   Value of constant.
          */
         public static function getConstant($name)
-        /*
-         * FUNCTION
-         *      return value of a constant
-         * INPUTS
-         *      * $name (string) -- name of constant to return value of
-         * OUTPUTS
-         *      (mixed) -- value of constant
-         ****
-         */
+        /**/
         {
             self::$last_error = '';
             
