@@ -923,6 +923,10 @@ namespace org\octris\core\tpl {
         protected function error($type, $cline, $line, $token, $payload = NULL)
         /**/
         {
+            if (php_sapi_name() != 'cli') {
+                print "<pre>";
+            }
+            
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
             printf("   file :    %s\n", $this->filename);
@@ -934,6 +938,10 @@ namespace org\octris\core\tpl {
                 printf("   message:  %s\n", $payload);
             }
          
+            if (php_sapi_name() != 'cli') {
+                print "</pre>";
+            }
+
             die();
         }
 
