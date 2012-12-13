@@ -136,7 +136,7 @@ namespace org\octris\core\tpl\compiler {
             $c = clone($options['compiler']);
                 
             if (($file = $c->findFile($args[0])) !== false) {
-                $ret = $c->process($file);
+                $ret = $c->process($file, $options['escape']);
             } else {
                 $err = sprintf(
                     'unable to locate file "%s" in "%s"', 

@@ -923,6 +923,10 @@ namespace org\octris\core\tpl {
         protected function error($type, $cline, $line, $token, $payload = NULL)
         /**/
         {
+            if (php_sapi_name() != 'cli') {
+                print "<pre>";
+            }
+            
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
             printf("   file :    %s\n", $this->filename);
@@ -934,6 +938,10 @@ namespace org\octris\core\tpl {
                 printf("   message:  %s\n", $payload);
             }
          
+            if (php_sapi_name() != 'cli') {
+                print "</pre>";
+            }
+
             die();
         }
 
@@ -1219,7 +1227,13 @@ namespace org\octris\core\tpl {
                     // resolve macro
                     $value = strtolower(substr($value, 1));
                     $file  = substr($code[0], 1, -1);
-                    $code  = array(compiler\macro::execMacro($value, array($file), array('compiler' => $this)));
+                    $code  = array(
+                        compiler\macro::execMacro(
+                            $value, 
+                            array($file), 
+                            array('compiler' => $this, 'escape' => $escape)
+                        )
+                    );
 
                     if (($err = compiler\macro::getError()) != '') {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
