@@ -377,18 +377,11 @@ namespace org\octris\core\tpl {
             $offset = $this->current['offset'];
             $length = $this->current['length'];
             
-            // fix problem where newline is removed when replacing on end of line
-            $nl  = substr($this->tpl, $offset + $length, 1);
-            
-            if ($nl == "\n" || $nl == "\r") {
-                // $str .= $nl;
-            }
-
             // replace template snippet
             $this->tpl = substr_replace($this->tpl, $str, $offset, $length);
 
             if ($move_offset) {
-                $this->setOffset($offset + strlen($str) + strlen($nl));
+                $this->setOffset($offset + strlen($str));
             } else {
                 $this->setOffset($offset);
             }
