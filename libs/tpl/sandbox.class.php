@@ -457,47 +457,31 @@ namespace org\octris\core\tpl {
         {
             $id = 'cycle:' . $id;
 
-            if (!isset($this->meta[$id])) {
-                $this->meta[$id] = array(
-                    'iterator'    => $array,
-                    'direction'   => 1,
-                    'pingpong'    => !!$pingpong,
-                    'reset_value' => $reset
-                );
+            if (!isset($this->cycles[$id])) {
+                if ($pingpong) {
+                    $array = array_merge($array, array_slice(array_reverse($array), 1, count($array) - 2));
+                }
 
-                $this->meta[$id]['iterator']->rewind();
-            } elseif ($this->meta[$id]['reset_value'] !== $reset) {
-                $this->meta[$id]['reset_value'] = $reset;
-                $this->meta[$id]['direction']   = 1;
+                $get_generator = function() use ($array, $reset) {
+                    $pos = 0; $cnt = count($array);
+                    while (true) {
+                        if ($reset != ($tmp = yield)) {
+                            $pos = 0; $reset = $tmp;
+                        }
 
-                $this->meta[$id]['iterator']->rewind();
-            }
+                        yield $array[$pos++];
 
-            $return = '';
-
-            if (!$this->meta[$id]['iterator']->valid()) {
-                if ($this->meta[$id]['pingpong']) {
-                    if ($this->meta[$id]['direction'] == 1) {
-                        $this->meta[$id]['direction'] = -1;
-                        $this->meta[$id]['iterator']->prev();
-                    } else {
-                        $this->meta[$id]['direction'] = 1;
-                        $this->meta[$id]['iterator']->rewind();
+                        if ($pos >= $cnt) $pos = 0;
                     }
-                } else {
-                    $this->meta[$id]['iterator']->rewind();
-                }
+                };
+
+                $this->cycles[$id] = $get_generator();
             }
 
-            if ($this->meta[$id]['iterator']->valid()) {
-                $return = $this->meta[$id]['iterator']->current()->item;
+            $this->cycles[$id]->send($reset);
 
-                if ($this->meta[$id]['direction'] == 1) {
-                    $this->meta[$id]['iterator']->next();
-                } else {
-                    $this->meta[$id]['iterator']->prev();
-                }
-            }
+            $return = $this->cycles[$id]->current();
+            $this->cycles[$id]->next();
 
             return $return;
         }
