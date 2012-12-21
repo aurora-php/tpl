@@ -397,21 +397,30 @@ namespace org\octris\core\tpl {
         {
             $id = 'trigger:' . $id . ':' . crc32("$steps:$start");
 
-            if (!isset($this->meta[$id]) || $this->meta[$id]['reset_value'] !== $reset) {
-                $this->meta[$id] = array(
-                    'current_step'  => $start,
-                    'total_steps'   => $steps,
-                    'reset_value'   => $reset
-                );
-            } else {
-                $this->meta[$id]['current_step']++;
+            if (!isset($this->meta[$id])) {
+                $get_generator = function() use ($start, $steps, $reset) {
+                    $pos = $start;
+
+                    while (true) {
+                        if ($reset != ($tmp = yield)) {
+                            $pos = $start; $reset = $tmp;
+                        } else {
+                            $pos = $pos % $steps;
+                        }
+
+                        yield (($steps - 1) == $pos++);
+                    }
+                };
+
+                $this->meta[$id] = $get_generator();
             }
 
-            $ret = ($this->meta[$id]['current_step'] % $this->meta[$id]['total_steps']);
+            $this->meta[$id]->send($reset);
 
-            $this->data[$id]['step'] = $ret;
+            $return = $this->meta[$id]->current();
+            $this->meta[$id]->next();
 
-            return ($ret == ($this->meta[$id]['total_steps'] - 1));
+            return $return;
         }
 
         /**
