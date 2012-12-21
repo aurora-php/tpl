@@ -466,13 +466,14 @@ namespace org\octris\core\tpl {
         {
             $id = 'cycle:' . $id;
 
-            if (!isset($this->cycles[$id])) {
+            if (!isset($this->meta[$id])) {
                 if ($pingpong) {
                     $array = array_merge($array, array_slice(array_reverse($array), 1, count($array) - 2));
                 }
 
                 $get_generator = function() use ($array, $reset) {
                     $pos = 0; $cnt = count($array);
+                    
                     while (true) {
                         if ($reset != ($tmp = yield)) {
                             $pos = 0; $reset = $tmp;
@@ -484,13 +485,13 @@ namespace org\octris\core\tpl {
                     }
                 };
 
-                $this->cycles[$id] = $get_generator();
+                $this->meta[$id] = $get_generator();
             }
 
-            $this->cycles[$id]->send($reset);
+            $this->meta[$id]->send($reset);
 
-            $return = $this->cycles[$id]->current();
-            $this->cycles[$id]->next();
+            $return = $this->meta[$id]->current();
+            $this->meta[$id]->next();
 
             return $return;
         }
