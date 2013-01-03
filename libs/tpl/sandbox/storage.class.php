@@ -74,7 +74,7 @@ namespace org\octris\core\tpl\sandbox {
         /**/
         {
             if (!isset($this->init[$name])) {
-                throw new \Exception('Unknown propety "' . $name . '".');
+                throw new \Exception('Unknown property "' . $name . '".');
             }
 
             $cb = $this->init[$name];
