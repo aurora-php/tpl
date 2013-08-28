@@ -69,8 +69,8 @@ namespace org\octris\core\tpl {
             self::T_BRACE_CLOSE => '\)',
             self::T_PSEPARATOR  => '\,',
 
-            self::T_ESCAPE      => 'escape',
-            self::T_LET         => 'let',
+            self::T_ESCAPE      => 'escape(?=\()',
+            self::T_LET         => 'let(?=\()',
             self::T_GETTEXT     => '_',
             self::T_BOOL        => '(true|false)',
             self::T_METHOD      => '[a-z_][a-z0-9_]*',
