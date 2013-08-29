@@ -71,9 +71,9 @@ namespace org\octris\core\tpl {
 
             self::T_ESCAPE      => 'escape(?=\()',
             self::T_LET         => 'let(?=\()',
-            self::T_GETTEXT     => '_',
+            self::T_GETTEXT     => '_(?=\()',
+            self::T_METHOD      => '[a-z_][a-z0-9_]*(?=\()',
             self::T_BOOL        => '(true|false)',
-            self::T_METHOD      => '[a-z_][a-z0-9_]*',
             self::T_VARIABLE    => '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+',
             self::T_CONSTANT    => "%[_a-z][_a-z0-9]*",
             self::T_MACRO       => "@[_a-z][_a-z0-9]*",
