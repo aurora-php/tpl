@@ -419,7 +419,7 @@ namespace org\octris\core\tpl\compiler {
                 '(%s ? %s : %s)', 
                 $args[0], 
                 $args[1], 
-                (count($args) > 2 ? $args[3] : $args[1])
+                (count($args) == 3 ? $args[2] : '')
             );
         }
         
