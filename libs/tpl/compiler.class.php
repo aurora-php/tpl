@@ -14,7 +14,7 @@ namespace org\octris\core\tpl {
      * Implementation of template compiler.
      *
      * @octdoc      c:tpl/compiler
-     * @copyright   copyright (c) 2010-2012 by Harald Lapp
+     * @copyright   copyright (c) 2010-2013 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class compiler
