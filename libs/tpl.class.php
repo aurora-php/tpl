@@ -243,9 +243,8 @@ namespace org\octris\core {
 
             if (($filename = $c->findFile($inp)) !== false) {
                 $tpl = $c->process($filename, $escape);
-
-                $c = new tpl\compress();
-                $tpl = $c->process($tpl, $this->path, $this->resources);
+                
+                $tpl = tpl\compress::process($tpl, $this->path, $this->resources);
                 $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
 
                 file_put_contents($out, $tpl);
