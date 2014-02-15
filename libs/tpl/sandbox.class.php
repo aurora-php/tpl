@@ -24,7 +24,7 @@ namespace org\octris\core\tpl {
          * Template data.
          *
          * @octdoc  p:sandbox/$data
-         * @var     array
+         * @type    array
          */
         public $data = array();
         /**/
@@ -33,7 +33,7 @@ namespace org\octris\core\tpl {
          * Storage for sandbox internal data objects.
          *
          * @octdoc  p:sandbox/$storage
-         * @var     \org\octris\core\tpl\sandbox\storage
+         * @type    \org\octris\core\tpl\sandbox\storage
          */
         protected $storage;
         /**/
@@ -42,7 +42,7 @@ namespace org\octris\core\tpl {
          * Internal storage for meta data required for block functions.
          *
          * @octdoc  p:sandbox/$meta
-         * @var     array
+         * @type    array
          */
         protected $meta = array();
         /**/
@@ -51,7 +51,7 @@ namespace org\octris\core\tpl {
          * Internal storage for cut/copied buffers.
          *
          * @octdoc  p:sandbox/$pastebin
-         * @var     array
+         * @type    array
          */
         protected $pastebin = array();
         /**/
@@ -60,7 +60,7 @@ namespace org\octris\core\tpl {
          * Function registry.
          *
          * @octdoc  p:sandbox/$registry
-         * @var     array
+         * @type    array
          */
         protected $registry = array();
         /**/
@@ -69,7 +69,7 @@ namespace org\octris\core\tpl {
          * Name of file that is rendered by the sandbox instance.
          *
          * @octdoc  p:sandbox/$filename
-         * @var     string
+         * @type    string
          */
         protected $filename = '';
         /**/
@@ -78,7 +78,7 @@ namespace org\octris\core\tpl {
          * Instance of locale class.
          *
          * @octdoc  p:compiler/$l10n
-         * @var     \org\octris\core\l10n
+         * @type    \org\octris\core\l10n
          */
         protected $l10n;
         /**/
@@ -87,7 +87,7 @@ namespace org\octris\core\tpl {
          * Instance of caching backend for template snippets.
          *
          * @octdoc  p:sandbox/$cache
-         * @var     \org\octris\core\cache|null
+         * @type    \org\octris\core\cache|null
          */
         protected $cache = null;
         /**/

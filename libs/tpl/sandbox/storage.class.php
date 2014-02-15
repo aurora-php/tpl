@@ -24,7 +24,7 @@ namespace org\octris\core\tpl\sandbox {
          * Storage for initialization callbacks.
          *
          * @octdoc  p:storage/$init
-         * @var     array
+         * @type    array
          */
         private $init = array();
         /**/
@@ -33,7 +33,7 @@ namespace org\octris\core\tpl\sandbox {
          * Instance of storage class.
          *
          * @octdoc  p:storage/$instance
-         * @var     \org\octris\core\tpl\sandbox\storage|null
+         * @type    \org\octris\core\tpl\sandbox\storage|null
          */
         private static $instance = null;
         /**/

@@ -26,7 +26,7 @@ namespace org\octris\core\tpl\compiler {
          * Inline method rewrite.
          *
          * @octdoc  p:rewrite/$inline
-         * @var     array
+         * @type    array
          */
         protected static $inline = array(
             // blocks
@@ -114,7 +114,7 @@ namespace org\octris\core\tpl\compiler {
          * Allowed PHP functions and optional mapping to an PHP or framework internal name.
          *
          * @octdoc  p:rewrite/$phpfunc
-         * @var     array
+         * @type    array
          */
         protected static $phpfunc = array(
             // string functions
@@ -159,7 +159,7 @@ namespace org\octris\core\tpl\compiler {
          * Forbidden function names.
          *
          * @octdoc  p:rewrite/$forbidden
-         * @var     array
+         * @type    array
          */
         protected static $forbidden = array(
             'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
@@ -171,7 +171,7 @@ namespace org\octris\core\tpl\compiler {
          * Last error occured.
          *
          * @octdoc  p:rewrite/$last_error
-         * @var     string
+         * @type    string
          */
         protected static $last_error = '';
         /**/

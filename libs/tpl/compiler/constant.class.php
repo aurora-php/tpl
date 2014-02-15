@@ -24,7 +24,7 @@ namespace org\octris\core\tpl\compiler {
          * Constant registry.
          *
          * @octdoc  p:constant/$registry
-         * @var     array
+         * @type    array
          */
         protected static $registry = array(
             // pre-defined constants for bool type
@@ -64,7 +64,7 @@ namespace org\octris\core\tpl\compiler {
          * Last occured error.
          *
          * @octdoc  p:constant/$last_error
-         * @var     string
+         * @type    string
          */
         protected static $last_error = '';
         /**/

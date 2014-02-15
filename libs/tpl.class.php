@@ -41,7 +41,7 @@ namespace org\octris\core {
          * Instance of sandbox for executing template in.
          *
          * @octdoc  p:tpl/$sandbox
-         * @var     \org\octris\core\tpl\sandbox
+         * @type    \org\octris\core\tpl\sandbox
          */
         protected $sandbox;
         /**/
@@ -50,7 +50,7 @@ namespace org\octris\core {
          * Whether to fetch compiled template from cache.
          *
          * @octdoc  p:tpl/$use_cache
-         * @var     bool
+         * @type    bool
          */
         protected $use_cache = false;
         /**/
@@ -59,7 +59,7 @@ namespace org\octris\core {
          * Stores pathes to look into when searching for template to load.
          *
          * @octdoc  p:tpl/$searchpath
-         * @var     array
+         * @type    array
          */
         protected $searchpath = array();
         /**/
@@ -68,7 +68,7 @@ namespace org\octris\core {
          * Instance of locale class.
          *
          * @octdoc  p:tpl/$l10n
-         * @var     \org\octris\core\l10n
+         * @type    \org\octris\core\l10n
          */
         protected $l10n;
         /**/
@@ -77,7 +77,7 @@ namespace org\octris\core {
          * Output path for various file types.
          *
          * @octdoc  p:tpl/$path
-         * @var     array
+         * @type    array
          */
         protected $path = array(
             'tpl'   => '/tmp',      // output path for compiled templates
@@ -90,7 +90,7 @@ namespace org\octris\core {
          * Resource pathes for various file types.
          *
          * @octdoc  p:tpl/$resources
-         * @var     array
+         * @type    array
          */
         protected $resources = array(
             'tpl'   => '',
