@@ -54,7 +54,7 @@ namespace org\octris\core\tpl\parser {
          * Parser patterns
          *
          * @octdoc  p:html/$patterns
-         * @var     array
+         * @type    array
          */
         protected static $patterns = array(
             self::T_TAG_START       => '/</',
@@ -81,7 +81,7 @@ namespace org\octris\core\tpl\parser {
          * Parser rules.
          *
          * @octdoc  p:html/$rules
-         * @var     array
+         * @type    array
          */
         protected static $rules = array(
             self::T_DATA            => array(
@@ -146,7 +146,7 @@ namespace org\octris\core\tpl\parser {
          * Attributes and their relevant context information.
          *
          * @octdoc  p:html/$attributes
-         * @var     array
+         * @type    array
          */
         protected static $attributes = array(
             'js' => array(
@@ -166,7 +166,7 @@ namespace org\octris\core\tpl\parser {
          * Current state of parser in document.
          *
          * @octdoc  p:html/$state
-         * @var     int
+         * @type    int
          */
         protected $state = self::T_DATA;
         /**/
@@ -175,7 +175,7 @@ namespace org\octris\core\tpl\parser {
          * Stack for escaping modes.
          *
          * @octdoc  p:html/$escape
-         * @var     array
+         * @type    array
          */
         protected $escape = array(\org\octris\core\tpl::T_ESC_HTML);
         /**/
@@ -184,7 +184,7 @@ namespace org\octris\core\tpl\parser {
          * Array for storing normalized template commands.
          *
          * @octdoc  p:html/$commands
-         * @var     array
+         * @type    array
          */
         protected $commands = array();
         /**/
