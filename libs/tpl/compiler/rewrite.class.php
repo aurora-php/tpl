@@ -263,7 +263,7 @@ namespace org\octris\core\tpl\compiler {
                     }
                 }
                 
-                $name = '_' . str_replace('#', '_', $name);
+                $name = '_' . str_replace('#', 'block_', $name);
 
                 return self::$name($args);
             } elseif (substr($name, 0, 1) == '#') {
@@ -293,7 +293,7 @@ namespace org\octris\core\tpl\compiler {
         /*
          * inline block functions, that can be converted directly
          */
-        protected static function __bench($args) {
+        protected static function _block_bench($args) {
             $var1 = '$_' . self::getUniqId();
             $var2 = '$_' . self::getUniqId();
 
@@ -315,7 +315,7 @@ namespace org\octris\core\tpl\compiler {
             );
         }
 
-        protected static function __cache($args) {
+        protected static function _block_cache($args) {
             $var = '$_' . self::getUniqId();
             $key = $args[0];
             $ttl = $args[1];
@@ -333,28 +333,28 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
-        protected static function __copy($args) {
+        protected static function _block_copy($args) {
             return array(
                 '$this->bufferStart(' . implode(', ', $args) . ', false);', 
                 '$this->bufferEnd();'
             );
         }
         
-        protected static function __cron($args) {
+        protected static function _block_cron($args) {
             return array(
                 'if ($this->cron(' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
         
-        protected static function __cut($args) {
+        protected static function _block_cut($args) {
             return array(
                 '$this->bufferStart(' . implode(', ', $args) . ', true);', 
                 '$this->bufferEnd();'
             );
         }
         
-        protected static function __foreach($args) {
+        protected static function _block_foreach($args) {
             $var = self::getUniqId();
             $arg = $args[1];
             unset($args[1]);
@@ -371,14 +371,14 @@ namespace org\octris\core\tpl\compiler {
             );
         }
         
-        protected static function __if($args) {
+        protected static function _block_if($args) {
             return array(
                 'if (' . implode('', $args) . ') {',
                 '}'
             );
         }
 
-        protected static function __loop($args) {
+        protected static function _block_loop($args) {
             $var = self::getUniqId();
             
             $start = $args[1];
@@ -402,14 +402,14 @@ namespace org\octris\core\tpl\compiler {
             );
         }
 
-        protected static function __onchange($args) {
+        protected static function _block_onchange($args) {
             return array(
                 'if ($this->onchange("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
                 '}'
             );
         }
         
-        protected static function __trigger($args) {
+        protected static function _block_trigger($args) {
             return array(
                 'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
                 '}'
