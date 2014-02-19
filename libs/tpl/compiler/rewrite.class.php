@@ -99,7 +99,7 @@ namespace org\octris\core\tpl\compiler {
 
             // localisation functions
             'comify'    => array('min' => 2, 'max' => 4),
-            'enum'      => array('min' => 2, 'max' => 5),
+            'enum'      => array('min' => 2),
             'monf'      => array('min' => 1, 'max' => 2),
             'numf'      => array('min' => 1, 'max' => 2),
             'perf'      => array('min' => 1, 'max' => 2),
