@@ -979,7 +979,7 @@ namespace org\octris\core\tpl {
                     }
                 }
                 
-                $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('parse error at "%s"', $in));
+                $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('parse error at "%s" in "%s"', $in, $mem));
             }
 
             if (count($out) > 0) {
