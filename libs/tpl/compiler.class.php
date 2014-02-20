@@ -959,7 +959,7 @@ namespace org\octris\core\tpl {
         /**/
         {
             $out = array();
-            $in  = stripslashes($in);
+            $mem = $in;
 
             while (strlen($in) > 0) {
                 foreach (self::$tokens as $token => $regexp) {
