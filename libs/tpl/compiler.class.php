@@ -925,6 +925,8 @@ namespace org\octris\core\tpl {
         {
             if (php_sapi_name() != 'cli') {
                 print "<pre>";
+
+                $payload = htmlentities($payload, ENT_QUOTES);
             }
             
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
