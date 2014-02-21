@@ -63,7 +63,7 @@ namespace org\octris\core\tpl\compiler {
          * Set error.
          *
          * @octdoc  m:macro/setError
-         * @param   string      $name       Name of constant the error occured for.
+         * @param   string      $name       Name of macro the error occured for.
          * @param   string      $msg        Additional error message.
          */
         protected static function setError($name, $msg)
