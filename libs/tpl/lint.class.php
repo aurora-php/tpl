@@ -79,9 +79,11 @@ namespace org\octris\core\tpl {
          * @octdoc  m:lint/toolchain
          * @param   string      $snippet        Template snippet to process.
          * @param   int         $line           Line in template processed.
+         * @param   array       $blocks         Block information required by analyzer / compiler.
+         * @param   string      $escape         Escaping to use.
          * @return  string                      Processed / compiled snippet.
          */
-        protected function toolchain($snippet, $line)
+        protected function toolchain($snippet, $line, array &$blocks, $escape)
         /**/
         {
             $tokens = $this->tokenize($snippet, $line);
@@ -112,7 +114,7 @@ namespace org\octris\core\tpl {
             $this->errors   = 0;
             $this->errout   = $errout;
 
-            $this->parse($filename, true);
+            $this->parse(\org\octris\core\tpl::T_ESC_AUTO);
             
             return ($this->errors == 0);
         }
