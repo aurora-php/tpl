@@ -78,7 +78,7 @@ namespace org\octris\core\tpl {
             self::T_CONSTANT    => "%[_a-z][_a-z0-9]*",
             self::T_MACRO       => "@[_a-z][_a-z0-9]*",
         
-            self::T_STRING      => "(?:(?:\"(?:\\\\\"|[^\"])+\")|(?:\'(?:\\\\\'|[^\'])+\'))",
+            self::T_STRING      => "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))",
             self::T_NUMBER      => '[+-]?[0-9]+(\.[0-9]+|)',
             
             self::T_WHITESPACE  => '\s+',
