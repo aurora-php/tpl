@@ -243,7 +243,7 @@ namespace org\octris\core\tpl {
                     )
                 ),
             
-                // T_BLOCK_CLOSE, T_IF_ELSE, T_VARIABLE, T_CONSTANT, T_STRING, T_NUMBER, T_BOOL
+                // T_BLOCK_CLOSE, T_IF_ELSE, T_VARIABLE, T_CONSTANT
                 self::T_BLOCK_CLOSE => array(self::T_END => NULL),
                 self::T_IF_ELSE     => array(self::T_END => NULL),
                 self::T_VARIABLE    => array(self::T_END => NULL),

@@ -123,7 +123,7 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:parser/__construct
          * @param   string                  $filename                   Filename of template to load.
-         * @param   int                     $flags                      Optional ption flags to set.
+         * @param   int                     $flags                      Optional option flags to set.
          */
         public function __construct($filename, $flags = 0) 
         /**/
