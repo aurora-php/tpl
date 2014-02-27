@@ -123,11 +123,10 @@ namespace org\octris\core\tpl {
         public function process($filename, $escape)
         /**/
         {
-            $this->filename = $filename;
             $this->errors   = 0;
 
-            $this->parse(\org\octris\core\tpl::T_ESC_NONE);
-            
+            parent::process($filename, $escape);
+
             return ($this->errors == 0);
         }
     }
