@@ -1363,7 +1363,7 @@ namespace org\octris\core\tpl {
 
             if (count($blocks['analyzer']) > 0) {
                 // all block-commands in a template have to be closed
-                $this->error(__FUNCTION__, __LINE__, $line, 0, sprintf('missing %s for %s',
+                $this->error(__FUNCTION__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
                     $this->getTokenName(self::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
                         return $v['value'];
