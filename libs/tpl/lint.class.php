@@ -28,7 +28,7 @@ namespace org\octris\core\tpl {
          * @octdoc  p:lint/$errout
          * @type    resource
          */
-        protected $errout;
+        protected $errout = 'php://stderr';
         /**/
 
         /**
@@ -39,6 +39,18 @@ namespace org\octris\core\tpl {
          */
         protected $errors = 0;
         /**/
+
+        /**
+         * Set location for error output.
+         *
+         * @octdoc  m:lint/setErrorOutput
+         * @param   string      $errout     Location for error output.
+         */
+        public function setErrorOutput($errout)
+        /**/
+        {
+            $this->errout = $errout;
+        }
 
         /**
          * Trigger an error.
@@ -104,17 +116,17 @@ namespace org\octris\core\tpl {
          *
          * @octdoc  m:lint/process
          * @param   string      $filename       Name of template file to lint.
+         * @param   string      $escape         Escaping to use.
          * @param   string      $err            Destination for error reporting.
          * @return  bool                        Returns true if template is valid.
          */
-        public function process($filename, $errout = 'php://stdout')
+        public function process($filename, $escape)
         /**/
         {
             $this->filename = $filename;
             $this->errors   = 0;
-            $this->errout   = $errout;
 
-            $this->parse(\org\octris\core\tpl::T_ESC_AUTO);
+            $this->parse(\org\octris\core\tpl::T_ESC_NONE);
             
             return ($this->errors == 0);
         }
