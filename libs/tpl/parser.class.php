@@ -241,6 +241,18 @@ namespace org\octris\core\tpl {
         }
 
         /**
+         * Get number of total lines of template.
+         *
+         * @octdoc  m:parser/getTotalLines
+         * @return  int                                                 Number of total lines.
+         */
+        public function getTotalLines()
+        /**/
+        {
+            return substr_count($this->tpl, "\n") + 1;
+        }
+
+        /**
          * Return template contents.
          *
          * @octdoc  m:parser/getTemplate
