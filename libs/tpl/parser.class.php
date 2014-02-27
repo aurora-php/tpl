@@ -379,11 +379,13 @@ namespace org\octris\core\tpl {
             
             // replace template snippet
             $this->tpl = substr_replace($this->tpl, $str, $offset, $length);
-
+            
             if ($move_offset) {
-                $this->setOffset($offset + strlen($str));
+                // $this->setOffset($offset + strlen($str));
+                $this->next_offset = $offset + strlen($str);
             } else {
-                $this->setOffset($offset);
+                // $this->setOffset($offset);
+                $this->next_offset = $offset;
             }
         }
     }
