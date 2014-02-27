@@ -91,7 +91,7 @@ namespace org\octris\core\tpl {
 
             if (count($tokens) > 0) {
                 try {
-                    $this->analyze($tokens);
+                    $this->analyze($tokens, $blocks);
                 } catch(\Exception $e) {
                 }
             }
