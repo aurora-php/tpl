@@ -99,7 +99,7 @@ namespace org\octris\core\tpl\compiler {
                 self::T_GETTEXT, self::T_IF_OPEN, self::T_IF_ELSE, self::T_LET,
                 self::T_MACRO, self::T_METHOD, self::T_VARIABLE
             ]], true);
-            $this->sddRule(self::T_BLOCK_OPEN, ['$concatenation' => [
+            $this->addRule(self::T_BLOCK_OPEN, ['$concatenation' => [
                 self::T_BRACE_OPEN,
                 ['$option' => [
                     ['$concatenation' => [
