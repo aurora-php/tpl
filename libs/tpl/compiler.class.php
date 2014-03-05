@@ -30,7 +30,7 @@ namespace org\octris\core\tpl {
         const T_TYPE            = '<type>';
         const T_PARAMETER       = '<parameter>';
         
-        const T_BLOCK_OPEN      = '<block-open>'
+        const T_BLOCK_OPEN      = '<block-open>';
         const T_BLOCK_CLOSE     = '<block-close>';
         const T_IF_OPEN         = '<if-open>';
         const T_IF_ELSE         = '<if-else>';
@@ -49,7 +49,7 @@ namespace org\octris\core\tpl {
         const T_STRING          = '<string>';
         const T_NUMBER          = '<number>';
         const T_BOOL            = '<bool>';
-        const T_NULL            = '<null>'
+        const T_NULL            = '<null>';
         
         const T_WHITESPACE      = '<whitespace>';
         /**/
