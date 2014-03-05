@@ -23,6 +23,40 @@ namespace org\octris\core\tpl\compiler {
     /**/
     {
         /**
+         * Known tokens.
+         *
+         * @octdoc  d:grammar/T_...
+         * @type    string
+         */
+        const T_START           = '<start>';
+        const T_TYPE            = '<type>';
+        const T_PARAMETER       = '<parameter>';
+        
+        const T_BLOCK_OPEN      = '<block-open>';
+        const T_BLOCK_CLOSE     = '<block-close>';
+        const T_IF_OPEN         = '<if-open>';
+        const T_IF_ELSE         = '<if-else>';
+        const T_BRACE_OPEN      = '(';
+        const T_BRACE_CLOSE     = ')';
+        const T_PSEPARATOR      = ',';
+    
+        const T_METHOD          = '<method>';
+        const T_LET             = '<let>';
+        const T_VARIABLE        = '<variable>';
+        const T_CONSTANT        = '<constant>';
+        const T_MACRO           = '<macro>';
+        const T_GETTEXT         = '<gettext>';
+        const T_ESCAPE          = '<escape>';
+    
+        const T_STRING          = '<string>';
+        const T_NUMBER          = '<number>';
+        const T_BOOL            = '<bool>';
+        const T_NULL            = '<null>';
+        
+        const T_WHITESPACE      = '<whitespace>';
+        /**/
+                
+        /**
          * Constructor.
          *
          * @octdoc  m:grammar/__construct
@@ -33,126 +67,126 @@ namespace org\octris\core\tpl\compiler {
             parent::__construct();
             
             // define tokens
-            $this->addToken(c::T_IF_OPEN,     '#if');
-            $this->addToken(c::T_IF_ELSE,     '#else');
-            $this->addToken(c::T_BLOCK_CLOSE, '#end');
-            $this->addToken(c::T_BLOCK_OPEN,  '#[a-z][a-z-0-9_]*');
-            $this->addToken(c::T_BRACE_OPEN,  '\(');
-            $this->addToken(c::T_BRACE_CLOSE, '\)');
-            $this->addToken(c::T_PSEPARATOR,  '\,');
-            $this->addToken(c::T_ESCAPE,      'escape(?=\()');
-            $this->addToken(c::T_LET,         'let(?=\()');
-            $this->addToken(c::T_GETTEXT,     '_(?=\()');
-            $this->addToken(c::T_METHOD,      '[a-z_][a-z0-9_]*(?=\()');
-            $this->addToken(c::T_BOOL,        '(true|false)');
-            $this->addToken(c::T_VARIABLE,    '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+');
-            $this->addToken(c::T_CONSTANT,    "%[_a-z][_a-z0-9]*");
-            $this->addToken(c::T_MACRO,       "@[_a-z][_a-z0-9]*");
-            $this->addToken(c::T_STRING,      "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
-            $this->addToken(c::T_NUMBER,      '[+-]?[0-9]+(\.[0-9]+|)');
-            $this->addToken(c::T_NULL,        'null');
-            $this->addToken(c::T_WHITESPACE,  '\s+');
+            $this->addToken(self::T_IF_OPEN,     '#if');
+            $this->addToken(self::T_IF_ELSE,     '#else');
+            $this->addToken(self::T_BLOCK_CLOSE, '#end');
+            $this->addToken(self::T_BLOCK_OPEN,  '#[a-z][a-z-0-9_]*');
+            $this->addToken(self::T_BRACE_OPEN,  '\(');
+            $this->addToken(self::T_BRACE_CLOSE, '\)');
+            $this->addToken(self::T_PSEPARATOR,  '\,');
+            $this->addToken(self::T_ESCAPE,      'escape(?=\()');
+            $this->addToken(self::T_LET,         'let(?=\()');
+            $this->addToken(self::T_GETTEXT,     '_(?=\()');
+            $this->addToken(self::T_METHOD,      '[a-z_][a-z0-9_]*(?=\()');
+            $this->addToken(self::T_BOOL,        '(true|false)');
+            $this->addToken(self::T_VARIABLE,    '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+');
+            $this->addToken(self::T_CONSTANT,    "%[_a-z][_a-z0-9]*");
+            $this->addToken(self::T_MACRO,       "@[_a-z][_a-z0-9]*");
+            $this->addToken(self::T_STRING,      "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
+            $this->addToken(self::T_NUMBER,      '[+-]?[0-9]+(\.[0-9]+|)');
+            $this->addToken(self::T_NULL,        'null');
+            $this->addToken(self::T_WHITESPACE,  '\s+');
             
             // define grammar rules
-            $this->addRule(c::T_TYPE, ['$alternation' => [
-                c::T_BOOL, c::T_NULL, c::T_NUMBER, c::T_STRING
+            $this->addRule(self::T_TYPE, ['$alternation' => [
+                self::T_BOOL, self::T_NULL, self::T_NUMBER, self::T_STRING
             ]]);
-            $this->addRule(c::T_PARAMETER, ['$alternation' => [
-                c::T_METHOD, c::T_VARIABLE, c::T_CONSTANT, '<type>'
+            $this->addRule(self::T_PARAMETER, ['$alternation' => [
+                self::T_METHOD, self::T_VARIABLE, self::T_CONSTANT, '<type>'
             ]]);
-            $this->addRule(c::T_START, ['$alternation' => [
-                c::T_BLOCK_OPEN, c::T_BLOCK_CLOSE, c::T_CONSTANT, c::T_ESCAPE,
-                c::T_GETTEXT, c::T_IF_OPEN, c::T_IF_ELSE, c::T_LET,
-                c::T_MACRO, c::T_METHOD, c::T_VARIABLE
+            $this->addRule(self::T_START, ['$alternation' => [
+                self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_CONSTANT, self::T_ESCAPE,
+                self::T_GETTEXT, self::T_IF_OPEN, self::T_IF_ELSE, self::T_LET,
+                self::T_MACRO, self::T_METHOD, self::T_VARIABLE
             ]], true);
-            $this->sddRule(c::T_BLOCK_OPEN, ['$concatenation' => [
-                c::T_BRACE_OPEN,
+            $this->sddRule(self::T_BLOCK_OPEN, ['$concatenation' => [
+                self::T_BRACE_OPEN,
                 ['$option' => [
                     ['$concatenation' => [
-                        c::T_PARAMETER,
+                        self::T_PARAMETER,
                         ['$repeat' => [
                             ['$concatenation' => [
-                                c::T_PSEPARATOR,
-                                c::T_PARAMETER
+                                self::T_PSEPARATOR,
+                                self::T_PARAMETER
                             ]]
                         ]]
                     ]]
                 ]],
-                c::T_BRACE_CLOSE
+                self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(c::T_IF_OPEN, ['$concatenation' => [
-                c::T_BRACE_OPEN,
-                c::T_PARAMETER,
+            $this->addRule(self::T_IF_OPEN, ['$concatenation' => [
+                self::T_BRACE_OPEN,
+                self::T_PARAMETER,
                 ['$repeat' => [
                     ['$concatenation' => [
-                        c::T_PSEPARATOR,
-                        c::T_PARAMETER
+                        self::T_PSEPARATOR,
+                        self::T_PARAMETER
                     ]]
                 ]],
-                c::T_BRACE_CLOSE
+                self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(c::T_METHOD, ['$concatenation' => [
-                c::T_BRACE_OPEN,
+            $this->addRule(self::T_METHOD, ['$concatenation' => [
+                self::T_BRACE_OPEN,
                 ['$option' => [
                     ['$concatenation' => [
-                        c::T_PARAMETER,
+                        self::T_PARAMETER,
                         ['$repeat' => [
                             ['$concatenation' => [
-                                c::T_PSEPARATOR,
-                                c::T_PARAMETER
+                                self::T_PSEPARATOR,
+                                self::T_PARAMETER
                             ]]
                         ]]
                     ]]
                 ]],
-                c::T_BRACE_CLOSE
+                self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(c::T_ESCAPE, ['$concatenation' => [
-                c::T_BRACE_OPEN,
+            $this->addRule(self::T_ESCAPE, ['$concatenation' => [
+                self::T_BRACE_OPEN,
                 ['$alternation' => [
-                    c::T_VARIABLE,
-                    c::T_CONSTANT,
-                    c::T_STRING
+                    self::T_VARIABLE,
+                    self::T_CONSTANT,
+                    self::T_STRING
                 ]],
-                c::T_PSEPARATOR,
-                c::T_CONSTANT,
-                c::T_BRACE_CLOSE
+                self::T_PSEPARATOR,
+                self::T_CONSTANT,
+                self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(c::T_LET, ['$concatenation' => [
-                c::T_BRACE_OPEN,
-                c::T_VARIABLE,
-                c::T_PSEPARATOR,
-                c::T_PARAMETER,
-                c::T_BRACE_CLOSE
+            $this->addRule(self::T_LET, ['$concatenation' => [
+                self::T_BRACE_OPEN,
+                self::T_VARIABLE,
+                self::T_PSEPARATOR,
+                self::T_PARAMETER,
+                self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(c::T_GETTEXT, ['$concatenation' => [
-                c::T_BRACE_OPEN,
+            $this->addRule(self::T_GETTEXT, ['$concatenation' => [
+                self::T_BRACE_OPEN,
                 ['$alternation' => [
-                    c::T_CONSTANT,
-                    c::T_STRING,
-                    c::T_VARIABLE,
+                    self::T_CONSTANT,
+                    self::T_STRING,
+                    self::T_VARIABLE,
                 ]],
-                c::T_BRACE_CLOSE
+                self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(c::T_MACRO, ['$concatenation' => [
-                c::T_BRACE_OPEN,
+            $this->addRule(self::T_MACRO, ['$concatenation' => [
+                self::T_BRACE_OPEN,
                 ['$option' => [
                     ['$concatenation' => [
                         ['$alternation' => [
-                            c::T_CONSTANT,
-                            c::T_TYPE
+                            self::T_CONSTANT,
+                            self::T_TYPE
                         ]],
                         ['$repeat' => [
                             ['$concatenation' => [
-                                c::T_PSEPARATOR,
+                                self::T_PSEPARATOR,
                                 ['$alternation' => [
-                                    c::T_CONSTANT,
-                                    c::T_TYPE
+                                    self::T_CONSTANT,
+                                    self::T_TYPE
                                 ]]
                             ]]
                         ]]
                     ]]
                 ]],
-                c::T_BRACE_CLOSE
+                self::T_BRACE_CLOSE
             ]]);            
         }
     }

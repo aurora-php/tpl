@@ -10,6 +10,8 @@
  */
 
 namespace org\octris\core\tpl {
+    use \org\octris\core\tpl\compiler\grammar;
+    
     /**
      * Implementation of template compiler.
      *
@@ -20,40 +22,6 @@ namespace org\octris\core\tpl {
     class compiler
     /**/
     {
-        /**
-         * Known parser tokens.
-         *
-         * @octdoc  d:compiler/T_...
-         * @type    string
-         */
-        const T_START           = '<start>';
-        const T_TYPE            = '<type>';
-        const T_PARAMETER       = '<parameter>';
-        
-        const T_BLOCK_OPEN      = '<block-open>';
-        const T_BLOCK_CLOSE     = '<block-close>';
-        const T_IF_OPEN         = '<if-open>';
-        const T_IF_ELSE         = '<if-else>';
-        const T_BRACE_OPEN      = '(';
-        const T_BRACE_CLOSE     = ')';
-        const T_PSEPARATOR      = ',';
-    
-        const T_METHOD          = '<method>';
-        const T_LET             = '<let>';
-        const T_VARIABLE        = '<variable>';
-        const T_CONSTANT        = '<constant>';
-        const T_MACRO           = '<macro>';
-        const T_GETTEXT         = '<gettext>';
-        const T_ESCAPE          = '<escape>';
-    
-        const T_STRING          = '<string>';
-        const T_NUMBER          = '<number>';
-        const T_BOOL            = '<bool>';
-        const T_NULL            = '<null>';
-        
-        const T_WHITESPACE      = '<whitespace>';
-        /**/
-                
         /**
          * Instance of parser class.
          *
@@ -281,8 +249,8 @@ namespace org\octris\core\tpl {
                 extract($current);
             
                 switch ($token) {
-                case self::T_IF_OPEN:
-                case self::T_BLOCK_OPEN:
+                case grammar::T_IF_OPEN:
+                case grammar::T_BLOCK_OPEN:
                     // replace/rewrite block call
                     $value = strtolower($value);
                     
@@ -295,23 +263,23 @@ namespace org\octris\core\tpl {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
                     }
                     break;
-                case self::T_IF_ELSE:
+                case grammar::T_IF_ELSE:
                     $code[] = '} else {';
                     break;
-                case self::T_BLOCK_CLOSE:
+                case grammar::T_BLOCK_CLOSE:
                     $code[] = array_pop($blocks['compiler']);
                     break;
-                case self::T_BRACE_CLOSE:
+                case grammar::T_BRACE_CLOSE:
                     array_push($stack, $code);
                     $code = array();
                     break;
-                case self::T_GETTEXT:
+                case grammar::T_GETTEXT:
                     // gettext handling
                     $code = array($this->gettext(array_reverse($code)));
                     break;
-                case self::T_ESCAPE:
-                case self::T_LET:
-                case self::T_METHOD:
+                case grammar::T_ESCAPE:
+                case grammar::T_LET:
+                case grammar::T_METHOD:
                     // replace/rewrite method call
                     $value = strtolower($value);
                     $code  = array(compiler\rewrite::$value(array_reverse($code)));
@@ -322,7 +290,7 @@ namespace org\octris\core\tpl {
                     
                     if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
                     break;
-                case self::T_MACRO:
+                case grammar::T_MACRO:
                     // resolve macro
                     $value = strtolower(substr($value, 1));
                     $file  = substr($code[0], 1, -1);
@@ -340,7 +308,7 @@ namespace org\octris\core\tpl {
                     
                     $code[] = implode(', ', array_pop($stack));
                     break;
-                case self::T_CONSTANT:
+                case grammar::T_CONSTANT:
                     $value = strtoupper(substr($value, 1));
                     $tmp   = compiler\constant::getConstant($value);
                 
@@ -350,7 +318,7 @@ namespace org\octris\core\tpl {
                 
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
                     break;
-                case self::T_VARIABLE:
+                case grammar::T_VARIABLE:
                     $tmp = sprintf(
                         '$this->data["%s"]', 
                         implode('"]["', explode(':', strtolower(substr($value, 1))))
@@ -359,12 +327,12 @@ namespace org\octris\core\tpl {
                     // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
                     $code[] = $tmp;
                     break;
-                case self::T_BOOL:
-                case self::T_STRING:
-                case self::T_NUMBER:
+                case grammar::T_BOOL:
+                case grammar::T_STRING:
+                case grammar::T_NUMBER:
                     $code[] = $value;
                     break;
-                case self::T_START:
+                case grammar::T_START:
                     /*
                      * NOTE: Regarding newlines behind PHP closing tag '?>'. this is because PHP 'eats' newslines
                      *       after PHP closing tag. For details refer to:
@@ -373,12 +341,12 @@ namespace org\octris\core\tpl {
                      */
                     $last_token = $getLastToken($last_tokens, -2);
                     
-                    if ($last_token == self::T_LET) {
+                    if ($last_token == grammar::T_LET) {
                         $code = array('<?php ' . implode('', $code) . '; ?>'."\n");
-                    } elseif (in_array($last_token, array(self::T_CONSTANT, self::T_MACRO))) {
+                    } elseif (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
                         $code = array(implode('', $code));
-                    } elseif (!in_array($last_token, array(self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE))) {
-                        if ($last_token == self::T_ESCAPE) {
+                    } elseif (!in_array($last_token, array(grammar::T_BLOCK_OPEN, grammar::T_BLOCK_CLOSE, grammar::T_IF_OPEN, grammar::T_IF_ELSE))) {
+                        if ($last_token == grammar::T_ESCAPE) {
                             // no additional escaping, when 'escape' method was used
                             $code = array('<?php $this->write(' . implode('', $code) . '); ?>'."\n");
                         } else {
@@ -388,9 +356,9 @@ namespace org\octris\core\tpl {
                         $code = array('<?php ' . implode('', $code) . ' ?>'."\n");
                     }
                     break;
-                case self::T_PSEPARATOR:
-                case self::T_BRACE_OPEN:
-                case self::T_END:
+                case grammar::T_PSEPARATOR:
+                case grammar::T_BRACE_OPEN:
+                case grammar::T_END:
                     // nothing to do for these tokens
                     break;
                 default:
@@ -418,25 +386,25 @@ namespace org\octris\core\tpl {
             if (is_null(self::$parser)) {
                 // initialize parser
                 $grammar = new \org\octris\core\tpl\compiler\grammar();
-                self::$parser = new \org\octris\core\parser($grammar, [self::T_WHITESPACE]);
+                self::$parser = new \org\octris\core\parser($grammar, [grammar::T_WHITESPACE]);
                 
-                $grammar->addEvent(self::T_IF_OPEN, function($current) use (&$blocks) {
+                $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
                     $blocks['analyzer'][] = $current;
                 });
-                $grammar->addEvent(self::T_IF_OPEN, function($current) use (&$blocks) {
+                $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
                     $blocks['analyzer'][] = $current;
                 });
-                $grammar->addEvent(self::T_BLOCK_CLOSE, function($current) use (&$blocks) {
+                $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
                     // closing block only allowed is a block is open
                     if (!($block = array_pop($blocks['analyzer']))) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'there is no open block');
                     }
                 });
-                $grammar->addEvent(self::T_IF_ELSE, function($current) use (&$blocks) {
-                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != self::T_IF_OPEN)) {
+                $grammar->addEvent(grammar::T_IF_ELSE, function($current) use (&$blocks) {
+                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
                         $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
-                        $blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
+                        $blocks['analyzer'][$cnt - 1]['token'] = grammar::T_IF_ELSE;
                     }
                 });
             }
@@ -487,7 +455,7 @@ namespace org\octris\core\tpl {
             if (count($blocks['analyzer']) > 0) {
                 // all block-commands in a template have to be closed
                 $this->error(__FUNCTION__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
-                    $this->getTokenName(self::T_BLOCK_CLOSE),
+                    $this->getTokenName(grammar::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
                         return $v['value'];
                     }, array_reverse($blocks['analyzer'])))
