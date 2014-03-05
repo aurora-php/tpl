@@ -497,11 +497,37 @@ namespace org\octris\core\tpl {
         protected function toolchain($snippet, $line, array &$blocks, $escape)
         /**/
         {
-            $tokens = $this->tokenize($snippet, $line);
+            if (is_null(self::$parser)) {
+                // initialize parser
+                $grammar = new \org\octris\core\tpl\compiler\grammar();
+                self::$parser = new \org\octris\core\parser($grammar, [self::T_WHITESPACE]);
+                
+                $grammar->addEvent(self::T_IF_OPEN, function($current) use (&$blocks) {
+                    $blocks['analyzer'][] = $current;
+                });
+                $grammar->addEvent(self::T_IF_OPEN, function($current) use (&$blocks) {
+                    $blocks['analyzer'][] = $current;
+                });
+                $grammar->addEvent(self::T_BLOCK_CLOSE, function($current) use (&$blocks) {
+                    // closing block only allowed is a block is open
+                    if (!($block = array_pop($blocks['analyzer']))) {
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, 'there is no open block');
+                    }
+                });
+                $grammar->addEvent(self::T_IF_ELSE, function($current) use (&$blocks) {
+                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != self::T_IF_OPEN)) {
+                        $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
+                    } else {
+                        $blocks['analyzer'][$cnt - 1]['token'] = self::T_IF_ELSE;
+                    }
+                });
+            }
+
+            $tokens = self::$parser->tokenize($snippet, $line);
             $code   = '';
 
             if (count($tokens) > 0) {
-                if ($this->analyze($tokens, $blocks) !== false) {
+                if (self::$parser->getGrammar()->analyze($tokens) !== false) {
                     $tokens = array_reverse($tokens);
                     $code   = implode('', $this->compile($tokens, $blocks, $escape));
                 }
