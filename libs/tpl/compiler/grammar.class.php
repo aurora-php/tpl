@@ -36,9 +36,9 @@ namespace org\octris\core\tpl\compiler {
         const T_BLOCK_CLOSE     = '<block-close>';
         const T_IF_OPEN         = '<if-open>';
         const T_IF_ELSE         = '<if-else>';
-        const T_BRACE_OPEN      = '(';
-        const T_BRACE_CLOSE     = ')';
-        const T_PSEPARATOR      = ',';
+        const T_BRACE_OPEN      = '"("';
+        const T_BRACE_CLOSE     = '")"';
+        const T_PSEPARATOR      = '","';
     
         const T_METHOD          = '<method>';
         const T_LET             = '<let>';
