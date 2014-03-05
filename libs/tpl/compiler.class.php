@@ -130,13 +130,13 @@ namespace org\octris\core\tpl {
          * Trigger an error and halt execution.
          *
          * @octdoc  m:compiler/error
-         * @param   string      $type       Type of error to trigger.
-         * @param   int         $cline      Line in compiler class error was triggered from.
+         * @param   string      $ifile      Internal filename the error occured in.
+         * @param   int         $iline      Internal line number the error occured in.
          * @param   int         $line       Line in template the error was triggered for.
-         * @param   int         $token      ID of token that triggered the error.
+         * @param   mixed       $token      Token that triggered the error.
          * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
-        protected function error($type, $cline, $line, $token, $payload = NULL)
+        protected function error($ifile, $iline, $line, $token, $payload = NULL)
         /**/
         {
             if (php_sapi_name() != 'cli') {
@@ -145,13 +145,13 @@ namespace org\octris\core\tpl {
                 $payload = htmlentities($payload, ENT_QUOTES);
             }
             
-            printf("\n** ERROR: %s(%d) **\n", $type, $cline);
+            printf("\n** ERROR: %s(%d) **\n", $ifile, $iline);
             printf("   line :    %d\n", $line);
             printf("   file :    %s\n", $this->filename);
-            printf("   token:    %s\n", $this->getTokenName($token));
+            printf("   token:    %s\n", $token);
             
             if (is_array($payload)) {
-                printf("   expected: %s\n", implode(', ', $this->getTokenNames(array_keys($payload))));
+                printf("   expected: %s\n", implode(', ', $payload));
             } elseif (isset($payload)) {
                 printf("   message:  %s\n", $payload);
             }
@@ -260,7 +260,7 @@ namespace org\octris\core\tpl {
                     $blocks['compiler'][] = $_end;
                 
                     if (($err = compiler\rewrite::getError()) != '') {
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
                     break;
                 case grammar::T_IF_ELSE:
@@ -285,7 +285,7 @@ namespace org\octris\core\tpl {
                     $code  = array(compiler\rewrite::$value(array_reverse($code)));
                     
                     if (($err = compiler\rewrite::getError()) != '') {
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
                     
                     if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
@@ -303,7 +303,7 @@ namespace org\octris\core\tpl {
                     );
 
                     if (($err = compiler\macro::getError()) != '') {
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
                     
                     $code[] = implode(', ', array_pop($stack));
@@ -313,7 +313,7 @@ namespace org\octris\core\tpl {
                     $tmp   = compiler\constant::getConstant($value);
                 
                     if (($err = compiler\constant::getError()) != '') {
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, $err);
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
                 
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
@@ -362,7 +362,7 @@ namespace org\octris\core\tpl {
                     // nothing to do for these tokens
                     break;
                 default:
-                    $this->error(__FUNCTION__, __LINE__, $line, $token, 'unknown token');
+                    $this->error(__FILE__, __LINE__, $line, $token, 'unknown token');
                     break;
                 }
             }
@@ -397,22 +397,25 @@ namespace org\octris\core\tpl {
                 $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
                     // closing block only allowed is a block is open
                     if (!($block = array_pop($blocks['analyzer']))) {
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, 'there is no open block');
+                        $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
                     }
                 });
                 $grammar->addEvent(grammar::T_IF_ELSE, function($current) use (&$blocks) {
                     if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
-                        $this->error(__FUNCTION__, __LINE__, $line, $token, 'only allowed inside an "if" block');
+                        $this->error(__FILE__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                     } else {
                         $blocks['analyzer'][$cnt - 1]['token'] = grammar::T_IF_ELSE;
                     }
                 });
             }
 
-            $tokens = self::$parser->tokenize($snippet, $line);
             $code   = '';
 
-            if (count($tokens) > 0) {
+            if (($tokens = self::$parser->tokenize($snippet, $line)) === false) {
+                $error = self::$parser->getLastError();
+
+                $this->error($error['iline'], $error['iline'], $error['line'], $error['token'], $error['payload']);
+            } elseif (count($tokens) > 0) {
                 if (self::$parser->getGrammar()->analyze($tokens) !== false) {
                     $tokens = array_reverse($tokens);
                     $code   = implode('', $this->compile($tokens, $blocks, $escape));
@@ -454,7 +457,7 @@ namespace org\octris\core\tpl {
 
             if (count($blocks['analyzer']) > 0) {
                 // all block-commands in a template have to be closed
-                $this->error(__FUNCTION__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
+                $this->error(__FILE__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
                     $this->getTokenName(grammar::T_BLOCK_CLOSE),
                     implode(', ', array_map(function($v) {
                         return $v['value'];
