@@ -31,11 +31,13 @@ namespace org\octris\core\tpl\compiler {
         const T_START           = '<start>';
         const T_TYPE            = '<type>';
         const T_PARAMETER       = '<parameter>';
+        const T_BLOCK           = '<block>';
+        const T_IF_BLOCK        = '<if-block>';
         
         const T_BLOCK_OPEN      = '<block-open>';
         const T_BLOCK_CLOSE     = '<block-close>';
-        const T_IF_OPEN         = '<if-open>';
-        const T_IF_ELSE         = '<if-else>';
+        const T_IF_OPEN         = '<if>';
+        const T_IF_ELSE         = '<else>';
         const T_BRACE_OPEN      = '"("';
         const T_BRACE_CLOSE     = '")"';
         const T_PSEPARATOR      = '","';
@@ -95,11 +97,12 @@ namespace org\octris\core\tpl\compiler {
                 self::T_METHOD, self::T_VARIABLE, self::T_CONSTANT, '<type>'
             ]]);
             $this->addRule(self::T_START, ['$alternation' => [
-                self::T_BLOCK_OPEN, self::T_BLOCK_CLOSE, self::T_CONSTANT, self::T_ESCAPE,
-                self::T_GETTEXT, self::T_IF_OPEN, self::T_IF_ELSE, self::T_LET,
+                self::T_BLOCK, self::T_BLOCK_CLOSE, self::T_CONSTANT, self::T_ESCAPE,
+                self::T_GETTEXT, self::T_IF_BLOCK, self::T_IF_ELSE, self::T_LET,
                 self::T_MACRO, self::T_METHOD, self::T_VARIABLE
             ]], true);
-            $this->addRule(self::T_BLOCK_OPEN, ['$concatenation' => [
+            $this->addRule(self::T_BLOCK, ['$concatenation' => [
+                self::T_BLOCK_OPEN,
                 self::T_BRACE_OPEN,
                 ['$option' => [
                     ['$concatenation' => [
@@ -114,7 +117,8 @@ namespace org\octris\core\tpl\compiler {
                 ]],
                 self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(self::T_IF_OPEN, ['$concatenation' => [
+            $this->addRule(self::T_IF_BLOCK, ['$concatenation' => [
+                self::T_IF_OPEN,
                 self::T_BRACE_OPEN,
                 self::T_PARAMETER,
                 self::T_BRACE_CLOSE
