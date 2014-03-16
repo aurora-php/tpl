@@ -332,30 +332,6 @@ namespace org\octris\core\tpl {
                 case grammar::T_NUMBER:
                     $code[] = $value;
                     break;
-                case grammar::T_START:
-                    /*
-                     * NOTE: Regarding newlines behind PHP closing tag '?>'. this is because PHP 'eats' newslines
-                     *       after PHP closing tag. For details refer to:
-                     *      
-                     *      http://shiflett.org/blog/2005/oct/php-stripping-newlines
-                     */
-                    $last_token = $getLastToken($last_tokens, -2);
-                    
-                    if ($last_token == grammar::T_LET) {
-                        $code = array('<?php ' . implode('', $code) . '; ?>'."\n");
-                    } elseif (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
-                        $code = array(implode('', $code));
-                    } elseif (!in_array($last_token, array(grammar::T_BLOCK_OPEN, grammar::T_BLOCK_CLOSE, grammar::T_IF_OPEN, grammar::T_IF_ELSE))) {
-                        if ($last_token == grammar::T_ESCAPE) {
-                            // no additional escaping, when 'escape' method was used
-                            $code = array('<?php $this->write(' . implode('', $code) . '); ?>'."\n");
-                        } else {
-                            $code = array('<?php $this->write(' . implode('', $code) . ', "' . $escape . '"); ?>'."\n");
-                        }
-                    } else {
-                        $code = array('<?php ' . implode('', $code) . ' ?>'."\n");
-                    }
-                    break;
                 case grammar::T_PSEPARATOR:
                 case grammar::T_BRACE_OPEN:
                 case grammar::T_END:
@@ -367,6 +343,29 @@ namespace org\octris\core\tpl {
                 }
             }
             
+            /*
+             * NOTE: Regarding newlines behind PHP closing tag '?>'. this is because PHP 'eats' newslines
+             *       after PHP closing tag. For details refer to:
+             *      
+             *      http://shiflett.org/blog/2005/oct/php-stripping-newlines
+             */
+            $last_token = $getLastToken($last_tokens, -1);
+            
+            if ($last_token == grammar::T_LET) {
+                $code = array('<?php ' . implode('', $code) . '; ?>'."\n");
+            } elseif (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
+                $code = array(implode('', $code));
+            } elseif (!in_array($last_token, array(grammar::T_BLOCK_OPEN, grammar::T_BLOCK_CLOSE, grammar::T_IF_OPEN, grammar::T_IF_ELSE))) {
+                if ($last_token == grammar::T_ESCAPE) {
+                    // no additional escaping, when 'escape' method was used
+                    $code = array('<?php $this->write(' . implode('', $code) . '); ?>'."\n");
+                } else {
+                    $code = array('<?php $this->write(' . implode('', $code) . ', "' . $escape . '"); ?>'."\n");
+                }
+            } else {
+                $code = array('<?php ' . implode('', $code) . ' ?>'."\n");
+            }
+
             return $code;
         }
         
