@@ -429,12 +429,8 @@ namespace org\octris\core\tpl {
                 $this->error($error['iline'], $error['iline'], $error['line'], $error['token'], $error['payload']);
             } elseif (count($tokens) > 0) {
                 if (self::$parser->getGrammar()->analyze($tokens) !== false) {
-                    print "valid\n";
-                    
                     $tokens = array_reverse($tokens);
                     $code   = implode('', $this->compile($tokens, $blocks, $escape));
-                } else {
-                    print "invalid\n";
                 }
             }
             
