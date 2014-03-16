@@ -28,34 +28,35 @@ namespace org\octris\core\tpl\compiler {
          * @octdoc  d:grammar/T_...
          * @type    string
          */
-        const T_START           = '<start>';
-        const T_TYPE            = '<type>';
-        const T_PARAMETER       = '<parameter>';
-        const T_BLOCK           = '<block>';
-        const T_IF_BLOCK        = '<if-block>';
-        
-        const T_BLOCK_OPEN      = '<block-open>';
-        const T_BLOCK_CLOSE     = '<block-close>';
-        const T_IF_OPEN         = '<if>';
-        const T_IF_ELSE         = '<else>';
-        const T_BRACE_OPEN      = '"("';
-        const T_BRACE_CLOSE     = '")"';
-        const T_PSEPARATOR      = '","';
-    
-        const T_METHOD          = '<method>';
-        const T_LET             = '<let>';
-        const T_VARIABLE        = '<variable>';
-        const T_CONSTANT        = '<constant>';
-        const T_MACRO           = '<macro>';
-        const T_GETTEXT         = '<gettext>';
-        const T_ESCAPE          = '<escape>';
-    
-        const T_STRING          = '<string>';
-        const T_NUMBER          = '<number>';
-        const T_BOOL            = '<bool>';
-        const T_NULL            = '<null>';
-        
-        const T_WHITESPACE      = '<whitespace>';
+        const T_START               = '<start>';
+        const T_TYPE                = '<type>';
+        const T_PARAMETER           = '<parameter>';
+        const T_BLOCK               = '<block>';
+        const T_IF_BLOCK            = '<if-block>';
+        const T_METHOD              = '<method>';
+                                    
+        const T_BLOCK_OPEN          = '<block-open>';
+        const T_BLOCK_CLOSE         = '<block-close>';
+        const T_IF_OPEN             = '"#if"';
+        const T_IF_ELSE             = '"#else"';
+        const T_BRACE_OPEN          = '"("';
+        const T_BRACE_CLOSE         = '")"';
+        const T_PSEPARATOR          = '","';
+
+        const T_METHOD_IDENTIFIER   = 'identifier';
+        const T_LET                 = '<let>';
+        const T_VARIABLE            = '<variable>';
+        const T_CONSTANT            = '<constant>';
+        const T_MACRO               = '<macro>';
+        const T_GETTEXT             = '<gettext>';
+        const T_ESCAPE              = '<escape>';
+                                    
+        const T_STRING              = '<string>';
+        const T_NUMBER              = '<number>';
+        const T_BOOL                = '<bool>';
+        const T_NULL                = '<null>';
+                                    
+        const T_WHITESPACE          = '<whitespace>';
         /**/
                 
         /**
@@ -69,25 +70,25 @@ namespace org\octris\core\tpl\compiler {
             parent::__construct();
             
             // define tokens
-            $this->addToken(self::T_IF_OPEN,     '#if');
-            $this->addToken(self::T_IF_ELSE,     '#else');
-            $this->addToken(self::T_BLOCK_CLOSE, '#end');
-            $this->addToken(self::T_BLOCK_OPEN,  '#[a-z][a-z-0-9_]*');
-            $this->addToken(self::T_BRACE_OPEN,  '\(');
-            $this->addToken(self::T_BRACE_CLOSE, '\)');
-            $this->addToken(self::T_PSEPARATOR,  '\,');
-            $this->addToken(self::T_ESCAPE,      'escape(?=\()');
-            $this->addToken(self::T_LET,         'let(?=\()');
-            $this->addToken(self::T_GETTEXT,     '_(?=\()');
-            $this->addToken(self::T_METHOD,      '[a-z_][a-z0-9_]*(?=\()');
-            $this->addToken(self::T_BOOL,        '(true|false)');
-            $this->addToken(self::T_VARIABLE,    '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+');
-            $this->addToken(self::T_CONSTANT,    "%[_a-z][_a-z0-9]*");
-            $this->addToken(self::T_MACRO,       "@[_a-z][_a-z0-9]*");
-            $this->addToken(self::T_STRING,      "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
-            $this->addToken(self::T_NUMBER,      '[+-]?[0-9]+(\.[0-9]+|)');
-            $this->addToken(self::T_NULL,        'null');
-            $this->addToken(self::T_WHITESPACE,  '\s+');
+            $this->addToken(self::T_IF_OPEN,            '#if');
+            $this->addToken(self::T_IF_ELSE,            '#else');
+            $this->addToken(self::T_BLOCK_CLOSE,        '#end');
+            $this->addToken(self::T_BLOCK_OPEN,         '#[a-z][a-z-0-9_]*');
+            $this->addToken(self::T_BRACE_OPEN,         '\(');
+            $this->addToken(self::T_BRACE_CLOSE,        '\)');
+            $this->addToken(self::T_PSEPARATOR,         '\,');
+            $this->addToken(self::T_ESCAPE,             'escape(?=\()');
+            $this->addToken(self::T_LET,                'let(?=\()');
+            $this->addToken(self::T_GETTEXT,            '_(?=\()');
+            $this->addToken(self::T_METHOD_IDENTIFIER,  '[a-z_][a-z0-9_]*(?=\()');
+            $this->addToken(self::T_BOOL,               '(true|false)');
+            $this->addToken(self::T_VARIABLE,           '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+');
+            $this->addToken(self::T_CONSTANT,           "%[_a-z][_a-z0-9]*");
+            $this->addToken(self::T_MACRO,              "@[_a-z][_a-z0-9]*");
+            $this->addToken(self::T_STRING,             "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
+            $this->addToken(self::T_NUMBER,             '[+-]?[0-9]+(\.[0-9]+|)');
+            $this->addToken(self::T_NULL,               'null');
+            $this->addToken(self::T_WHITESPACE,         '\s+');
             
             // define grammar rules
             $this->addRule(self::T_TYPE, ['$alternation' => [
@@ -124,6 +125,7 @@ namespace org\octris\core\tpl\compiler {
                 self::T_BRACE_CLOSE
             ]]);
             $this->addRule(self::T_METHOD, ['$concatenation' => [
+                self::T_METHOD_IDENTIFIER,
                 self::T_BRACE_OPEN,
                 ['$option' => [
                     ['$concatenation' => [
