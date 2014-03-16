@@ -86,7 +86,7 @@ namespace org\octris\core\tpl {
         }
         
         /**
-         * Execute compiler toolchain for a template snippet.
+         * Execute lint toolchain for a template snippet.
          *
          * @octdoc  m:lint/toolchain
          * @param   string      $snippet        Template snippet to process.
@@ -98,17 +98,24 @@ namespace org\octris\core\tpl {
         protected function toolchain($snippet, $line, array &$blocks, $escape)
         /**/
         {
-            $tokens = $this->tokenize($snippet, $line);
-            $code   = '';
+            if (is_null(self::$parser)) {
+                // initialize parser
+                $this->setup($blocks);
+            }
 
-            if (count($tokens) > 0) {
-                try {
-                    $this->analyze($tokens, $blocks);
-                } catch(\Exception $e) {
+            try {
+                if (($tokens = self::$parser->tokenize($snippet, $line)) === false) {
+                    $error = self::$parser->getLastError();
+
+                    $this->error($error['iline'], $error['iline'], $error['line'], $error['token'], $error['payload']);
+                } elseif (count($tokens) > 0) {
+                    self::$parser->getGrammar()->analyze($tokens);
                 }
+            } catch(\Exception $e) {
+                // dismiss exception to continue lint process
             }
             
-            return $code;
+            return '';
         }
         
         /**
