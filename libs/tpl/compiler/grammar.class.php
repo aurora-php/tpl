@@ -117,12 +117,6 @@ namespace org\octris\core\tpl\compiler {
             $this->addRule(self::T_IF_OPEN, ['$concatenation' => [
                 self::T_BRACE_OPEN,
                 self::T_PARAMETER,
-                ['$repeat' => [
-                    ['$concatenation' => [
-                        self::T_PSEPARATOR,
-                        self::T_PARAMETER
-                    ]]
-                ]],
                 self::T_BRACE_CLOSE
             ]]);
             $this->addRule(self::T_METHOD, ['$concatenation' => [
@@ -164,6 +158,17 @@ namespace org\octris\core\tpl\compiler {
                     self::T_CONSTANT,
                     self::T_STRING,
                     self::T_VARIABLE,
+                ]],
+                ['$option' => [
+                    ['$concatenation' => [
+                        self::T_PARAMETER,
+                        ['$repeat' => [
+                            ['$concatenation' => [
+                                self::T_PSEPARATOR,
+                                self::T_PARAMETER
+                            ]]
+                        ]]
+                    ]]
                 ]],
                 self::T_BRACE_CLOSE
             ]]);
