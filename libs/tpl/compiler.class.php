@@ -391,7 +391,7 @@ namespace org\octris\core\tpl {
                 $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
                     $blocks['analyzer'][] = $current;
                 });
-                $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
+                $grammar->addEvent(grammar::T_BLOCK_OPEN, function($current) use (&$blocks) {
                     $blocks['analyzer'][] = $current;
                 });
                 $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
