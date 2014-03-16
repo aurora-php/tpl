@@ -371,6 +371,39 @@ namespace org\octris\core\tpl {
         }
         
         /**
+         * Setup toolchain.
+         *
+         * @octdoc  m:compiler/setup
+         * @param   array       $blocks         Block information required by analyzer / compiler.
+         */
+        protected function setup(array &$blocks)
+        /**/
+        {
+            $grammar = new \org\octris\core\tpl\compiler\grammar();
+            self::$parser = new \org\octris\core\parser($grammar, [grammar::T_WHITESPACE]);
+            
+            $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
+                $blocks['analyzer'][] = $current;
+            });
+            $grammar->addEvent(grammar::T_BLOCK_OPEN, function($current) use (&$blocks) {
+                $blocks['analyzer'][] = $current;
+            });
+            $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
+                // closing block only allowed is a block is open
+                if (!($block = array_pop($blocks['analyzer']))) {
+                    $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
+                }
+            });
+            $grammar->addEvent(grammar::T_IF_ELSE, function($current) use (&$blocks) {
+                if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
+                    $this->error(__FILE__, __LINE__, $line, $token, 'only allowed inside an "if" block');
+                } else {
+                    $blocks['analyzer'][$cnt - 1]['token'] = grammar::T_IF_ELSE;
+                }
+            });
+        }
+        
+        /**
          * Execute compiler toolchain for a template snippet.
          *
          * @octdoc  m:compiler/toolchain
@@ -385,28 +418,7 @@ namespace org\octris\core\tpl {
         {
             if (is_null(self::$parser)) {
                 // initialize parser
-                $grammar = new \org\octris\core\tpl\compiler\grammar();
-                self::$parser = new \org\octris\core\parser($grammar, [grammar::T_WHITESPACE]);
-                
-                $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
-                    $blocks['analyzer'][] = $current;
-                });
-                $grammar->addEvent(grammar::T_BLOCK_OPEN, function($current) use (&$blocks) {
-                    $blocks['analyzer'][] = $current;
-                });
-                $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
-                    // closing block only allowed is a block is open
-                    if (!($block = array_pop($blocks['analyzer']))) {
-                        $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
-                    }
-                });
-                $grammar->addEvent(grammar::T_IF_ELSE, function($current) use (&$blocks) {
-                    if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
-                        $this->error(__FILE__, __LINE__, $line, $token, 'only allowed inside an "if" block');
-                    } else {
-                        $blocks['analyzer'][$cnt - 1]['token'] = grammar::T_IF_ELSE;
-                    }
-                });
+                $this->setup($blocks);
             }
 
             $code   = '';
