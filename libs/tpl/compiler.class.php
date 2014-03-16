@@ -334,7 +334,6 @@ namespace org\octris\core\tpl {
                     break;
                 case grammar::T_PSEPARATOR:
                 case grammar::T_BRACE_OPEN:
-                case grammar::T_END:
                     // nothing to do for these tokens
                     break;
                 default:
