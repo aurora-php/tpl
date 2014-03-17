@@ -332,7 +332,7 @@ namespace org\octris\core\tpl {
                 case grammar::T_NUMBER:
                     $code[] = $value;
                     break;
-                case grammar::T_PSEPARATOR:
+                case grammar::T_PUNCT:
                 case grammar::T_BRACE_OPEN:
                     // nothing to do for these tokens
                     break;
