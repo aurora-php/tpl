@@ -28,39 +28,45 @@ namespace org\octris\core\tpl\compiler {
          * @octdoc  d:grammar/T_...
          * @type    string
          */
-        const T_START               = '<start>';
-        const T_TYPE                = '<type>';
-        const T_PARAMETER           = '<parameter>';
-        const T_BLOCK               = '<block>';
-        const T_IF_BLOCK            = '<if-block>';
-        const T_METHOD_STATEMENT    = '<method>';
-        const T_ESCAPE_STATEMENT    = '<escape>';
-        const T_LET_STATEMENT       = '<let>';
-        const T_GETTEXT_STATEMENT   = '<gettext>';
-        const T_MACRO_STATEMENT     = '<macro>';
-                                    
-        const T_BLOCK_OPEN          = '<block-open>';
-        const T_BLOCK_CLOSE         = '<block-close>';
-        const T_IF_OPEN             = '"#if"';
-        const T_IF_ELSE             = '"#else"';
-        const T_BRACE_OPEN          = '"("';
-        const T_BRACE_CLOSE         = '")"';
-        const T_PSEPARATOR          = '","';
+        const T_START                = '<syntax>';
+        
+        const T_BOOL                 = '<bool>';
+        const T_NULL                 = '<null>';
+        const T_NUMBER               = '<number>';
+        const T_STRING               = '<string>';
+                                     
+        const T_VALUE                = '<value>';
+        const T_PARAMETER            = '<parameter>';
+        const T_PARAMETER_LIST       = '<parameter-list>';
+        const T_MACRO_PARAMETER      = '<macro-parameter>';
+        const T_MACRO_PARAMETER_LIST = '<macro-parameter-list>';
+                                     
+        const T_BLOCK                = '<block>';
 
-        const T_METHOD              = '<method-identifier>';
-        const T_LET                 = '"let"';
-        const T_VARIABLE            = '<variable>';
-        const T_CONSTANT            = '<constant>';
-        const T_MACRO               = '<macro-identifier>';
-        const T_GETTEXT             = '"gettext"';
-        const T_ESCAPE              = '"escape"';
-                                    
-        const T_STRING              = '<string>';
-        const T_NUMBER              = '<number>';
-        const T_BOOL                = '<bool>';
-        const T_NULL                = '<null>';
-                                    
-        const T_WHITESPACE          = '<whitespace>';
+        const T_CONSTANT             = '<constant>';
+        const T_VARIABLE             = '"$..."';
+
+        const T_MACRO_DEF            = '<macro>';
+        const T_METHOD_DEF           = '<method>';
+        const T_ESCAPE_DEF           = '<escape>';
+        const T_LET_DEF              = '<let>';
+        const T_GETTEXT_DEF          = '<gettext>';
+
+        const T_MACRO                = '"@..."';
+        const T_METHOD               = '"..."';
+        const T_ESCAPE               = '"escape"';
+        const T_LET                  = '"let"';
+        const T_GETTEXT              = '"_"';
+                                     
+        const T_BRACE_OPEN           = '"("';
+        const T_BRACE_CLOSE          = '")"';
+        const T_PUNCT                = '","';
+        const T_WHITESPACE           = '" "';
+
+        const T_IF_OPEN              = '"#if"';
+        const T_IF_ELSE              = '"#else"';
+        const T_BLOCK_CLOSE          = '"#end"';
+        const T_BLOCK_OPEN           = '"#[a-z][a-z-0-9_]*"';
         /**/
                 
         /**
@@ -77,79 +83,72 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_IF_OPEN,            '#if');
             $this->addToken(self::T_IF_ELSE,            '#else');
             $this->addToken(self::T_BLOCK_CLOSE,        '#end');
-            $this->addToken(self::T_BLOCK_OPEN,         '#[a-z][a-z-0-9_]*');
+            $this->addToken(self::T_BLOCK_OPEN,         '#[a-z][a-z-0-9_]*(?=\()');
+
             $this->addToken(self::T_BRACE_OPEN,         '\(');
             $this->addToken(self::T_BRACE_CLOSE,        '\)');
-            $this->addToken(self::T_PSEPARATOR,         '\,');
+            $this->addToken(self::T_PUNCT,              '\,');
+
+            $this->addToken(self::T_VARIABLE,           '\$[a-zA-Z_][a-zA-Z0-9_]*(:\$?[a-zA-Z_][a-zA-Z0-9_]*|:[0-9]+|)+');
+            $this->addToken(self::T_CONSTANT,           '[A-Z_][A-Z0-9]*');
+
             $this->addToken(self::T_ESCAPE,             'escape(?=\()');
             $this->addToken(self::T_LET,                'let(?=\()');
             $this->addToken(self::T_GETTEXT,            '_(?=\()');
-            $this->addToken(self::T_METHOD,             '[a-z_][a-z0-9_]*(?=\()');
+            $this->addToken(self::T_METHOD,             '[a-z][a-z0-9_]*(?=\()');
+            $this->addToken(self::T_MACRO,              '@[a-z][a-z0-9_]*(?=\()');
+
             $this->addToken(self::T_BOOL,               '(true|false)');
-            $this->addToken(self::T_VARIABLE,           '\$[a-z_][a-z0-9_]*(:\$?[a-z_][a-z0-9_]*|)+');
-            $this->addToken(self::T_CONSTANT,           "%[_a-z][_a-z0-9]*");
-            $this->addToken(self::T_MACRO,              "@[_a-z][_a-z0-9]*");
-            $this->addToken(self::T_STRING,             "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
-            $this->addToken(self::T_NUMBER,             '[+-]?[0-9]+(\.[0-9]+|)');
             $this->addToken(self::T_NULL,               'null');
-            $this->addToken(self::T_WHITESPACE,         '\s+');
+            $this->addToken(self::T_NUMBER,             '[+-]?[0-9]+(\.[0-9]+|)');
+            $this->addToken(self::T_STRING,             "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
+
+            $this->addToken(self::T_WHITESPACE,         '\s+');        
             
             // define grammar rules
-            $this->addRule(self::T_TYPE, ['$alternation' => [
+            $this->addRule(self::T_START, ['$alternation' => [
+                self::T_BLOCK, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE,
+                self::T_CONSTANT, 
+                self::T_ESCAPE,
+                self::T_GETTEXT, 
+                self::T_LET,
+                self::T_MACRO, self::T_METHOD,
+                self::T_VARIABLE
+            ]], true);
+                
+            $this->addRule(self::T_VALUE, ['$alternation' => [
                 self::T_BOOL, self::T_NULL, self::T_NUMBER, self::T_STRING
             ]]);
             $this->addRule(self::T_PARAMETER, ['$alternation' => [
-                self::T_METHOD_STATEMENT, self::T_VARIABLE, self::T_CONSTANT, self::T_TYPE
+                self::T_METHOD, self::T_VARIABLE, self::T_CONSTANT, self::T_VALUE
             ]]);
-            $this->addRule(self::T_START, ['$alternation' => [
-                self::T_BLOCK, self::T_BLOCK_CLOSE, self::T_IF_BLOCK, self::T_IF_ELSE,
-                self::T_CONSTANT, 
-                self::T_ESCAPE_STATEMENT,
-                self::T_GETTEXT_STATEMENT, 
-                self::T_LET_STATEMENT,
-                self::T_MACRO_STATEMENT, 
-                self::T_METHOD_STATEMENT, 
-                self::T_VARIABLE
-            ]], true);
-            $this->addRule(self::T_BLOCK, ['$concatenation' => [
-                self::T_BLOCK_OPEN,
-                self::T_BRACE_OPEN,
-                ['$option' => [
-                    ['$concatenation' => [
-                        self::T_PARAMETER,
-                        ['$repeat' => [
-                            ['$concatenation' => [
-                                self::T_PSEPARATOR,
-                                self::T_PARAMETER
-                            ]]
+            $this->addRule(self::T_PARAMETER_LIST, ['$option' => [
+                ['$concatenation' => [
+                    self::T_PARAMETER,
+                    ['$repeat' => [
+                        ['$concatenation' => [
+                            self::T_PUNCT,
+                            self::T_PARAMETER
                         ]]
                     ]]
-                ]],
-                self::T_BRACE_CLOSE
+                ]]
             ]]);
-            $this->addRule(self::T_IF_BLOCK, ['$concatenation' => [
-                self::T_IF_OPEN,
-                self::T_BRACE_OPEN,
-                self::T_PARAMETER,
-                self::T_BRACE_CLOSE
+            $this->addRule(self::T_MACRO_PARAMETER, ['$alternation' => [
+                self::T_CONSTANT, self::T_VALUE
             ]]);
-            $this->addRule(self::T_METHOD_STATEMENT, ['$concatenation' => [
-                self::T_METHOD,
-                self::T_BRACE_OPEN,
-                ['$option' => [
-                    ['$concatenation' => [
-                        self::T_PARAMETER,
-                        ['$repeat' => [
-                            ['$concatenation' => [
-                                self::T_PSEPARATOR,
-                                self::T_PARAMETER
-                            ]]
+            $this->addRule(self::T_MACRO_PARAMETER_LIST, ['$alternation' => [
+                ['$concatenation' => [
+                    self::T_MACRO_PARAMETER,
+                    ['$repeat' => [
+                        ['$concatenation' => [
+                            self::T_PUNCT,
+                            self::T_MACRO_PARAMETER
                         ]]
                     ]]
-                ]],
-                self::T_BRACE_CLOSE
+                ]]
             ]]);
-            $this->addRule(self::T_ESCAPE_STATEMENT, ['$concatenation' => [
+
+            $this->addRule(self::T_ESCAPE_DEF, ['$concatenation' => [
                 self::T_ESCAPE,
                 self::T_BRACE_OPEN,
                 ['$alternation' => [
@@ -157,19 +156,21 @@ namespace org\octris\core\tpl\compiler {
                     self::T_CONSTANT,
                     self::T_STRING
                 ]],
-                self::T_PSEPARATOR,
+                self::T_PUNCT,
                 self::T_CONSTANT,
                 self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(self::T_LET_STATEMENT, ['$concatenation' => [
+            
+            $this->addRule(self::T_LET_DEF, ['$concatenation' => [
                 self::T_LET,
                 self::T_BRACE_OPEN,
                 self::T_VARIABLE,
-                self::T_PSEPARATOR,
+                self::T_PUNCT,
                 self::T_PARAMETER,
                 self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(self::T_GETTEXT_STATEMENT, ['$concatenation' => [
+
+            $this->addRule(self::T_GETTEXT_DEF, ['$concatenation' => [
                 self::T_GETTEXT,
                 self::T_BRACE_OPEN,
                 ['$alternation' => [
@@ -177,41 +178,42 @@ namespace org\octris\core\tpl\compiler {
                     self::T_STRING,
                     self::T_VARIABLE,
                 ]],
-                ['$option' => [
-                    ['$concatenation' => [
-                        self::T_PARAMETER,
-                        ['$repeat' => [
-                            ['$concatenation' => [
-                                self::T_PSEPARATOR,
-                                self::T_PARAMETER
-                            ]]
-                        ]]
-                    ]]
-                ]],
+                self::T_PARAMETER_LIST,
                 self::T_BRACE_CLOSE
             ]]);
-            $this->addRule(self::T_MACRO_STATEMENT, ['$concatenation' => [
+
+            $this->addRule(self::T_METHOD_DEF, ['$concatenation' => [
+                self::T_METHOD,
+                self::T_BRACE_OPEN,
+                self::T_PARAMETER_LIST,
+                self::T_BRACE_CLOSE
+            ]]);
+            
+            $this->addRule(self::T_MACRO_DEF, ['$concatenation' => [
                 self::T_MACRO,
                 self::T_BRACE_OPEN,
-                ['$option' => [
+                self::T_MACRO_PARAMETER_LIST,
+                self::T_BRACE_CLOSE
+            ]]);
+            
+            $this->addRule(self::T_BLOCK, ['$concatenation' => [
+                ['$alternation' => [
                     ['$concatenation' => [
-                        ['$alternation' => [
-                            self::T_CONSTANT,
-                            self::T_TYPE
-                        ]],
-                        ['$repeat' => [
-                            ['$concatenation' => [
-                                self::T_PSEPARATOR,
-                                ['$alternation' => [
-                                    self::T_CONSTANT,
-                                    self::T_TYPE
-                                ]]
-                            ]]
-                        ]]
+                        self::T_IF_OPEN,
+                        self::T_BRACE_OPEN,
+                        self::T_PARAMETER,
+                        self::T_BRACE_CLOSE
+                    ]],
+                    self::T_IF_ELSE, 
+                    self::T_BLOCK_CLOSE,
+                    ['$concatenation' => [
+                        self::T_BLOCK_OPEN,
+                        self::T_BRACE_OPEN,
+                        self::T_PARAMETER_LIST,
+                        self::T_BRACE_CLOSE
                     ]]
                 ]],
-                self::T_BRACE_CLOSE
-            ]]);            
+            ]]);
         }
     }
 }
