@@ -148,7 +148,7 @@ namespace org\octris\core\tpl {
             printf("\n** ERROR: %s(%d) **\n", $ifile, $iline);
             printf("   line :    %d\n", $line);
             printf("   file :    %s\n", $this->filename);
-            printf("   token:    %s\n", $token);
+            printf("   token:    %s\n", htmlentities($token, ENT_QUOTES));
             
             if (is_array($payload)) {
                 printf("   expected: %s\n", implode(', ', $payload));
