@@ -107,13 +107,13 @@ namespace org\octris\core\tpl\compiler {
             
             // define grammar rules
             $this->addRule(self::T_START, ['$alternation' => [
-                self::T_BLOCK, self::T_BLOCK_CLOSE, self::T_IF_OPEN, self::T_IF_ELSE,
+                self::T_BLOCK,
                 self::T_CONSTANT, 
-                self::T_ESCAPE,
-                self::T_GETTEXT, 
-                self::T_LET,
-                self::T_MACRO, self::T_METHOD,
-                self::T_VARIABLE
+                self::T_VARIABLE,
+                self::T_ESCAPE_DEF,
+                self::T_GETTEXT_DEF, 
+                self::T_LET_DEF,
+                self::T_MACRO_DEF, self::T_METHOD_DEF
             ]], true);
                 
             $this->addRule(self::T_VALUE, ['$alternation' => [
