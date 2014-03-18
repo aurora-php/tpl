@@ -74,6 +74,15 @@ namespace org\octris\core\tpl {
         /**/
 
         /**
+         * For calculating correct line number in template.
+         *
+         * @octdoc  p:parser/$line_correction
+         * @type    int
+         */
+        protected $line_correction = 0;
+        /**/
+
+        /**
          * Current offset to start parsing from.
          *
          * @octdoc  p:parser/$offset
@@ -157,7 +166,8 @@ namespace org\octris\core\tpl {
         public function rewind() 
         /**/
         {
-            $this->offset = 0;
+            $this->offset          = 0;
+            $this->line_correction = 0;
         
             $this->next();
         }
@@ -237,7 +247,7 @@ namespace org\octris\core\tpl {
         protected function getLineNumber($offset)
         /**/
         {
-            return substr_count(substr($this->tpl, 0, $offset), "\n") + 1;
+            return substr_count(substr($this->tpl, 0, $offset), "\n") + 1 - $this->line_correction;
         }
 
         /**
@@ -390,6 +400,8 @@ namespace org\octris\core\tpl {
             $length = $this->current['length'];
             
             // replace template snippet
+            $this->line_correction += (substr_count($str, "\n") - substr_count($this->tpl, "\n", $offset, $length));
+            
             $this->tpl = substr_replace($this->tpl, $str, $offset, $length);
             
             if ($move_offset) {
