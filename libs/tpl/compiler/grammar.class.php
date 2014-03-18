@@ -46,11 +46,13 @@ namespace org\octris\core\tpl\compiler {
         const T_CONSTANT             = '<constant>';
         const T_VARIABLE             = '"$..."';
 
-        const T_MACRO_DEF            = '<macro>';
-        const T_METHOD_DEF           = '<method>';
+        const T_ARRAY_DEF            = '<array>';
         const T_ESCAPE_DEF           = '<escape>';
         const T_LET_DEF              = '<let>';
         const T_GETTEXT_DEF          = '<gettext>';
+        const T_MACRO_DEF            = '<macro>';
+        const T_METHOD_DEF           = '<method>';
+        const T_VARIABLE_DEF         = '<variable>';
 
         const T_MACRO                = '"@..."';
         const T_METHOD               = '"..."';
@@ -61,6 +63,9 @@ namespace org\octris\core\tpl\compiler {
         const T_BRACE_OPEN           = '"("';
         const T_BRACE_CLOSE          = '")"';
         const T_PUNCT                = '","';
+        const T_ARRAY_OPEN           = '"["';
+        const T_ARRAY_CLOSE          = '"]"';
+        const T_ARRAY_KEY            = '"=>"';
         const T_WHITESPACE           = '" "';
 
         const T_IF_OPEN              = '"#if"';
@@ -102,6 +107,10 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_NULL,               'null');
             $this->addToken(self::T_NUMBER,             '[+-]?[0-9]+(\.[0-9]+|)');
             $this->addToken(self::T_STRING,             "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
+            
+            $this->addToken(self::T_ARRAY_OPEN,         '\[');
+            $this->addToken(self::T_ARRAY_CLOSE,        '\]');
+            $this->addToken(self::T_ARRAY_KEY,          '=>');
 
             $this->addToken(self::T_WHITESPACE,         '\s+');        
             
@@ -109,7 +118,7 @@ namespace org\octris\core\tpl\compiler {
             $this->addRule(self::T_START, ['$alternation' => [
                 self::T_BLOCK,
                 self::T_CONSTANT, 
-                self::T_VARIABLE,
+                self::T_VARIABLE_DEF,
                 self::T_ESCAPE_DEF,
                 self::T_GETTEXT_DEF, 
                 self::T_LET_DEF,
@@ -120,7 +129,7 @@ namespace org\octris\core\tpl\compiler {
                 self::T_BOOL, self::T_NULL, self::T_NUMBER, self::T_STRING
             ]]);
             $this->addRule(self::T_PARAMETER, ['$alternation' => [
-                self::T_METHOD, self::T_VARIABLE, self::T_CONSTANT, self::T_VALUE
+                self::T_METHOD_DEF, self::T_VARIABLE_DEF, self::T_CONSTANT, self::T_VALUE, self::T_ARRAY_DEF
             ]]);
             $this->addRule(self::T_PARAMETER_LIST, ['$option' => [
                 ['$concatenation' => [
@@ -152,7 +161,7 @@ namespace org\octris\core\tpl\compiler {
                 self::T_ESCAPE,
                 self::T_BRACE_OPEN,
                 ['$alternation' => [
-                    self::T_VARIABLE,
+                    self::T_VARIABLE_DEF,
                     self::T_CONSTANT,
                     self::T_STRING
                 ]],
@@ -164,7 +173,7 @@ namespace org\octris\core\tpl\compiler {
             $this->addRule(self::T_LET_DEF, ['$concatenation' => [
                 self::T_LET,
                 self::T_BRACE_OPEN,
-                self::T_VARIABLE,
+                self::T_VARIABLE_DEF,
                 self::T_PUNCT,
                 self::T_PARAMETER,
                 self::T_BRACE_CLOSE
@@ -176,7 +185,7 @@ namespace org\octris\core\tpl\compiler {
                 ['$alternation' => [
                     self::T_CONSTANT,
                     self::T_STRING,
-                    self::T_VARIABLE,
+                    self::T_VARIABLE_DEF,
                 ]],
                 self::T_PARAMETER_LIST,
                 self::T_BRACE_CLOSE
@@ -195,6 +204,32 @@ namespace org\octris\core\tpl\compiler {
                 self::T_MACRO_PARAMETER_LIST,
                 self::T_BRACE_CLOSE
             ]]);
+            
+            $this->addRule(self::T_ARRAY_DEF, ['$concatenation' => [
+                self::T_ARRAY_OPEN,
+                ['$option' => [
+                    ['$concatenation' => [
+                        self::T_STRING,
+                        self::T_ARRAY_KEY
+                    ]]
+                ]],                    
+                self::T_PARAMETER,
+                ['$repeat' => [
+                    ['$concatenation' => [
+                        self::T_PUNCT,
+                        ['$option' => [
+                            ['$concatenation' => [
+                                self::T_STRING,
+                                self::T_ARRAY_KEY
+                            ]]
+                        ]],
+                        self::T_PARAMETER             
+                    ]]
+                ]],
+                self::T_ARRAY_CLOSE
+            ]]);
+            
+            $this->addRule(self::T_VARIABLE_DEF, ['$concatenation' => [ self::T_VARIABLE ]]);
             
             $this->addRule(self::T_BLOCK, ['$concatenation' => [
                 ['$alternation' => [
