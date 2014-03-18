@@ -271,10 +271,10 @@ namespace org\octris\core\tpl {
                     break;
                 case grammar::T_BRACE_CLOSE:
                     array_push($stack, $code);
+                    $code = array();
                     break;
                 case grammar::T_ARRAY_CLOSE:
-                    array_push($stack, $code);
-                    $code = array(']');
+                    $code[] = ']';
                     break;
                 case grammar::T_GETTEXT:
                     // gettext handling
@@ -292,10 +292,9 @@ namespace org\octris\core\tpl {
                     }
 
                     if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    break;
                 case grammar::T_ARRAY_OPEN:
-                    $code = array('[');
-                
-                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    $code[] = '[';
                     break;
                 case grammar::T_MACRO:
                     // resolve macro
