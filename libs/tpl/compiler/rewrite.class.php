@@ -77,7 +77,8 @@ namespace org\octris\core\tpl\compiler {
             'now'       => array('min' => 0, 'max' => 0),
             'uniqid'    => array('min' => 0, 'max' => 0),
             'let'       => array('min' => 2, 'max' => 2),
-            'dump'      => array('min' => 1, 'max' => 1),
+            'ddump'     => array('min' => 1),
+            'dprint'    => array('min' => 1),
             'error'     => array('min' => 1, 'max' => 1),
             
             'include'   => array('min' => 1, 'max' => 1),
@@ -547,8 +548,12 @@ namespace org\octris\core\tpl\compiler {
             return '(' . implode(' = ', $args) . ')';
         }
         
-        protected static function _dump($args) {
-            return '$this->dump(' . implode('', $args) . ')';
+        protected static function _ddump($args) {
+            return '$this->ddump(' . implode('', $args) . ')';
+        }
+        
+        protected static function _dprint($args) {
+            return '$this->dprint(' . implode('', $args) . ')';
         }
         
         protected static function _error($args) {
