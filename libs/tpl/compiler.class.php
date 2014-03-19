@@ -428,7 +428,7 @@ namespace org\octris\core\tpl {
 
             $code   = '';
 
-            if (($tokens = self::$parser->tokenize($snippet, $line)) === false) {
+            if (($tokens = self::$parser->tokenize($snippet, $line, $this->filename)) === false) {
                 $error = self::$parser->getLastError();
 
                 $this->error($error['iline'], $error['iline'], $error['line'], $error['token'], $error['payload']);
