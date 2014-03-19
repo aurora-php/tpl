@@ -269,12 +269,25 @@ namespace org\octris\core\tpl {
                 case grammar::T_BLOCK_CLOSE:
                     $code[] = array_pop($blocks['compiler']);
                     break;
+                case grammar::T_ARRAY_CLOSE:
                 case grammar::T_BRACE_CLOSE:
                     array_push($stack, $code);
                     $code = array();
                     break;
-                case grammar::T_ARRAY_CLOSE:
-                    $code[] = ']';
+                case grammar::T_ARRAY_OPEN:
+                    $code = array('[' . array_reduce(array_reverse($code), function($code, $snippet) {
+                        static $last = '';
+                        
+                        if ($code != '') {
+                            $code .= (($last == '=>' || $snippet == '=>') ? '' : ', ');
+                        }
+
+                        $code .= $last = $snippet;
+                        
+                        return $code;
+                    }, '') . ']');
+                    
+                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
                     break;
                 case grammar::T_GETTEXT:
                     // gettext handling
