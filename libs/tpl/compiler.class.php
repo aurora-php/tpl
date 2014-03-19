@@ -293,12 +293,26 @@ namespace org\octris\core\tpl {
                     // gettext handling
                     $code = array($this->gettext(array_reverse($code)));
                     break;
+                case grammar::T_DDUMP:
+                case grammar::T_DPRINT:
                 case grammar::T_ESCAPE:
                 case grammar::T_LET:
                 case grammar::T_METHOD:
                     // replace/rewrite method call
                     $value = strtolower($value);
-                    $code  = array(compiler\rewrite::$value(array_reverse($code)));
+                    
+                    if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
+                        // ddump and dprint need to be treated a little different from other method calls,
+                        // because we include template-filename and template-linenumber in arguments
+                        $code = array(compiler\rewrite::$value(
+                            array_merge(
+                                array('"' . $file . '"', (int)$line),
+                                array_reverse($code)
+                            )
+                        ));
+                    } else {
+                        $code = array(compiler\rewrite::$value(array_reverse($code)));
+                    }
                     
                     if (($err = compiler\rewrite::getError()) != '') {
                         $this->error(__FILE__, __LINE__, $line, $token, $err);

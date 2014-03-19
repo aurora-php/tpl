@@ -47,6 +47,8 @@ namespace org\octris\core\tpl\compiler {
         const T_VARIABLE             = '"$..."';
 
         const T_ARRAY_DEF            = '<array>';
+        const T_DDUMP_DEF            = '<ddump>';
+        const T_DPRINT_DEF           = '<dprint>';
         const T_ESCAPE_DEF           = '<escape>';
         const T_LET_DEF              = '<let>';
         const T_GETTEXT_DEF          = '<gettext>';
@@ -56,6 +58,8 @@ namespace org\octris\core\tpl\compiler {
 
         const T_MACRO                = '"@..."';
         const T_METHOD               = '"..."';
+        const T_DDUMP                = '"ddump"';
+        const T_DPRINT               = '"dprint"';
         const T_ESCAPE               = '"escape"';
         const T_LET                  = '"let"';
         const T_GETTEXT              = '"_"';
@@ -97,6 +101,8 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_VARIABLE,           '\$[a-zA-Z_][a-zA-Z0-9_]*(:\$?[a-zA-Z_][a-zA-Z0-9_]*|:[0-9]+|)+');
             $this->addToken(self::T_CONSTANT,           '[A-Z_][A-Z0-9]*');
 
+            $this->addToken(self::T_DDUMP,              'ddump(?=\()');
+            $this->addToken(self::T_DPRINT,             'dprint(?=\()');
             $this->addToken(self::T_ESCAPE,             'escape(?=\()');
             $this->addToken(self::T_LET,                'let(?=\()');
             $this->addToken(self::T_GETTEXT,            '_(?=\()');
@@ -119,6 +125,7 @@ namespace org\octris\core\tpl\compiler {
                 self::T_BLOCK,
                 self::T_CONSTANT, 
                 self::T_VARIABLE_DEF,
+                self::T_DDUMP_DEF, self::T_DPRINT_DEF,
                 self::T_ESCAPE_DEF,
                 self::T_GETTEXT_DEF, 
                 self::T_LET_DEF,
@@ -157,6 +164,20 @@ namespace org\octris\core\tpl\compiler {
                 ]]
             ]]);
 
+            $this->addRule(self::T_DDUMP_DEF, ['$concatenation' => [
+                self::T_DDUMP,
+                self::T_BRACE_OPEN,
+                self::T_PARAMETER_LIST,
+                self::T_BRACE_CLOSE
+            ]]);
+            
+            $this->addRule(self::T_DPRINT_DEF, ['$concatenation' => [
+                self::T_DPRINT,
+                self::T_BRACE_OPEN,
+                self::T_PARAMETER_LIST,
+                self::T_BRACE_CLOSE
+            ]]);
+            
             $this->addRule(self::T_ESCAPE_DEF, ['$concatenation' => [
                 self::T_ESCAPE,
                 self::T_BRACE_OPEN,
