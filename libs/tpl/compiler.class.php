@@ -458,7 +458,7 @@ namespace org\octris\core\tpl {
             if (($tokens = self::$parser->tokenize($snippet, $line, $this->filename)) === false) {
                 $error = self::$parser->getLastError();
 
-                $this->error($error['iline'], $error['iline'], $error['line'], $error['token'], $error['payload']);
+                $this->error($error['ifile'], $error['iline'], $error['line'], $error['token'], $error['payload']);
             } elseif (count($tokens) > 0) {
                 if (self::$parser->getGrammar()->analyze($tokens) !== false) {
                     $tokens = array_reverse($tokens);
