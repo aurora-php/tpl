@@ -92,7 +92,7 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_IF_OPEN,            '#if');
             $this->addToken(self::T_IF_ELSE,            '#else');
             $this->addToken(self::T_BLOCK_CLOSE,        '#end');
-            $this->addToken(self::T_BLOCK_OPEN,         '#[a-z][a-z-0-9_]*(?=\()');
+            $this->addToken(self::T_BLOCK_OPEN,         '#[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
             $this->addToken(self::T_BRACE_OPEN,         '\(');
             $this->addToken(self::T_BRACE_CLOSE,        '\)');
@@ -106,8 +106,8 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_ESCAPE,             'escape(?=\()');
             $this->addToken(self::T_LET,                'let(?=\()');
             $this->addToken(self::T_GETTEXT,            '_(?=\()');
-            $this->addToken(self::T_METHOD,             '[a-z][a-z0-9_]*(?=\()');
-            $this->addToken(self::T_MACRO,              '@[a-z][a-z0-9_]*(?=\()');
+            $this->addToken(self::T_METHOD,             '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
+            $this->addToken(self::T_MACRO,              '@[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
             $this->addToken(self::T_BOOL,               '(true|false)');
             $this->addToken(self::T_NULL,               'null');
