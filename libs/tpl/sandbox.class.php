@@ -548,43 +548,6 @@ namespace org\octris\core\tpl {
         }
 
         /**
-         * Dump contents of one or multiple variables.
-         *
-         * @octdoc  m:sandbox/ddump
-         * @param   mixed         ...$params        Parameters to pass to \org\octris\core\debug::ddump.
-         * @return  string                          Dumped variable contents as string.
-         * @see     \org\octris\core\debug::ddump
-         */
-        public function ddump(...$params)
-        /**/
-        {
-            ob_start();        
-            \org\octris\core\debug::ddump(...$params);
-            $return = ob_get_contents();
-            ob_end_clean();
-
-            return $return;
-        }
-
-        /**
-         * Print formatted debug message. Message formatting follows the rules of sprints/vsprintf.
-         *
-         * @octdoc  m:debug/dprint
-         * @param   mixed         ...$params        Parameters to pass to \org\octris\core\debug::dprint.
-         * @see     \org\octris\core\debug::dprint
-         */
-        public function dprint(...$params)
-        /**/
-        {
-            ob_start();        
-            \org\octris\core\debug::dprint(...$params);
-            $return = ob_get_contents();
-            ob_end_clean();
-
-            return $return;
-        }
-
-        /**
          * Read a file and return it as string.
          *
          * @octdoc  m:sandbox/includetpl

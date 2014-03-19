@@ -549,11 +549,11 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _ddump($args) {
-            return '$this->ddump(' . implode('', $args) . ')';
+            return '\\org\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
         }
         
         protected static function _dprint($args) {
-            return '$this->dprint(' . implode('', $args) . ')';
+            return '\\org\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
         }
         
         protected static function _error($args) {
