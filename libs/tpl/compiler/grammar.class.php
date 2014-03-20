@@ -208,7 +208,18 @@ namespace org\octris\core\tpl\compiler {
                     self::T_STRING,
                     self::T_VARIABLE_DEF,
                 ]],
-                self::T_PARAMETER_LIST,
+                ['$option' => [
+                    ['$concatenation' => [
+                        self::T_PUNCT,
+                        self::T_ARRAY_DEF,
+                        ['$option' => [
+                            ['$concatenation' => [
+                                self::T_PUNCT,
+                                self::T_PARAMETER
+                            ]]
+                        ]]                        
+                    ]]
+                ]],
                 self::T_BRACE_CLOSE
             ]]);
 
