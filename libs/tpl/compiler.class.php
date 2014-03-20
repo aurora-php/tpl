@@ -249,9 +249,21 @@ namespace org\octris\core\tpl {
                     
                     if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
                     break;
+                case grammar::T_DGETTEXT:
                 case grammar::T_GETTEXT:
-                    // gettext handling
-                    $code = array($this->gettext(array_reverse($code)));
+                    $code    = array_reverse($code);
+                    $_domain = ($token == grammar::T_DGETTEXT
+                                ? array_shift($code)
+                                : null);
+                    $_msg    = array_shift($code);
+
+                    $code = array(compiler\rewrite::gettext($this->l10n, $_domain, $_msg, $code));
+                    
+                    if (($err = compiler\rewrite::getError()) != '') {
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    }
+
+                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
                     break;
                 case grammar::T_DDUMP:
                 case grammar::T_DPRINT:
