@@ -609,30 +609,31 @@ namespace org\octris\core\tpl\compiler {
 
         // localization functions
         protected static function _comify($args) {
-            // TODO: implementation
+            return '($this->l10n->comify(' . implode(', ', $args) . '))';
         }
         protected static function _enum($args) {
+            return '($this->l10n->enum(' . implode(', ', $args) . '))';
         }        
         protected static function _monf($args) {
-            // TODO: implementation
+            return '($this->l10n->monf(' . implode(', ', $args) . '))';
         }
         protected static function _numf($args) {
-            // TODO: implementation
+            return '($this->l10n->numf(' . implode(', ', $args) . '))';
         }
         protected static function _perf($args) {
-            // TODO: implementation
+            return '($this->l10n->perf(' . implode(', ', $args) . '))';
         }
         protected static function _datef($args) {
-            // TODO: implementation
+            return '($this->l10n->datef(' . implode(', ', $args) . '))';
         }
         protected static function _gender($args) {
-            // TODO: implementation
+            return '($this->l10n->gender(' . implode(', ', $args) . '))';
         }
         protected static function _quant($args) {
-            // TODO: implementation
+            return '($this->l10n->quant(' . implode(', ', $args) . '))';
         }
         protected static function _yesno($args) {
-            // TODO: implementation
+            return '($this->l10n->yesno(' . implode(', ', $args) . '))';
         }
     }
 }
