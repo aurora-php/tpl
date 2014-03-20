@@ -240,22 +240,24 @@ namespace org\octris\core\tpl\compiler {
             $this->addRule(self::T_ARRAY_DEF, ['$concatenation' => [
                 self::T_ARRAY_OPEN,
                 ['$option' => [
-                    ['$concatenation' => [
-                        self::T_STRING,
-                        self::T_ARRAY_KEY
-                    ]]
-                ]],                    
-                self::T_PARAMETER,
-                ['$repeat' => [
-                    ['$concatenation' => [
-                        self::T_PUNCT,
-                        ['$option' => [
-                            ['$concatenation' => [
-                                self::T_STRING,
-                                self::T_ARRAY_KEY
-                            ]]
-                        ]],
-                        self::T_PARAMETER             
+                    ['$option' => [
+                        ['$concatenation' => [
+                            self::T_STRING,
+                            self::T_ARRAY_KEY
+                        ]]
+                    ]],                    
+                    self::T_PARAMETER,
+                    ['$repeat' => [
+                        ['$concatenation' => [
+                            self::T_PUNCT,
+                            ['$option' => [
+                                ['$concatenation' => [
+                                    self::T_STRING,
+                                    self::T_ARRAY_KEY
+                                ]]
+                            ]],
+                            self::T_PARAMETER             
+                        ]]
                     ]]
                 ]],
                 self::T_ARRAY_CLOSE
