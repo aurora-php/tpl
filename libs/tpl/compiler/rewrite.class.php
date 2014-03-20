@@ -356,8 +356,6 @@ namespace org\octris\core\tpl\compiler {
                 $return = '$this->l10n->translate(' . $msg . ', array(), ' . $domain . ')';
             }
             
-            ddump($return);
-            
             return $return;
         }
         
