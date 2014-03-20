@@ -104,7 +104,7 @@ namespace org\octris\core\tpl\compiler {
             'numf'      => array('min' => 1, 'max' => 2),
             'perf'      => array('min' => 1, 'max' => 2),
             'datef'     => array('min' => 1, 'max' => 2),
-            'gender'    => array('min' => 1, 'max' => 2),
+            'gender'    => array('min' => 4, 'max' => 4),
             'quant'     => array('min' => 2, 'max' => 4),
             'yesno'     => array('min' => 2, 'max' => 3),
         );
