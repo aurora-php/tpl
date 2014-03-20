@@ -319,7 +319,6 @@ namespace org\octris\core\tpl\compiler {
                     $txt = preg_replace_callback($pattern, function($m) use ($args, $chr, $fn) {
                         $cmd = (isset($m['cmd']) ? $m['cmd'] : '');
                         $arg = $m['arg'];
-                        $tmp = (isset($m['str']) ? preg_split('/(?<!\\\),/', $m['str']) : array());
 
                         if ($arg > count($args)) {
                             self::setError('gettext', sprintf('argument "%d" is not defined', $arg));
@@ -332,6 +331,10 @@ namespace org\octris\core\tpl\compiler {
                                 throw new \Exception(self::getError());
                             }
                         
+                            $tmp = array_map(function($arg) use ($chr) {
+                                return $chr . trim($arg) . $chr;
+                            }, (isset($m['str']) ? preg_split('/(?<!\\\),/', $m['str']) : array()));
+
                             $code = $chr . ' . ' . 
                                     self::$cmd(array_merge(array($args[$arg - 1]), $tmp)) . 
                                     ' . ' . $chr;
