@@ -472,12 +472,13 @@ namespace org\octris\core\tpl {
 
                 $this->error($error['ifile'], $error['iline'], $error['line'], $error['token'], $error['payload']);
             } elseif (count($tokens) > 0) {
-                if (self::$parser->getGrammar()->analyze($tokens, $expected) !== false) {
+                if (self::$parser->analyze($tokens) === false) {
+                    $error = self::$parser->getLastError();
+
+                    $this->error($error['ifile'], $error['iline'], $error['line'], $error['token'], $error['payload']);
+                } else {
                     $tokens = array_reverse($tokens);
                     $code   = implode('', $this->compile($tokens, $blocks, $escape));
-                } else {
-                    dprint("template error!");
-                    ddump($expected);
                 }
             }
             
