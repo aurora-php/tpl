@@ -142,18 +142,26 @@ namespace org\octris\core\tpl {
             if (php_sapi_name() != 'cli') {
                 print "<pre>";
 
-                $payload = htmlentities($payload, ENT_QUOTES);
+                $prepare = function($str) {
+                    return htmlentities($str, ENT_QUOTES);
+                };
+            } else {
+                $prepare = function($str) {
+                    return $str;
+                };
             }
             
             printf("\n** ERROR: %s(%d) **\n", $ifile, $iline);
             printf("   line :    %d\n", $line);
-            printf("   file :    %s\n", $this->filename);
-            printf("   token:    %s\n", htmlentities(self::$parser->getTokenName($token), ENT_QUOTES));
+            printf("   file :    %s\n", $prepare($this->filename));
+            printf("   token:    %s\n", $prepare(self::$parser->getTokenName($token)));
             
             if (is_array($payload)) {
-                printf("   expected: %s\n", implode(', ', $payload));
+                printf("   expected: %s\n", implode(', ', array_map(function($token) use ($prepare) {
+                    return $prepare(self::$parser->getTokenName($token));
+                }, $payload)));
             } elseif (isset($payload)) {
-                printf("   message:  %s\n", $payload);
+                printf("   message:  %s\n", $prepare($payload));
             }
          
             if (php_sapi_name() != 'cli') {
