@@ -308,7 +308,7 @@ namespace org\octris\core\tpl\compiler {
             $fn = array('comify', 'enum', 'monf', 'numf', 'perf', 'datef', 'gender', 'quant', 'yesno');
             
             if (preg_match('/^(["\'])(.*?)\1$/', $msg, $match)) {
-                $pattern = '/\[(?:(?P<cmd>[a-z]+), *)_(?P<arg>\d+)(?:, *(?P<str>.*?))?(?<!\\\)\]/s';
+                $pattern = '/\[(?:(?P<cmd>[a-z]+), *)?_(?P<arg>\d+)(?:, *(?P<str>.*?))?(?<!\\\)\]/s';
 
                 $chr = $match[1];                     // quotation character
                 $txt = $l10n->lookup($match[2]);      // get translated text
