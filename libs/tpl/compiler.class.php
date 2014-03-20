@@ -172,58 +172,6 @@ namespace org\octris\core\tpl {
         }
 
         /**
-         * Implementation of gettext compiler.
-         *
-         * @octdoc  m:compiler/gettext
-         * @param   array       $args       Arguments for gettext.
-         * @return  string                  Compiled code for gettext.
-         */
-        protected function gettext($args)
-        /**/
-        {
-            if (preg_match('/^(["\'])(.*?)\1$/', $args[0], $match)) {
-                $pattern = '/\[(?:(_\d+)|(?:([^,]+))(?:,(.*?))?(?<!\\\))\]/s';
-
-                $chr = $match[1];                           // quotation character
-                $txt = $this->l10n->lookup($match[2]);      // get translated text
-                
-                $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
-                
-                array_shift($args);
-                
-                if (count($args) > 0 && count($args[0]) > 0) {
-                    $txt = preg_replace_callback($pattern, function($m) use ($args, $chr) {
-                        $cmd = (isset($m[2]) ? $m[2] : '');
-                        $tmp = preg_split('/(?<!\\\),/', array_pop($m));
-                        $par = array();
-
-                        foreach ($tmp as $t) {
-                            $par[] = (($t = trim($t)) && preg_match('/^_(\d+)$/', $t, $m)
-                                        ? $args[($m[1] - 1)]
-                                        : '\'' . $t . '\'');
-                        }
-
-                        if (!is_callable([$this->l10n, $cmd])) {
-                            die('unknown method call\n');
-                        }
-
-                        $code = ($cmd != '' 
-                                 ? $chr . ' . $this->l10n->' . $cmd . '(' . implode(',', $par) . ') . ' . $chr
-                                 : $chr . ' . ' . array_shift($par) . ' . ' . $chr);
-
-                        return $code;
-                    }, $txt, -1, $cnt);
-                }
-                
-                $return = $txt;
-            } else {
-                $return = '$this->l10n->translate(' . implode('', $args) . ')';
-            }
-            
-            return $return;
-        }
-        
-        /**
          * Compile tokens to PHP code.
          *
          * @octdoc  m:compiler/compile
