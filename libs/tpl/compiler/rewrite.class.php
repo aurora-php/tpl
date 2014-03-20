@@ -98,15 +98,15 @@ namespace org\octris\core\tpl\compiler {
             'escape'    => array('min' => 2, 'max' => 2),
 
             // localisation functions
-            'comify'    => array('min' => 2, 'max' => 4),
+            'comify'    => array('min' => 2, 'max' => 3),
             'enum'      => array('min' => 2),
             'monf'      => array('min' => 1, 'max' => 2),
             'numf'      => array('min' => 1, 'max' => 2),
             'perf'      => array('min' => 1, 'max' => 2),
             'datef'     => array('min' => 1, 'max' => 2),
             'gender'    => array('min' => 1, 'max' => 2),
-            'quant'     => array('min' => 2, 'max' => 5),
-            'yesno'     => array('min' => 2, 'max' => 4),
+            'quant'     => array('min' => 2, 'max' => 4),
+            'yesno'     => array('min' => 2, 'max' => 3),
         );
         /**/
 
