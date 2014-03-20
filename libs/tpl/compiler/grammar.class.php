@@ -52,6 +52,7 @@ namespace org\octris\core\tpl\compiler {
         const T_ESCAPE_DEF           = '<escape>';
         const T_LET_DEF              = '<let>';
         const T_GETTEXT_DEF          = '<gettext>';
+        const T_DGETTEXT_DEF         = '<dgettext>';
         const T_MACRO_DEF            = '<macro>';
         const T_METHOD_DEF           = '<method>';
         const T_VARIABLE_DEF         = '<variable>';
@@ -63,6 +64,7 @@ namespace org\octris\core\tpl\compiler {
         const T_ESCAPE               = '"escape"';
         const T_LET                  = '"let"';
         const T_GETTEXT              = '"_"';
+        const T_DGETTEXT             = '"_d"';
                                      
         const T_BRACE_OPEN           = '"("';
         const T_BRACE_CLOSE          = '")"';
@@ -102,7 +104,8 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_DPRINT,             'dprint(?=\()');
             $this->addToken(self::T_ESCAPE,             'escape(?=\()');
             $this->addToken(self::T_LET,                'let(?=\()');
-            $this->addToken(self::T_GETTEXT,            '_(?=\()');
+            $this->addToken(self::T_GETTEXT,            '(_|gettext)(?=\()');
+            $this->addToken(self::T_DGETTEXT,           '(_d|dgettext)(?=\()');
             $this->addToken(self::T_METHOD,             '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
             $this->addToken(self::T_MACRO,              '@[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
@@ -128,6 +131,7 @@ namespace org\octris\core\tpl\compiler {
                 self::T_DDUMP_DEF, self::T_DPRINT_DEF,
                 self::T_ESCAPE_DEF,
                 self::T_GETTEXT_DEF, 
+                self::T_DGETTEXT_DEF, 
                 self::T_LET_DEF,
                 self::T_MACRO_DEF, self::T_METHOD_DEF
             ]], true);
@@ -211,13 +215,30 @@ namespace org\octris\core\tpl\compiler {
                 ['$option' => [
                     ['$concatenation' => [
                         self::T_PUNCT,
-                        self::T_ARRAY_DEF,
-                        ['$option' => [
-                            ['$concatenation' => [
-                                self::T_PUNCT,
-                                self::T_PARAMETER
-                            ]]
-                        ]]                        
+                        self::T_PARAMETER_LIST,
+                    ]]
+                ]],
+                self::T_BRACE_CLOSE
+            ]]);
+
+            $this->addRule(self::T_DGETTEXT_DEF, ['$concatenation' => [
+                self::T_DGETTEXT,
+                self::T_BRACE_OPEN,
+                ['$alternation' => [
+                    self::T_CONSTANT,
+                    self::T_STRING,
+                    self::T_VARIABLE_DEF
+                ]],
+                self::T_PUNCT,
+                ['$alternation' => [
+                    self::T_CONSTANT,
+                    self::T_STRING,
+                    self::T_VARIABLE_DEF,
+                ]],
+                ['$option' => [
+                    ['$concatenation' => [
+                        self::T_PUNCT,
+                        self::T_PARAMETER_LIST,
                     ]]
                 ]],
                 self::T_BRACE_CLOSE
