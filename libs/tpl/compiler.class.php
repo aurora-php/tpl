@@ -183,7 +183,7 @@ namespace org\octris\core\tpl {
                 
                 array_shift($args);
                 
-                if (count($args) > 0) {
+                if (count($args) > 0 && count($args[0]) > 0) {
                     $txt = preg_replace_callback($pattern, function($m) use ($args, $chr) {
                         $cmd = (isset($m[2]) ? $m[2] : '');
                         $tmp = preg_split('/(?<!\\\),/', array_pop($m));
@@ -195,8 +195,12 @@ namespace org\octris\core\tpl {
                                         : '\'' . $t . '\'');
                         }
 
+                        if (!is_callable([$this->l10n, $cmd])) {
+                            die('unknown method call\n');
+                        }
+
                         $code = ($cmd != '' 
-                                 ? $chr . ' . $this->' . $cmd . '(' . implode(',', $par) . ') . ' . $chr
+                                 ? $chr . ' . $this->l10n->' . $cmd . '(' . implode(',', $par) . ') . ' . $chr
                                  : $chr . ' . ' . array_shift($par) . ' . ' . $chr);
 
                         return $code;
@@ -205,7 +209,7 @@ namespace org\octris\core\tpl {
                 
                 $return = $txt;
             } else {
-                $return = '$this->_(' . implode('', $args) . ')';
+                $return = '$this->l10n->translate(' . implode('', $args) . ')';
             }
             
             return $return;
