@@ -42,7 +42,6 @@ namespace org\octris\core\tpl\compiler {
             '#trigger'  => array('min' => 0, 'max' => 3),
             
             // functions
-            '_'      => array('min' => 1),               // gettext
             'if'     => array('min' => 2, 'max' => 3),   // (... ? ... : ...)
             'ifset'  => array('min' => 2, 'max' => 3),   // (isset(...) ? ... : ...)
             'ifnull' => array('min' => 2, 'max' => 3),   // (is_null(...) ? ... : ...)
