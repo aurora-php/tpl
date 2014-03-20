@@ -98,9 +98,6 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_BRACE_CLOSE,        '\)');
             $this->addToken(self::T_PUNCT,              '\,');
 
-            $this->addToken(self::T_VARIABLE,           '\$[a-zA-Z_][a-zA-Z0-9_]*(:\$?[a-zA-Z_][a-zA-Z0-9_]*|:[0-9]+|)+');
-            $this->addToken(self::T_CONSTANT,           '[A-Z_][A-Z0-9]*');
-
             $this->addToken(self::T_DDUMP,              'ddump(?=\()');
             $this->addToken(self::T_DPRINT,             'dprint(?=\()');
             $this->addToken(self::T_ESCAPE,             'escape(?=\()');
@@ -114,6 +111,9 @@ namespace org\octris\core\tpl\compiler {
             $this->addToken(self::T_NUMBER,             '[+-]?[0-9]+(\.[0-9]+|)');
             $this->addToken(self::T_STRING,             "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
             
+            $this->addToken(self::T_VARIABLE,           '\$[a-zA-Z_][a-zA-Z0-9_]*(:\$?[a-zA-Z_][a-zA-Z0-9_]*|:[0-9]+|)+');
+            $this->addToken(self::T_CONSTANT,           '[A-Z_][A-Z0-9_]*');
+
             $this->addToken(self::T_ARRAY_OPEN,         '\[');
             $this->addToken(self::T_ARRAY_CLOSE,        '\]');
             $this->addToken(self::T_ARRAY_KEY,          '=>');
