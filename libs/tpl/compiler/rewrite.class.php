@@ -612,10 +612,6 @@ namespace org\octris\core\tpl\compiler {
             // TODO: implementation
         }
         protected static function _enum($args) {
-            $value   = array_shift($args);
-            $snippet = 'array(' . implode(', ', $args) . ')';
-            
-            return '(!array_key_exists(' . $value . ' - 1, ' . $snippet . ') ? "" : ' . $snippet . '[' . $value . ' - 1])';
         }        
         protected static function _monf($args) {
             // TODO: implementation
