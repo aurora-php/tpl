@@ -200,7 +200,7 @@ namespace org\octris\core\tpl {
                                  : $chr . ' . ' . array_shift($par) . ' . ' . $chr);
 
                         return $code;
-                    }, $txt, -1, $cnt = 0);
+                    }, $txt, -1, $cnt);
                 }
                 
                 $return = $txt;
