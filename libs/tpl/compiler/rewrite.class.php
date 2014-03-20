@@ -290,6 +290,74 @@ namespace org\octris\core\tpl\compiler {
             return md5(uniqid());
         }
 
+        /**
+         * Implementation of gettext compiler.
+         *
+         * @octdoc  m:rewrite/_gettext
+         * @param   \org\octris\core\l10n       $l10n           Instance of l10n class.
+         * @param   string                      $domain         Text domain to use.
+         * @param   string                      $msg            Message to translate.
+         * @param   array                       $args           Parameters for inline functions.
+         * @return  string                                      Compiled code for gettext.
+         */
+        public static function gettext($l10n, $domain, $msg, $args)
+        /**/
+        {
+            self::$last_error = '';
+           
+            $fn = array('comify', 'enum', 'monf', 'numf', 'perf', 'datef', 'gender', 'quant', 'yesno');
+            
+            if (preg_match('/^(["\'])(.*?)\1$/', $msg, $match)) {
+                $pattern = '/\[(?:(?P<cmd>[a-z]+), *)_(?P<arg>\d+)(?:, *(?P<str>.*?))?(?<!\\\)\]/s';
+
+                $chr = $match[1];                     // quotation character
+                $txt = $l10n->lookup($match[2]);      // get translated text
+                
+                $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
+                
+                try {
+                    $txt = preg_replace_callback($pattern, function($m) use ($args, $chr, $fn) {
+                        $cmd = (isset($m['cmd']) ? $m['cmd'] : '');
+                        $arg = $m['arg'];
+                        $tmp = (isset($m['str']) ? preg_split('/(?<!\\\),/', $m['str']) : array());
+
+                        if ($arg > count($args)) {
+                            self::setError('gettext', sprintf('argument "%d" is not defined', $arg));
+                            throw new \Exception(self::getError());
+                        }
+
+                        if ($cmd != '') {
+                            if (!in_array($cmd, $fn)) {
+                                self::setError('gettext', sprintf('unknown function "%s"', $cmd));
+                                throw new \Exception(self::getError());
+                            }
+                        
+                            $code = $chr . ' . ' . 
+                                    self::$cmd(array_merge(array($args[$arg - 1]), $tmp)) . 
+                                    ' . ' . $chr;
+                            
+                            if (self::getError() != '') {
+                                throw new \Exception(self::getError());
+                            }
+                        } else {
+                            $code = $chr . ' . ' . $args[$arg - 1] . ' . ' . $chr;
+                        }
+
+                        return $code;
+                    }, $txt, -1, $cnt);
+                } catch(\Exception $e) {
+                }
+                
+                $return = $txt;
+            } else {
+                $return = '$this->l10n->translate(' . $msg . ', array(), ' . $domain . ')';
+            }
+            
+            ddump($return);
+            
+            return $return;
+        }
+        
         /*
          * inline block functions, that can be converted directly
          */
