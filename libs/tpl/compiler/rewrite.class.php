@@ -310,8 +310,8 @@ namespace org\octris\core\tpl\compiler {
             if (preg_match('/^(["\'])(.*?)\1$/', $msg, $match)) {
                 $pattern = '/\[(?:(?P<cmd>[a-z]+), *)?_(?P<arg>\d+)(?:, *(?P<str>.*?))?(?<!\\\)\]/s';
 
-                $chr = $match[1];                     // quotation character
-                $txt = $l10n->lookup($match[2]);      // get translated text
+                $chr = $match[1];                           // quotation character
+                $txt = $l10n->lookup($match[2], $domain);   // get translated text
                 
                 $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
                 
