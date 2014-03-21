@@ -112,7 +112,7 @@ namespace org\octris\core\tpl {
         public function process($filename, $escape)
         /**/
         {
-            $this->errors   = 0;
+            $this->errors = 0;
 
             parent::process($filename, $escape);
 
