@@ -91,7 +91,11 @@ namespace org\octris\core\tpl {
 
                     $this->error($error['ifile'], $error['iline'], $error['line'], $error['token'], $error['payload']);
                 } elseif (count($tokens) > 0) {
-                    self::$parser->getGrammar()->analyze($tokens);
+                    if (self::$parser->analyze($tokens) === false) {
+                        $error = self::$parser->getLastError();
+
+                        $this->error($error['ifile'], $error['iline'], $error['line'], $error['token'], $error['payload']);
+                    }
                 }
             } catch(\Exception $e) {
                 // dismiss exception to continue lint process
