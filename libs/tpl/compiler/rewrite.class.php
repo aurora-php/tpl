@@ -320,28 +320,33 @@ namespace org\octris\core\tpl\compiler {
                         $cmd = (isset($m['cmd']) ? $m['cmd'] : '');
                         $arg = $m['arg'];
 
-                        if ($arg > count($args)) {
-                            self::setError('gettext', sprintf('argument "%d" is not defined', $arg));
-                            throw new \Exception(self::getError());
-                        }
-
                         if ($cmd != '') {
                             if (!in_array($cmd, $fn)) {
-                                self::setError('gettext', sprintf('unknown function "%s"', $cmd));
-                                throw new \Exception(self::getError());
+                                throw new \Exception(sprintf('unknown function "%s"', $cmd));
                             }
                         
+                            if ($arg > count($args)) {
+                                throw new \Exception(sprintf('argument "%d" for function "%s" is not defined', $arg, $cmd));
+                            }
+
                             $tmp = array_map(function($arg) use ($chr) {
                                 return $chr . trim($arg) . $chr;
                             }, (isset($m['str']) ? preg_split('/(?<!\\\),/', $m['str']) : array()));
 
-                            $code = $chr . ' . ' . 
-                                    self::$cmd(array_merge(array($args[$arg - 1]), $tmp)) . 
-                                    ' . ' . $chr;
-                            
-                            if (self::getError() != '') {
-                                throw new \Exception(self::getError());
+                            array_unshift($tmp, $args[$arg - 1]);
+
+                            $cnt = count($tmp);
+                
+                            if ($cnt < self::$inline[$cmd]['min']) {
+                                throw new \Exception(self::getError(sprintf('not enough arguments for function "%s"', $cmd)));
                             }
+                            if ($cnt > self::$inline[$cmd]['max']) {
+                                throw new \Exception(self::getError(sprintf('too many arguments for function "%s"', $cmd)));
+                            }
+                
+                            $code = $chr . ' . $this->l10n->' . $cmd . '(' . implode(', ', $tmp) . ') . ' . $chr;
+                        } elseif ($arg > count($args)) {
+                            throw new \Exception(sprintf('argument "%d" is not defined', $arg));
                         } else {
                             $code = $chr . ' . ' . $args[$arg - 1] . ' . ' . $chr;
                         }
@@ -349,6 +354,7 @@ namespace org\octris\core\tpl\compiler {
                         return $code;
                     }, $txt, -1, $cnt);
                 } catch(\Exception $e) {
+                    self::setError('gettext', $e->getMessage());
                 }
                 
                 $return = $txt;
