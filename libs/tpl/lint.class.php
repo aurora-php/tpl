@@ -23,15 +23,6 @@ namespace org\octris\core\tpl {
     /**/
     {
         /**
-         * File handle for error messages output.
-         *
-         * @octdoc  p:lint/$errout
-         * @type    resource
-         */
-        protected $errout = 'php://stderr';
-        /**/
-
-        /**
          * Number of errors occured.
          *
          * @octdoc  p:lint/$errors
@@ -41,48 +32,39 @@ namespace org\octris\core\tpl {
         /**/
 
         /**
-         * Set location for error output.
+         * Constructor.
          *
-         * @octdoc  m:lint/setErrorOutput
-         * @param   string      $errout     Location for error output.
+         * @octdoc  m:lint/__construct
          */
-        public function setErrorOutput($errout)
+        public function __construct()
         /**/
         {
-            $this->errout = $errout;
+            parent::__construct();
+            
+            if (defined('STDERR')) {
+                $this->errout = fopen('php://stderr', 'w');
+            }
         }
 
         /**
          * Trigger an error.
          *
          * @octdoc  m:lint/error
-         * @param   string      $type       Type of error to trigger.
-         * @param   int         $cline      Line in compiler class error was triggered from.
+         * @param   string      $ifile      Internal filename the error occured in.
+         * @param   int         $iline      Internal line number the error occured in.
          * @param   int         $line       Line in template the error was triggered for.
          * @param   int         $token      ID of token that triggered the error.
          * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
-        protected function error($type, $cline, $line, $token, $payload = NULL)
+        protected function error($ifile, $iline, $line, $token, $payload = NULL)
         /**/
         {
-            if ($fp = fopen($this->errout, 'w+')) {
-                fwrite($fp, sprintf("\n** ERROR: %s(%d) **\n", $type, $cline));
-                fwrite($fp, sprintf("   line :    %d\n", $line));
-                fwrite($fp, sprintf("   file :    %s\n", $this->filename));
-                fwrite($fp, sprintf("   token:    %s\n", $this->getTokenName($token)));
-            
-                if (is_array($payload)) {
-                    fwrite($fp, sprintf("   expected: %s\n", implode(', ', $this->getTokenNames(array_keys($payload)))));
-                } elseif (isset($payload)) {
-                    fwrite($fp, sprintf("   message:  %s\n", $payload));
-                }
-                
-                fclose($fp);
+            try {
+                parent::error($ifile, $iline, $line, $token, $payload);
+            } catch(\Exception $e) {
             }
          
             ++$this->errors;
-            
-            if ($type == 'analyze' || $type == 'tokenize') throw new \Exception('syntax error');
         }
         
         /**

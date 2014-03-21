@@ -32,6 +32,15 @@ namespace org\octris\core\tpl {
         /**/
         
         /**
+         * File handle for error messages output.
+         *
+         * @octdoc  p:compiler/$errout
+         * @type    resource
+         */
+        protected $errout = null;
+        /**/
+
+        /**
          * Name of file currently compiled.
          *
          * @octdoc  p:compiler/$filename
@@ -66,6 +75,23 @@ namespace org\octris\core\tpl {
         public function __construct()
         /**/
         {
+            $this->errout = fopen('php://output', 'w');
+        }
+
+        /**
+         * Set location for error output.
+         *
+         * @octdoc  m:compiler/setErrorOutput
+         * @param   string|resource             $errout     Location for error output.
+         */
+        public function setErrorOutput($errout)
+        /**/
+        {
+            if (!is_resource($errout)) {
+                throw new \Exception('Provided argument is not a resource "' . $errout . '"');
+            }
+            
+            $this->errout = $errout;
         }
 
         /**
@@ -139,8 +165,8 @@ namespace org\octris\core\tpl {
         protected function error($ifile, $iline, $line, $token, $payload = NULL)
         /**/
         {
-            if (php_sapi_name() != 'cli') {
-                print "<pre>";
+            if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
+                fputs($this->errout, "<pre>");
 
                 $prepare = function($str) {
                     return htmlentities($str, ENT_QUOTES);
@@ -150,25 +176,25 @@ namespace org\octris\core\tpl {
                     return $str;
                 };
             }
-            
-            printf("\n** ERROR: %s(%d) **\n", $ifile, $iline);
-            printf("   line :    %d\n", $line);
-            printf("   file :    %s\n", $prepare($this->filename));
-            printf("   token:    %s\n", $prepare(self::$parser->getTokenName($token)));
-            
+        
+            fputs($this->errout, sprintf("\n** ERROR: %s(%d) **\n", $ifile, $iline));
+            fputs($this->errout, sprintf("   line :    %d\n", $line));
+            fputs($this->errout, sprintf("   file :    %s\n", $prepare($this->filename)));
+            fputs($this->errout, sprintf("   token:    %s\n", $prepare(self::$parser->getTokenName($token))));
+        
             if (is_array($payload)) {
-                printf("   expected: %s\n", implode(', ', array_map(function($token) use ($prepare) {
+                fputs($this->errout, sprintf("   expected: %s\n", implode(', ', array_map(function($token) use ($prepare) {
                     return $prepare(self::$parser->getTokenName($token));
-                }, $payload)));
+                }, $payload))));
             } elseif (isset($payload)) {
-                printf("   message:  %s\n", $prepare($payload));
+                fputs($this->errout, sprintf("   message:  %s\n", $prepare($payload)));
             }
-         
-            if (php_sapi_name() != 'cli') {
-                print "</pre>";
+     
+            if ($pre) {
+                fputs($this->errout, "</pre>");
             }
 
-            die();
+            throw new \Exception('Compiler error');
         }
 
         /**
