@@ -340,7 +340,7 @@ namespace org\octris\core\tpl {
                     $code[] = implode(', ', array_pop($stack));
                     break;
                 case grammar::T_CONSTANT:
-                    $value = strtoupper(substr($value, 1));
+                    $value = strtoupper($value);
                     $tmp   = compiler\constant::getConstant($value);
                 
                     if (($err = compiler\constant::getError()) != '') {
