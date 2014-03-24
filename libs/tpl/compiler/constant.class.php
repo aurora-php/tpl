@@ -113,6 +113,8 @@ namespace org\octris\core\tpl\compiler {
         public static function setConstant($name, $value)
         /**/
         {
+            $name = strtoupper($name);
+            
             if (isset(self::$registry[$name])) {
                 throw new \Exception("constant '$name' is already defined");
             } else {
@@ -146,6 +148,8 @@ namespace org\octris\core\tpl\compiler {
         {
             self::$last_error = '';
             
+            $name = strtoupper($name);
+
             if (!isset(self::$registry[$name])) {
                 self::setError($name, 'unknown constant');
             } else {
