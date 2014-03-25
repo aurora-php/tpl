@@ -340,7 +340,7 @@ namespace org\octris\core\tpl {
                     $code[] = implode(', ', array_pop($stack));
                     break;
                 case grammar::T_CONSTANT:
-                    $value = strtoupper(substr($value, 1));
+                    $value = strtoupper($value);
                     $tmp   = compiler\constant::getConstant($value);
                 
                     if (($err = compiler\constant::getError()) != '') {
@@ -382,7 +382,7 @@ namespace org\octris\core\tpl {
              */
             $last_token = $getLastToken($last_tokens, -1);
             
-            if ($last_token == grammar::T_LET) {
+            if (in_array($last_token, array(grammar::T_LET, grammar::T_DDUMP, grammar::T_DPRINT))) {
                 $code = array('<?php ' . implode('', $code) . '; ?>'."\n");
             } elseif (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
                 $code = array(implode('', $code));
