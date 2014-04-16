@@ -35,7 +35,7 @@ namespace org\octris\core\tpl {
          * @octdoc  p:parser/$snippet_pattern
          * @type    string
          */
-        private static $snippet_pattern = "\{\{((?:[^\"'}]+|(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))*)\}\}";
+        private static $snippet_pattern = "\{\{((?:[^\"'{}]+|(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))*)\}\}";
         /**/
         
         /**
