@@ -280,7 +280,7 @@ namespace org\octris\core\tpl {
                     $code    = array_reverse($code);
                     $_domain = ($token == grammar::T_DGETTEXT
                                 ? array_shift($code)
-                                : null);
+                                : 'null');
                     $_msg    = array_shift($code);
 
                     $code = array(compiler\rewrite::gettext($this->l10n, $_domain, $_msg, $code));
