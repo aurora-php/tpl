@@ -420,7 +420,7 @@ namespace org\octris\core\tpl {
             });
             $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
                 // closing block only allowed is a block is open
-                if (!($block = array_pop($blocks['analyzer']))) {
+                if (!(array_pop($blocks['analyzer']))) {
                     $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
                 }
             });
@@ -504,7 +504,7 @@ namespace org\octris\core\tpl {
             if (count($blocks['analyzer']) > 0) {
                 // all block-commands in a template have to be closed
                 $this->error(__FILE__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
-                    $this->getTokenName(grammar::T_BLOCK_CLOSE),
+                    grammar::T_BLOCK_CLOSE,
                     implode(', ', array_map(function($v) {
                         return $v['value'];
                     }, array_reverse($blocks['analyzer'])))
