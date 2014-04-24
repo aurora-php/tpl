@@ -181,7 +181,7 @@ namespace org\octris\core\tpl {
          * Set values for multiple template variables.
          *
          * @octdoc  m:tpl/setValues
-         * @param   array       $array      Key/value array with values.
+         * @param   array|\Traversable       $array      Key/value array with values.
          */
         public function setValues($array)
         /**/
