@@ -311,7 +311,8 @@ namespace org\octris\core\tpl\compiler {
                 $pattern = '/\[(?:(?P<cmd>[a-z]+), *)?_(?P<arg>\d+)(?:, *(?P<str>.*?))?(?<!\\\)\]/s';
 
                 $chr = $match[1];                           // quotation character
-                $txt = $l10n->lookup($match[2], $domain);   // get translated text
+                $txt = stripcslashes($match[2]);
+                $txt = $l10n->lookup($txt, $domain);        // get translated text
                 
                 $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
                 

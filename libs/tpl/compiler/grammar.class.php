@@ -186,6 +186,9 @@ namespace org\octris\core\tpl\compiler {
                 self::T_ESCAPE,
                 self::T_BRACE_OPEN,
                 ['$alternation' => [
+                    self::T_GETTEXT_DEF, 
+                    self::T_DGETTEXT_DEF, 
+                    self::T_METHOD_DEF,
                     self::T_VARIABLE_DEF,
                     self::T_CONSTANT,
                     self::T_STRING

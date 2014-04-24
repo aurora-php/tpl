@@ -154,9 +154,9 @@ namespace org\octris\core {
          * @octdoc  m:sandbox/registerMethod
          * @param   string      $name       Name of template method to register.
          * @param   mixed       $callback   Callback to map to template method.
-         * @param   array       $args       For specifying min/max number of arguments required for callback method.
+         * @param   array       $args       Optional parametert for specifying min/max number of arguments required for callback method.
          */
-        public function registerMethod($name, $callback, array $args)
+        public function registerMethod($name, $callback, array $args = array('min' => 0, 'max' => 0))
         /**/
         {
             $this->sandbox->registerMethod($name, $callback, $args);
