@@ -147,12 +147,12 @@ namespace org\octris\core\tpl {
          * @param   int         $line       Line in template the error occured (0, if it's in the class library).
          * @param   int         $cline      Line in the class that triggered the error.
          */
-        public function error($msg, $line = 0, $cline = __LINE__)
+        public function error($msg, $line = 0, $cline = __LINE__, $filename = null)
         /**/
         {
             printf("\n** ERROR: sandbox(%d)**\n", $cline);
             printf("   line :    %d\n", $line);
-            printf("   file:     %s\n", $this->filename);
+            printf("   file:     %s\n", (is_null($filename) ? $this->filename : $filename));
             printf("   message:  %s\n", $msg);
 
             die();
@@ -573,7 +573,11 @@ namespace org\octris\core\tpl {
         {
             $this->filename = $filename;
 
-            require($filename);
+            try {
+                require($filename);
+            } catch(\Exception $e) {
+                $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
+            }
         }
     }
 }
