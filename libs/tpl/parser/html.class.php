@@ -10,8 +10,8 @@
  */
 
 namespace org\octris\core\tpl\parser {
-    require_once('org.octris.core/tpl.class.php');
-    require_once('org.octris.core/tpl/parser.class.php');
+    require_once('../../tpl.class.php');
+    require_once('../parser.class.php');
 
     /**
      * HTML Parser for auto-escaping functionality.
