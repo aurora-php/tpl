@@ -123,6 +123,7 @@ namespace org\octris\core\tpl\compiler {
             'cut'            => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::cut'),
             'escapeshellarg' => array('min' => 1, 'max' => 1, 'map' => 'escapeshellarg'),
             'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
+            'length'         => array('min' => 1, 'max' => 1, 'map' => 'strlen'),
             'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
             'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::obliterate'),
             'repeat'         => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
