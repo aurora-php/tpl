@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\sandbox {
+namespace octris\core\tpl\sandbox {
     /**
      * Object storage for sandbox.
      *
@@ -33,7 +33,7 @@ namespace org\octris\core\tpl\sandbox {
          * Instance of storage class.
          *
          * @octdoc  p:storage/$instance
-         * @type    \org\octris\core\tpl\sandbox\storage|null
+         * @type    \octris\core\tpl\sandbox\storage|null
          */
         private static $instance = null;
         /**/
@@ -51,7 +51,7 @@ namespace org\octris\core\tpl\sandbox {
          * Get instance of storage class.
          *
          * @octdoc  m:storage/getInstance
-         * @return  \org\octris\core\tpl\sandbox\storage                Instance of storage class.
+         * @return  \octris\core\tpl\sandbox\storage                Instance of storage class.
          */
         public static function getInstance()
         /**/

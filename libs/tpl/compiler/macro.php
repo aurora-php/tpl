@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\compiler {
+namespace octris\core\tpl\compiler {
     /**
      * Library for handling template macros.
      *
@@ -141,7 +141,7 @@ namespace org\octris\core\tpl\compiler {
                 $err = sprintf(
                     'unable to locate file "%s" in "%s"', 
                     $args[0],
-                    implode(':', \org\octris\core\tpl\compiler\searchpath::getPath())
+                    implode(':', \octris\core\tpl\compiler\searchpath::getPath())
                 );
             }
             

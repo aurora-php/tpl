@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\compiler {
-    use \org\octris\core\tpl\compiler as c;
+namespace octris\core\tpl\compiler {
+    use \octris\core\tpl\compiler as c;
     
     /**
      * Class for defining a template parser grammar.
@@ -19,7 +19,7 @@ namespace org\octris\core\tpl\compiler {
      * @copyright   copyright (c) 2014 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
-    class grammar extends \org\octris\core\parser\grammar
+    class grammar extends \octris\core\parser\grammar
     /**/
     {
         /**

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\compiler {
+namespace octris\core\tpl\compiler {
     /**
      * Library for handling template constants.
      *
@@ -52,11 +52,11 @@ namespace org\octris\core\tpl\compiler {
             'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
 
             // pre-defined constants for string functions
-            'CASE_UPPER'             => \org\octris\core\type\string::T_CASE_UPPER,
-            'CASE_LOWER'             => \org\octris\core\type\string::T_CASE_LOWER,
-            'CASE_TITLE'             => \org\octris\core\type\string::T_CASE_TITLE,
-            'CASE_UPPER_FIRST'       => \org\octris\core\type\string::T_CASE_UPPER_FIRST,
-            'CASE_LOWER_FIRST'       => \org\octris\core\type\string::T_CASE_LOWER_FIRST,
+            'CASE_UPPER'             => \octris\core\type\string::T_CASE_UPPER,
+            'CASE_LOWER'             => \octris\core\type\string::T_CASE_LOWER,
+            'CASE_TITLE'             => \octris\core\type\string::T_CASE_TITLE,
+            'CASE_UPPER_FIRST'       => \octris\core\type\string::T_CASE_UPPER_FIRST,
+            'CASE_LOWER_FIRST'       => \octris\core\type\string::T_CASE_LOWER_FIRST,
         );
         /**/
 

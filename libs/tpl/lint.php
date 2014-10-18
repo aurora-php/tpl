@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl {
+namespace octris\core\tpl {
     require_once('compiler.class.php');
     
     /**
@@ -19,7 +19,7 @@ namespace org\octris\core\tpl {
      * @copyright   copyright (c) 2010-2011 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
-    class lint extends \org\octris\core\tpl\compiler
+    class lint extends \octris\core\tpl\compiler
     /**/
     {
         /**

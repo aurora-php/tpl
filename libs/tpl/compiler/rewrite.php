@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\compiler {
+namespace octris\core\tpl\compiler {
     /**
      * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
      * if they are allowed php function calls or calls to functions that have to be registered to 
@@ -118,25 +118,25 @@ namespace org\octris\core\tpl\compiler {
          */
         protected static $phpfunc = array(
             // string functions
-            'chunk'          => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::chunk_split'),
-            'chunk_id'       => array('min' => 1, 'max' => 5, 'map' => '\org\octris\core\type\string::chunk_id'),
-            'cut'            => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::cut'),
+            'chunk'          => array('min' => 3, 'max' => 3, 'map' => '\octris\core\type\string::chunk_split'),
+            'chunk_id'       => array('min' => 1, 'max' => 5, 'map' => '\octris\core\type\string::chunk_id'),
+            'cut'            => array('min' => 2, 'max' => 4, 'map' => '\octris\core\type\string::cut'),
             'escapeshellarg' => array('min' => 1, 'max' => 1, 'map' => 'escapeshellarg'),
-            'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::lcfirst'),
+            'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::lcfirst'),
             'length'         => array('min' => 1, 'max' => 1, 'map' => 'strlen'),
-            'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::ltrim'),
-            'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\org\octris\core\type\string::obliterate'),
+            'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::ltrim'),
+            'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\octris\core\type\string::obliterate'),
             'repeat'         => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
-            'replace'        => array('min' => 3, 'max' => 3, 'map' => '\org\octris\core\type\string::str_replace'),
-            'rtrim'          => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::rtrim'),
-            'shorten'        => array('min' => 1, 'max' => 3, 'map' => '\org\octris\core\type\string::shorten'),
-            'sprintf'        => array('min' => 1,             'map' => '\org\octris\core\type\string::sprintf'),
-            'substr'         => array('min' => 2, 'max' => 3, 'map' => '\org\octris\core\type\string::substr'),
-            'tolower'        => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtolower'),
-            'toupper'        => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::strtoupper'),
-            'trim'           => array('min' => 1, 'max' => 2, 'map' => '\org\octris\core\type\string::trim'),
-            'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\org\octris\core\type\string::ucfirst'),
-            'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\org\octris\core\type\string::vsprintf'),
+            'replace'        => array('min' => 3, 'max' => 3, 'map' => '\octris\core\type\string::str_replace'),
+            'rtrim'          => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::rtrim'),
+            'shorten'        => array('min' => 1, 'max' => 3, 'map' => '\octris\core\type\string::shorten'),
+            'sprintf'        => array('min' => 1,             'map' => '\octris\core\type\string::sprintf'),
+            'substr'         => array('min' => 2, 'max' => 3, 'map' => '\octris\core\type\string::substr'),
+            'tolower'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::strtolower'),
+            'toupper'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::strtoupper'),
+            'trim'           => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::trim'),
+            'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::ucfirst'),
+            'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\octris\core\type\string::vsprintf'),
             
             // numeric functions
             'abs'        => array('min' => 1, 'max' => 1),
@@ -295,7 +295,7 @@ namespace org\octris\core\tpl\compiler {
          * Implementation of gettext compiler.
          *
          * @octdoc  m:rewrite/_gettext
-         * @param   \org\octris\core\l10n       $l10n           Instance of l10n class.
+         * @param   \octris\core\l10n       $l10n           Instance of l10n class.
          * @param   string                      $domain         Text domain to use.
          * @param   string                      $msg            Message to translate.
          * @param   array                       $args           Parameters for inline functions.
@@ -396,7 +396,7 @@ namespace org\octris\core\tpl\compiler {
             $var = '$_' . self::getUniqId();
             $key = $args[0];
             $ttl = $args[1];
-            $esc = (isset($args[2]) ? $args[2] : \org\octris\core\tpl::T_ESC_NONE);
+            $esc = (isset($args[2]) ? $args[2] : \octris\core\tpl::T_ESC_NONE);
 
             return array(
                 sprintf(
@@ -439,7 +439,7 @@ namespace org\octris\core\tpl\compiler {
             return array(
                 sprintf(
                     '$_%s = $this->storage->get("_%s", function() { ' .
-                    'return new \org\octris\core\tpl\sandbox\eachiterator(%s);' . 
+                    'return new \octris\core\tpl\sandbox\eachiterator(%s);' . 
                     '}); ' .
                     'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
                     $var, $var, $arg, $var
@@ -469,7 +469,7 @@ namespace org\octris\core\tpl\compiler {
             return array(
                 sprintf(
                     '$_%s = $this->storage->get("_%s", function() { ' .
-                    'return new \org\octris\core\tpl\sandbox\eachiterator(' .
+                    'return new \octris\core\tpl\sandbox\eachiterator(' .
                     'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
                     '); }); ' . 
                     'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
@@ -609,7 +609,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _collection($args) {
-            return '\\org\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
+            return '\\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
         }
         
         protected static function _now() {
@@ -625,11 +625,11 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _ddump($args) {
-            return '\\org\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
+            return '\\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
         }
         
         protected static function _dprint($args) {
-            return '\\org\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
+            return '\\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
         }
         
         protected static function _error($args) {
@@ -642,11 +642,11 @@ namespace org\octris\core\tpl\compiler {
         
         // string functions
         protected static function _explode($args) {
-            return 'new \\org\\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
+            return 'new \\\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
         }
         
         protected static function _implode($args) {
-            return '(implode(' . $args[0] . ', \\org\\octris\\core\\type::settype(' . $args[1] . ', "array")))';
+            return '(implode(' . $args[0] . ', \\\octris\\core\\type::settype(' . $args[1] . ', "array")))';
         }
         
         protected static function _lpad($args) {
@@ -662,7 +662,7 @@ namespace org\octris\core\tpl\compiler {
         }
         
         protected static function _totitle($args) {
-            return '\\org\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+            return '\\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
         }
 
         protected static function _concat($args) {
@@ -671,7 +671,7 @@ namespace org\octris\core\tpl\compiler {
         
         // array functions
         protected static function _array($args) {
-            return 'new \\org\\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
+            return 'new \\\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
         }
         
         protected static function _cycle($args) {

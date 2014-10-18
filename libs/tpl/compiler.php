@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl {
-    use \org\octris\core\tpl\compiler\grammar;
+namespace octris\core\tpl {
+    use \octris\core\tpl\compiler\grammar;
     
     /**
      * Implementation of template compiler.
@@ -26,7 +26,7 @@ namespace org\octris\core\tpl {
          * Instance of parser class.
          *
          * @octdoc  p:compiler/$parser
-         * @type    \org\octris\core\parser|null
+         * @type    \octris\core\parser|null
          */
         protected static $parser = null;
         /**/
@@ -62,7 +62,7 @@ namespace org\octris\core\tpl {
          * Instance of locale class.
          *
          * @octdoc  p:compiler/$l10n
-         * @type    \org\octris\core\l10n
+         * @type    \octris\core\l10n
          */
         protected $l10n;
         /**/
@@ -98,9 +98,9 @@ namespace org\octris\core\tpl {
          * Set l10n dependency.
          *
          * @octdoc  m:compiler/setL10n
-         * @param   \org\octris\core\l10n       $l10n       Instance of l10n class.
+         * @param   \octris\core\l10n       $l10n       Instance of l10n class.
          */
-        public function setL10n(\org\octris\core\l10n $l10n)
+        public function setL10n(\octris\core\l10n $l10n)
         /**/
         {
             $this->l10n = $l10n;
@@ -409,8 +409,8 @@ namespace org\octris\core\tpl {
         protected function setup(array &$blocks)
         /**/
         {
-            $grammar = new \org\octris\core\tpl\compiler\grammar();
-            self::$parser = new \org\octris\core\parser($grammar, [grammar::T_WHITESPACE]);
+            $grammar = new \octris\core\tpl\compiler\grammar();
+            self::$parser = new \octris\core\parser($grammar, [grammar::T_WHITESPACE]);
             
             $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
                 $blocks['analyzer'][] = $current;
@@ -483,11 +483,11 @@ namespace org\octris\core\tpl {
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
-            if ($escape == \org\octris\core\tpl::T_ESC_HTML) {
+            if ($escape == \octris\core\tpl::T_ESC_HTML) {
                 // parser for auto-escaping turned on
-                $parser = new \org\octris\core\tpl\parser\html($this->filename);
+                $parser = new \octris\core\tpl\parser\html($this->filename);
             } else {
-                $parser = new \org\octris\core\tpl\parser($this->filename);
+                $parser = new \octris\core\tpl\parser($this->filename);
                 $parser->setFilter(function($command) use ($escape) {
                     $command['escape'] = $escape;
 
@@ -529,18 +529,18 @@ namespace org\octris\core\tpl {
         {
             $this->filename = $filename;
 
-            if ($escape == \org\octris\core\tpl::T_ESC_AUTO) {
+            if ($escape == \octris\core\tpl::T_ESC_AUTO) {
                 // auto-escaping, try to determine escaping from file extension
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
                 if ($ext == 'html' || $ext == 'htm') {
-                    $escape = \org\octris\core\tpl::T_ESC_HTML;
+                    $escape = \octris\core\tpl::T_ESC_HTML;
                 } elseif ($ext == 'css') {
-                    $escape = \org\octris\core\tpl::T_ESC_CSS;
+                    $escape = \octris\core\tpl::T_ESC_CSS;
                 } elseif ($ext == 'js') {
-                    $escape = \org\octris\core\tpl::T_ESC_JS;
+                    $escape = \octris\core\tpl::T_ESC_JS;
                 } else {
-                    $escape = \org\octris\core\tpl::T_ESC_NONE;
+                    $escape = \octris\core\tpl::T_ESC_NONE;
                 }
             }
 

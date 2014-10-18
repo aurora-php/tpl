@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core\tpl\parser {
+namespace octris\core\tpl\parser {
     require_once(__DIR__ . '/../../tpl.class.php');
     require_once(__DIR__ . '/../parser.class.php');
 
@@ -20,7 +20,7 @@ namespace org\octris\core\tpl\parser {
      * @copyright   copyright (c) 2012 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
-    class html extends \org\octris\core\tpl\parser
+    class html extends \octris\core\tpl\parser
     /**/
     {
         /**
@@ -177,7 +177,7 @@ namespace org\octris\core\tpl\parser {
          * @octdoc  p:html/$escape
          * @type    array
          */
-        protected $escape = array(\org\octris\core\tpl::T_ESC_HTML);
+        protected $escape = array(\octris\core\tpl::T_ESC_HTML);
         /**/
 
         /**
@@ -265,13 +265,13 @@ namespace org\octris\core\tpl\parser {
                     } else {
                         switch (strtolower($state['payload'])) {
                         case 'script':
-                            array_push($this->escape, \org\octris\core\tpl::T_ESC_JS);
+                            array_push($this->escape, \octris\core\tpl::T_ESC_JS);
                             break;
                         case 'style':
-                            array_push($this->escape, \org\octris\core\tpl::T_ESC_CSS);
+                            array_push($this->escape, \octris\core\tpl::T_ESC_CSS);
                             break;
                         default:
-                            array_push($this->escape, \org\octris\core\tpl::T_ESC_HTML);
+                            array_push($this->escape, \octris\core\tpl::T_ESC_HTML);
                             break;
                         }
                     }
@@ -286,8 +286,8 @@ namespace org\octris\core\tpl\parser {
                     continue(2);
                 case self::T_TAG_CLOSE:
                     if (count($this->escape) == 1) {
-                        if ($this->escape[0] != \org\octris\core\tpl::T_ESC_HTML) {
-                            $this->escape[0] = \org\octris\core\tpl::T_ESC_HTML;
+                        if ($this->escape[0] != \octris\core\tpl::T_ESC_HTML) {
+                            $this->escape[0] = \octris\core\tpl::T_ESC_HTML;
                         }
                     } else {
                         array_pop($this->escape);
@@ -305,11 +305,11 @@ namespace org\octris\core\tpl\parser {
                         $name = strtolower($state['payload']);
                         
                         if (in_array($name, self::$attributes['js'])) {
-                            array_push($this->escape, \org\octris\core\tpl::T_ESC_JS);
+                            array_push($this->escape, \octris\core\tpl::T_ESC_JS);
                         } elseif (in_array($name, self::$attributes['uri'])) {
-                            array_push($this->escape, \org\octris\core\tpl::T_ESC_URI);
+                            array_push($this->escape, \octris\core\tpl::T_ESC_URI);
                         } else {
-                            array_push($this->escape, \org\octris\core\tpl::T_ESC_ATTR);
+                            array_push($this->escape, \octris\core\tpl::T_ESC_ATTR);
                         }
                     }
                     break;

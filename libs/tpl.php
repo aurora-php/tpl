@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'org.octris.core' package.
+ * This file is part of the 'octris/core' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace org\octris\core {
-    use \org\octris\core\tpl\compiler as compiler;
+namespace octris\core {
+    use \octris\core\tpl\compiler as compiler;
 
     /**
      * Main class of template engine.
@@ -41,7 +41,7 @@ namespace org\octris\core {
          * Instance of sandbox for executing template in.
          *
          * @octdoc  p:tpl/$sandbox
-         * @type    \org\octris\core\tpl\sandbox
+         * @type    \octris\core\tpl\sandbox
          */
         protected $sandbox;
         /**/
@@ -68,7 +68,7 @@ namespace org\octris\core {
          * Instance of locale class.
          *
          * @octdoc  p:tpl/$l10n
-         * @type    \org\octris\core\l10n
+         * @type    \octris\core\l10n
          */
         protected $l10n;
         /**/
@@ -114,9 +114,9 @@ namespace org\octris\core {
          * Set l10n dependency.
          *
          * @octdoc  m:tpl/setL10n
-         * @param   \org\octris\core\l10n       $l10n       Instance of l10n class.
+         * @param   \octris\core\l10n       $l10n       Instance of l10n class.
          */
-        public function setL10n(\org\octris\core\l10n $l10n)
+        public function setL10n(\octris\core\l10n $l10n)
         /**/
         {
             $this->sandbox->setL10n($l10n);
@@ -215,9 +215,9 @@ namespace org\octris\core {
          * Set cache for template snippets.
          *
          * @octdoc  m:tpl/setSnippetCache
-         * @param   \org\octris\core\cache      $cache          Caching instance.
+         * @param   \octris\core\cache      $cache          Caching instance.
          */
-        public function setSnippetCache(\org\octris\core\cache $cache)
+        public function setSnippetCache(\octris\core\cache $cache)
         /**/
         {
             $this->sandbox->setSnippetCache($cache);
