@@ -609,7 +609,7 @@ namespace octris\core\tpl\compiler {
         }
         
         protected static function _collection($args) {
-            return '\\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
+            return '\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
         }
         
         protected static function _now() {
@@ -625,11 +625,11 @@ namespace octris\core\tpl\compiler {
         }
         
         protected static function _ddump($args) {
-            return '\\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
+            return '\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
         }
         
         protected static function _dprint($args) {
-            return '\\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
+            return '\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
         }
         
         protected static function _error($args) {
@@ -642,11 +642,11 @@ namespace octris\core\tpl\compiler {
         
         // string functions
         protected static function _explode($args) {
-            return 'new \\\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
+            return 'new \\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
         }
         
         protected static function _implode($args) {
-            return '(implode(' . $args[0] . ', \\\octris\\core\\type::settype(' . $args[1] . ', "array")))';
+            return '(implode(' . $args[0] . ', \\octris\\core\\type::settype(' . $args[1] . ', "array")))';
         }
         
         protected static function _lpad($args) {
@@ -662,7 +662,7 @@ namespace octris\core\tpl\compiler {
         }
         
         protected static function _totitle($args) {
-            return '\\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+            return '\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
         }
 
         protected static function _concat($args) {
@@ -671,7 +671,7 @@ namespace octris\core\tpl\compiler {
         
         // array functions
         protected static function _array($args) {
-            return 'new \\\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
+            return 'new \\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
         }
         
         protected static function _cycle($args) {
