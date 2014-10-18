@@ -10,14 +10,11 @@
  */
 
 namespace octris\core\tpl\parser {
-    require_once(__DIR__ . '/../../tpl.class.php');
-    require_once(__DIR__ . '/../parser.class.php');
-
     /**
      * HTML Parser for auto-escaping functionality.
      *
      * @octdoc      c:parser/html
-     * @copyright   copyright (c) 2012 by Harald Lapp
+     * @copyright   copyright (c) 2012-2014 by Harald Lapp
      * @author      Harald Lapp <harald@octris.org>
      */
     class html extends \octris\core\tpl\parser
