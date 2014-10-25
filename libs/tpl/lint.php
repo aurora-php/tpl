@@ -18,7 +18,6 @@ namespace octris\core\tpl {
      * @author      Harald Lapp <harald@octris.org>
      */
     class lint extends \octris\core\tpl\compiler
-    /**/
     {
         /**
          * Number of errors occured.
@@ -35,7 +34,6 @@ namespace octris\core\tpl {
          * @octdoc  m:lint/__construct
          */
         public function __construct()
-        /**/
         {
             parent::__construct();
             
@@ -55,7 +53,6 @@ namespace octris\core\tpl {
          * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
         protected function error($ifile, $iline, $line, $token, $payload = NULL)
-        /**/
         {
             try {
                 parent::error($ifile, $iline, $line, $token, $payload);
@@ -76,7 +73,6 @@ namespace octris\core\tpl {
          * @return  string                      Processed / compiled snippet.
          */
         protected function toolchain($snippet, $line, array &$blocks, $escape)
-        /**/
         {
             if (is_null(self::$parser)) {
                 // initialize parser
@@ -112,7 +108,6 @@ namespace octris\core\tpl {
          * @return  bool                        Returns true if template is valid.
          */
         public function process($filename, $escape)
-        /**/
         {
             $this->errors = 0;
 

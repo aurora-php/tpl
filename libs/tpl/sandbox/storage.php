@@ -18,7 +18,6 @@ namespace octris\core\tpl\sandbox {
      * @author      Harald Lapp <harald@octris.org>
      */
     class storage
-    /**/
     {
         /**
          * Storage for initialization callbacks.
@@ -54,7 +53,6 @@ namespace octris\core\tpl\sandbox {
          * @return  \octris\core\tpl\sandbox\storage                Instance of storage class.
          */
         public static function getInstance()
-        /**/
         {
             if (is_null(self::$instance)) {
                 self::$instance = new self();
@@ -71,7 +69,6 @@ namespace octris\core\tpl\sandbox {
          * @return  mixed                                               Data stored in property.
          */
         public function __get($name)
-        /**/
         {
             if (!isset($this->init[$name])) {
                 throw new \Exception('Unknown property "' . $name . '".');
@@ -91,7 +88,6 @@ namespace octris\core\tpl\sandbox {
          * @return  mixed                                               Data.
          */
         public function get($name, callable $cb)
-        /**/
         {
             if (!$name == 'instance' || $name == 'init') {
                 throw new \Exception('Forbidden to access property "' . $name . '".');

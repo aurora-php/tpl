@@ -20,7 +20,6 @@ namespace octris\core\tpl {
      * @author      Harald Lapp <harald@octris.org>
      */
     class compiler
-    /**/
     {
         /**
          * Instance of parser class.
@@ -73,7 +72,6 @@ namespace octris\core\tpl {
          * @octdoc  m:compiler/__construct
          */
         public function __construct()
-        /**/
         {
             $this->errout = fopen('php://output', 'w');
         }
@@ -85,7 +83,6 @@ namespace octris\core\tpl {
          * @param   string|resource             $errout     Location for error output.
          */
         public function setErrorOutput($errout)
-        /**/
         {
             if (!is_resource($errout)) {
                 throw new \Exception('Provided argument is not a resource "' . $errout . '"');
@@ -101,7 +98,6 @@ namespace octris\core\tpl {
          * @param   \octris\core\l10n       $l10n       Instance of l10n class.
          */
         public function setL10n(\octris\core\l10n $l10n)
-        /**/
         {
             $this->l10n = $l10n;
         }
@@ -113,7 +109,6 @@ namespace octris\core\tpl {
          * @param   mixed       $pathname       Name of path to register.
          */
         public function addSearchPath($pathname)
-        /**/
         {
             if (is_array($pathname)) {
                 foreach ($pathname as $path) $this->addSearchPath($path);
@@ -131,7 +126,6 @@ namespace octris\core\tpl {
          * @param   string      $filename       Name of file to lookup.
          */
         public function findFile($filename)
-        /**/
         {
             $return = false;
             
@@ -163,7 +157,6 @@ namespace octris\core\tpl {
          * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
         protected function error($ifile, $iline, $line, $token, $payload = NULL)
-        /**/
         {
             if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
                 fputs($this->errout, "<pre>");
@@ -207,7 +200,6 @@ namespace octris\core\tpl {
          * @return  string                  Generated PHP code.
          */
         protected function compile(&$tokens, &$blocks, $escape)
-        /**/
         {
             $stack = array();
             $code  = array();
@@ -407,7 +399,6 @@ namespace octris\core\tpl {
          * @param   array       $blocks         Block information required by analyzer / compiler.
          */
         protected function setup(array &$blocks)
-        /**/
         {
             $grammar = new \octris\core\tpl\compiler\grammar();
             self::$parser = new \octris\core\parser($grammar, [grammar::T_WHITESPACE]);
@@ -444,7 +435,6 @@ namespace octris\core\tpl {
          * @return  string                      Processed / compiled snippet.
          */
         protected function toolchain($snippet, $line, array &$blocks, $escape)
-        /**/
         {
             if (is_null(self::$parser)) {
                 // initialize parser
@@ -479,7 +469,6 @@ namespace octris\core\tpl {
          * @return  string                      Processed / compiled template.
          */
         protected function parse($escape)
-        /**/
         {
             $blocks = array('analyzer' => array(), 'compiler' => array());
 
@@ -525,7 +514,6 @@ namespace octris\core\tpl {
          * @return  string                      Compiled template.
          */
         public function process($filename, $escape)
-        /**/
         {
             $this->filename = $filename;
 

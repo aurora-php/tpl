@@ -18,7 +18,6 @@ namespace octris\core\tpl\compiler {
      * @author      Harald Lapp <harald@octris.org>
      */
     class macro
-    /**/
     {
         /**
          * Macro registry.
@@ -54,7 +53,6 @@ namespace octris\core\tpl\compiler {
          * @return  string                  Last occured error.
          */
         public static function getError()
-        /**/
         {
             return self::$last_error;
         }
@@ -67,7 +65,6 @@ namespace octris\core\tpl\compiler {
          * @param   string      $msg        Additional error message.
          */
         protected static function setError($name, $msg)
-        /**/
         {
             self::$last_error = sprintf('"%s" -- %s', $name, $msg);
         }
@@ -81,7 +78,6 @@ namespace octris\core\tpl\compiler {
          * @param   array       $args       For testing min/max number of arguments required for macro.
          */
         public static function registerMacro($name, callable $callback, array $args)
-        /**/
         {
             self::$registry[strtolower($name)] = array(
                 'callback' => $callback,
@@ -98,7 +94,6 @@ namespace octris\core\tpl\compiler {
          * @param   array       $options    Optional additional options for macro.
          */
         public static function execMacro($name, $args, array $options = array())
-        /**/
         {
             self::$last_error = '';
             

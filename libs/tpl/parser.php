@@ -18,7 +18,6 @@ namespace octris\core\tpl {
      * @author      Harald Lapp <harald@octris.org>
      */
     class parser implements \Iterator 
-    /**/
     {
         /**
          * Option flags.
@@ -144,7 +143,6 @@ namespace octris\core\tpl {
          * @param   int                     $flags                      Optional option flags to set.
          */
         public function __construct($filename, $flags = 0) 
-        /**/
         {
             if (is_null(self::$tokennames)) {
                 $class = new \ReflectionClass($this);
@@ -173,7 +171,6 @@ namespace octris\core\tpl {
          * @octdoc  p:parser/rewind
          */
         public function rewind() 
-        /**/
         {
             $this->offset          = 0;
             $this->line_correction = 0;
@@ -188,7 +185,6 @@ namespace octris\core\tpl {
          * @return  array                                               Array with template command and escaping.
          */
         public function current() 
-        /**/
         {
             $filter = $this->filter;
 
@@ -202,7 +198,6 @@ namespace octris\core\tpl {
          * @return  int                                                 Offset.
          */
         public function key() 
-        /**/
         {
             return $this->offset;
         }
@@ -213,7 +208,6 @@ namespace octris\core\tpl {
          * @octdoc  m:parser/next
          */
         public function next() 
-        /**/
         {
             $this->offset = $this->next_offset;
 
@@ -239,7 +233,6 @@ namespace octris\core\tpl {
          * @Return  bool                                                Parser state is valid.
          */
         public function valid() 
-        /**/
         {
             return $this->valid;
         }
@@ -254,7 +247,6 @@ namespace octris\core\tpl {
          * @return  int                                                 Number of lines detected.
          */
         protected function getLineNumber($offset)
-        /**/
         {
             return substr_count(substr($this->tpl, 0, $offset), "\n") + 1 - $this->line_correction;
         }
@@ -266,7 +258,6 @@ namespace octris\core\tpl {
          * @return  int                                                 Number of total lines.
          */
         public function getTotalLines()
-        /**/
         {
             return substr_count($this->tpl, "\n") + 1;
         }
@@ -278,7 +269,6 @@ namespace octris\core\tpl {
          * @return  string                                              Template contents.
          */
         public function getTemplate()
-        /**/
         {
             return $this->tpl;
         }
@@ -290,7 +280,6 @@ namespace octris\core\tpl {
          * @param   int                     $token                      Id of token to return name of.
          */
         protected function getTokenName($token)
-        /**/
         {
             return (isset(self::$tokennames[$token])
                     ? self::$tokennames[$token]
@@ -305,7 +294,6 @@ namespace octris\core\tpl {
          * @return  array                   Names of tokens.
          */
         protected function getTokenNames(array $tokens)
-        /**/
         {
             $return = array();
             
@@ -321,7 +309,6 @@ namespace octris\core\tpl {
          * @param   int         $offset     New offset to move parser to.
          */
         public function setOffset($offset)
-        /**/
         {
             $this->offset = $offset;
         }
@@ -334,7 +321,6 @@ namespace octris\core\tpl {
          * @return  mixed                                   Data to return.
          */
         public function setFilter(callable $callback)
-        /**/
         {
             $this->filter = $callback;
         }
@@ -350,7 +336,6 @@ namespace octris\core\tpl {
          * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
          */
         protected function error($type, $cline, $line, $token, $payload = NULL)
-        /**/
         {
             printf("\n** ERROR: %s(%d) **\n", $type, $cline);
             printf("   line :    %d\n", $line);
@@ -374,7 +359,6 @@ namespace octris\core\tpl {
          * @param   string      $tpl            Template content to prepare.
          */
         protected function prepare($tpl)
-        /**/
         {
             $pattern = '/(' . self::$snippet_pattern . '|<\?php|\?>)/s';
             $offset  = 0;
@@ -403,7 +387,6 @@ namespace octris\core\tpl {
          * @param   bool        $move_offset    Optional whether to move offset after replacing or set it to value of first parameter.
          */
         public function replaceSnippet($str, $move_offset = false)
-        /**/
         {
             $offset = $this->current['offset'];
             $length = $this->current['length'];

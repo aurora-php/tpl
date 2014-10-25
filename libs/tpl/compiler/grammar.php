@@ -20,7 +20,6 @@ namespace octris\core\tpl\compiler {
      * @author      Harald Lapp <harald@octris.org>
      */
     class grammar extends \octris\core\parser\grammar
-    /**/
     {
         /**
          * Known tokens.
@@ -86,7 +85,6 @@ namespace octris\core\tpl\compiler {
          * @octdoc  m:grammar/__construct
          */
         public function __construct()
-        /**/
         {
             parent::__construct();
             

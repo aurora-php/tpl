@@ -18,7 +18,6 @@ namespace octris\core\tpl {
      * @author      Harald Lapp <harald@octris.org>
      */
     class sandbox
-    /**/
     {
         /**
          * Template data.
@@ -98,7 +97,6 @@ namespace octris\core\tpl {
          * @octdoc  m:sandbox/__construct
          */
         public function __construct()
-        /**/
         {
             $this->storage = \octris\core\tpl\sandbox\storage::getInstance();
         }
@@ -110,7 +108,6 @@ namespace octris\core\tpl {
          * @param   \octris\core\l10n       $l10n       Instance of l10n class.
          */
         public function setL10n(\octris\core\l10n $l10n)
-        /**/
         {
             $this->l10n = $l10n;
         }
@@ -124,7 +121,6 @@ namespace octris\core\tpl {
          * @return  mixed                   Return value of called function.
          */
         public function __call($name, $args)
-        /**/
         {
             if (!isset($this->registry[$name])) {
                 $this->error(sprintf('"%s" -- unknown function', $name), 0, __LINE__);
@@ -148,7 +144,6 @@ namespace octris\core\tpl {
          * @param   int         $cline      Line in the class that triggered the error.
          */
         public function error($msg, $line = 0, $cline = __LINE__, $filename = null)
-        /**/
         {
             printf("\n** ERROR: sandbox(%d)**\n", $cline);
             printf("   line :    %d\n", $line);
@@ -167,7 +162,6 @@ namespace octris\core\tpl {
          * @param   array       $args       For specifying min/max number of arguments required for callback method.
          */
         public function registerMethod($name, $callback, array $args)
-        /**/
         {
             $name = strtolower($name);
 
@@ -184,7 +178,6 @@ namespace octris\core\tpl {
          * @param   array|\Traversable       $array      Key/value array with values.
          */
         public function setValues($array)
-        /**/
         {
             foreach ($array as $k => $v) $this->setValue($k, $v);
         }
@@ -200,7 +193,6 @@ namespace octris\core\tpl {
          * @param   mixed       $value      Value to set for template variable.
          */
         public function setValue($name, $value)
-        /**/
         {
             if (is_scalar($value) || (is_object($value) && $value instanceof \Traversable)) {
                 $this->data[$name] = $value;
@@ -218,7 +210,6 @@ namespace octris\core\tpl {
          * @param   \octris\core\cache      $cache          Caching instance.
          */
         public function setSnippetCache(\octris\core\cache $cache)
-        /**/
         {
             $this->cache = $cache;
         }
@@ -231,7 +222,6 @@ namespace octris\core\tpl {
          * @return  string                  Translated message.
          */
         public function gettext($msg)
-        /**/
         {
             return $this->l10n->gettext($msg);
         }
@@ -247,7 +237,6 @@ namespace octris\core\tpl {
          * @return  bool                                                        Returns 'true' as long as iterator did not reach end of array.
          */
         public function each(\octris\core\tpl\sandbox\eachiterator $iterator, &$ctrl, &$meta = null)
-        /**/
         {
             if (($return = $iterator->valid())) {
                 $ctrl = $iterator->current();
@@ -278,7 +267,6 @@ namespace octris\core\tpl {
          * @param   bool        $cut        Optional flag that indicates if buffer should be cut or copied.
          */
         public function bufferStart(&$ctrl, $cut = true)
-        /**/
         {
             array_push($this->pastebin, array(
                 'buffer' => &$ctrl,
@@ -294,7 +282,6 @@ namespace octris\core\tpl {
          * @octdoc  m:sandbox/bufferEnd
          */
         public function bufferEnd()
-        /**/
         {
             $buffer = array_pop($this->pastebin);
             $buffer['buffer'] = ob_get_contents();
@@ -317,7 +304,6 @@ namespace octris\core\tpl {
          * @return  bool                        Returns true, if key was available in cache.
          */
         public function cacheLookup($key, $escape = \octris\core\tpl::T_ESC_NONE)
-        /**/
         {
             if (!($return = is_null($this->cache))) {
                 if (($return = $this->cache->exists($key))) {
@@ -345,7 +331,6 @@ namespace octris\core\tpl {
          * @param   int         $timeout        Cache timeout.
          */
         public function cacheStore($key, $data, $timeout)
-        /**/
         {
             if (!is_null($this->cache)) {
                 $this->cache->save($key, $data, $timeout);
@@ -361,7 +346,6 @@ namespace octris\core\tpl {
          * @return  bool                        Returns true if cron block creation succeeded.
          */
         public function cron($start, $end = 0)
-        /**/
         {
             if (!ctype_digit($start)) {
                 $start = (int)strtotime($start);
@@ -393,7 +377,6 @@ namespace octris\core\tpl {
          * @return  bool                    Returns true if trigger is raised.
          */
         public function trigger($id, $steps = 2, $start = 0, $reset = 1)
-        /**/
         {
             $id = 'trigger:' . $id . ':' . crc32("$steps:$start");
 
@@ -432,7 +415,6 @@ namespace octris\core\tpl {
          * @return  bool                    Returns true if variable value change was detected.
          */
         public function onchange($id, $value)
-        /**/
         {
             $id = 'onchange:' . $id;
 
@@ -462,7 +444,6 @@ namespace octris\core\tpl {
          * @return  mixed                   Current list item.
          */
         public function cycle($id, $array, $pingpong = false, $reset = 1)
-        /**/
         {
             $id = 'cycle:' . $id;
 
@@ -504,7 +485,6 @@ namespace octris\core\tpl {
          * @param   string          $escape         Escaping to use.
          */
         public function escape($val, $escape)
-        /**/
         {
             switch ($escape) {
             case \octris\core\tpl::T_ESC_ATTR:
@@ -538,7 +518,6 @@ namespace octris\core\tpl {
          * @param   string          $escape         Optional escaping to use.
          */
         public function write($val = '', $escape = '')
-        /**/
         {
             if ($escape !== \octris\core\tpl::T_ESC_NONE) {
                 $val = $this->escape($val, $escape);
@@ -555,7 +534,6 @@ namespace octris\core\tpl {
          * @return  string                  File contents.
          */
         public function includetpl($file)
-        /**/
         {
             return (is_readable($file)
                     ? file_get_contents($file)
@@ -569,7 +547,6 @@ namespace octris\core\tpl {
          * @param   string      $filename       Filename of template to render.
          */
         public function render($filename)
-        /**/
         {
             $this->filename = $filename;
 

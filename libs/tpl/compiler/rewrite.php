@@ -20,7 +20,6 @@ namespace octris\core\tpl\compiler {
      * @author      Harald Lapp <harald@octris.org>
      */
     class rewrite
-    /**/
     {
         /**
          * Inline method rewrite.
@@ -193,7 +192,6 @@ namespace octris\core\tpl\compiler {
          * @return  string                  Last occured error.
          */
         public static function getError()
-        /**/
         {
             return self::$last_error;
         }
@@ -206,7 +204,6 @@ namespace octris\core\tpl\compiler {
          * @param   string      $msg        Additional error message.
          */
         protected static function setError($name, $msg)
-        /**/
         {
             self::$last_error = sprintf('"%s" -- %s', $name, $msg);
         }
@@ -219,7 +216,6 @@ namespace octris\core\tpl\compiler {
          * @param   array       $args       Arguments for method.
          */
         public static function __callStatic($name, $args)
-        /**/
         {
             self::$last_error = '';
            
@@ -286,7 +282,6 @@ namespace octris\core\tpl\compiler {
          * @return  string                  Uniq identifier
          */
         protected static function getUniqId()
-        /**/
         {
             return md5(uniqid());
         }
@@ -302,7 +297,6 @@ namespace octris\core\tpl\compiler {
          * @return  string                                      Compiled code for gettext.
          */
         public static function gettext($l10n, $domain, $msg, $args)
-        /**/
         {
             self::$last_error = '';
            

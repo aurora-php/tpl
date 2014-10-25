@@ -20,7 +20,6 @@ namespace octris\core {
      * @author      Harald Lapp <harald@octris.org>
      */
     class tpl
-    /**/
     {
         /**
          * Escape types.
@@ -105,7 +104,6 @@ namespace octris\core {
          * @octdoc  m:tpl/__construct
          */
         public function __construct()
-        /**/
         {
             $this->sandbox = new tpl\sandbox();
         }
@@ -117,7 +115,6 @@ namespace octris\core {
          * @param   \octris\core\l10n       $l10n       Instance of l10n class.
          */
         public function setL10n(\octris\core\l10n $l10n)
-        /**/
         {
             $this->sandbox->setL10n($l10n);
             $this->l10n = $l10n;
@@ -130,7 +127,6 @@ namespace octris\core {
          * @param   array       $array      Key/value array with values.
          */
         public function setValues($array)
-        /**/
         {
             $this->sandbox->setValues($array);
         }
@@ -143,7 +139,6 @@ namespace octris\core {
          * @param   mixed       $value      Value to set for template variable.
          */
         public function setValue($name, $value)
-        /**/
         {
             $this->sandbox->setValue($name, $value);
         }
@@ -157,7 +152,6 @@ namespace octris\core {
          * @param   array       $args       Optional parametert for specifying min/max number of arguments required for callback method.
          */
         public function registerMethod($name, $callback, array $args = array('min' => 0, 'max' => 0))
-        /**/
         {
             $this->sandbox->registerMethod($name, $callback, $args);
         }
@@ -169,7 +163,6 @@ namespace octris\core {
          * @param   mixed       $pathname       Name of path to register.
          */
         public function addSearchPath($pathname)
-        /**/
         {
             if (is_array($pathname)) {
                 foreach ($pathname as $path) $this->addSearchPath($path);
@@ -189,7 +182,6 @@ namespace octris\core {
          * @param   string      $pathname   Name of path to register.
          */
         public function setResourcePath($ext, $pathname)
-        /**/
         {
             if (array_key_exists($ext, $this->resources) && is_dir($pathname)) {
                 $this->resources[$ext] = rtrim($pathname, '/');
@@ -204,7 +196,6 @@ namespace octris\core {
          * @param   string      $pathname   Name of path to register.
          */
         public function setOutputPath($ext, $pathname)
-        /**/
         {
             if (array_key_exists($ext, $this->path) && is_writable($pathname)) {
                 $this->path[$ext] = rtrim($pathname, '/');
@@ -218,7 +209,6 @@ namespace octris\core {
          * @param   \octris\core\cache      $cache          Caching instance.
          */
         public function setSnippetCache(\octris\core\cache $cache)
-        /**/
         {
             $this->sandbox->setSnippetCache($cache);
         }
@@ -232,7 +222,6 @@ namespace octris\core {
          * @param   string      $escape     Escaping to use.
          */
         protected function process($inp, $out, $escape)
-        /**/
         {
             // tpl\compiler\constant::setConstants($this->constants);
             $sandbox = $this->sandbox;
@@ -268,7 +257,6 @@ namespace octris\core {
          * @return  string                      Compiled template.
          */
         public function compile($filename, $escape = self::T_ESC_HTML)
-        /**/
         {
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $tpl = '';
@@ -300,7 +288,6 @@ namespace octris\core {
          * @param   string      $escape         Optional escaping to use.
          */
         public function render($filename, $escape = self::T_ESC_HTML)
-        /**/
         {
             $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
             $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
@@ -323,7 +310,6 @@ namespace octris\core {
          * @return  string                      Rendered template.
          */
         public function fetch($filename, $escape = self::T_ESC_HTML)
-        /**/
         {
             ob_start();
 
@@ -344,7 +330,6 @@ namespace octris\core {
          * @param   string      $escape         Optional escaping to use.
          */
         public function save($savename, $filename, $escape = self::T_ESC_HTML)
-        /**/
         {
             file_put_contents($savename, $this->fetch($filename, $escape));
         }

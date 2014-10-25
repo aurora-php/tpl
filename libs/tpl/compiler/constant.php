@@ -18,7 +18,6 @@ namespace octris\core\tpl\compiler {
      * @author      Harald Lapp <harald@octris.org>
      */
     class constant
-    /**/
     {
         /**
          * Constant registry.
@@ -85,7 +84,6 @@ namespace octris\core\tpl\compiler {
          * @return  string                  Last occured error.
          */
         public static function getError()
-        /**/
         {
             return self::$last_error;
         }
@@ -98,7 +96,6 @@ namespace octris\core\tpl\compiler {
          * @param   string      $msg        Additional error message.
          */
         protected static function setError($name, $msg)
-        /**/
         {
             self::$last_error = sprintf('"%s" -- %s', $name, $msg);
         }
@@ -111,7 +108,6 @@ namespace octris\core\tpl\compiler {
          * @param   mixed       $value      Value of constant.
          */
         public static function setConstant($name, $value)
-        /**/
         {
             $name = strtoupper($name);
             
@@ -129,7 +125,6 @@ namespace octris\core\tpl\compiler {
          * @param   array       $constants  Key/value array defining constants.
          */
         public static function setConstants(array $constants)
-        /**/
         {
             foreach ($constants as $name => $value) {
                 $this->setConstant($name, $value);
@@ -144,7 +139,6 @@ namespace octris\core\tpl\compiler {
          * @return  mixed                   Value of constant.
          */
         public static function getConstant($name)
-        /**/
         {
             self::$last_error = '';
             

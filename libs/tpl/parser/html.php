@@ -18,7 +18,6 @@ namespace octris\core\tpl\parser {
      * @author      Harald Lapp <harald@octris.org>
      */
     class html extends \octris\core\tpl\parser
-    /**/
     {
         /**
          * Parser states.
@@ -194,7 +193,6 @@ namespace octris\core\tpl\parser {
          * @param   int                     $flags                      Optional option flags to set.
          */
         public function __construct($filename, $flags = 0) 
-        /**/
         {
             parent::__construct($filename, $flags);
         }
@@ -207,7 +205,6 @@ namespace octris\core\tpl\parser {
          * @octdoc  p:html/rewind
          */
         public function rewind() 
-        /**/
         {
             $this->offset     = 0;
             $this->new_offset = 0;
@@ -221,7 +218,6 @@ namespace octris\core\tpl\parser {
          * @octdoc  m:html/next
          */
         public function next() 
-        /**/
         {
             $current = null;
         
@@ -370,7 +366,6 @@ namespace octris\core\tpl\parser {
          * @param   int         $offset     Offset to set.
          */
         public function setOffset($offset)
-        /**/
         {
             $this->next_offset = $offset;
         }
@@ -383,7 +378,6 @@ namespace octris\core\tpl\parser {
          * @return  string                                                      Prepared HTML document.
          */
         protected function prepare($tpl)
-        /**/
         {
             $tpl = parent::prepare($tpl);
             $tpl = preg_replace_callback('/\{\{(.*?)\}\}/', function($m) {
