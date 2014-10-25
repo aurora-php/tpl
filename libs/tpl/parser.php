@@ -149,7 +149,7 @@ namespace octris\core\tpl {
                 self::$tokennames = array_flip($class->getConstants());
             }
 
-            $this->filter = function($command) {
+            $this->filter = function ($command) {
                 return $command;
             };
         

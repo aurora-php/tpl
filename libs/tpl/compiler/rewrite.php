@@ -312,7 +312,7 @@ namespace octris\core\tpl\compiler {
                 $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
                 
                 try {
-                    $txt = preg_replace_callback($pattern, function($m) use ($args, $chr, $fn) {
+                    $txt = preg_replace_callback($pattern, function ($m) use ($args, $chr, $fn) {
                         $cmd = (isset($m['cmd']) ? $m['cmd'] : '');
                         $arg = $m['arg'];
 
@@ -325,7 +325,7 @@ namespace octris\core\tpl\compiler {
                                 throw new \Exception(sprintf('argument "%d" for function "%s" is not defined', $arg, $cmd));
                             }
 
-                            $tmp = array_map(function($arg) use ($chr) {
+                            $tmp = array_map(function ($arg) use ($chr) {
                                 return $chr . trim($arg) . $chr;
                             }, (isset($m['str']) ? preg_split('/(?<!\\\),/', $m['str']) : array()));
 
@@ -432,7 +432,7 @@ namespace octris\core\tpl\compiler {
 
             return array(
                 sprintf(
-                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    '$_%s = $this->storage->get("_%s", function () { ' .
                     'return new \octris\core\tpl\sandbox\eachiterator(%s);' . 
                     '}); ' .
                     'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
@@ -462,7 +462,7 @@ namespace octris\core\tpl\compiler {
 
             return array(
                 sprintf(
-                    '$_%s = $this->storage->get("_%s", function() { ' .
+                    '$_%s = $this->storage->get("_%s", function () { ' .
                     'return new \octris\core\tpl\sandbox\eachiterator(' .
                     'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
                     '); }); ' . 

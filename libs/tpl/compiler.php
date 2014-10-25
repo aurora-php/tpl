@@ -161,11 +161,11 @@ namespace octris\core\tpl {
             if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
                 fputs($this->errout, "<pre>");
 
-                $prepare = function($str) {
+                $prepare = function ($str) {
                     return htmlentities($str, ENT_QUOTES);
                 };
             } else {
-                $prepare = function($str) {
+                $prepare = function ($str) {
                     return $str;
                 };
             }
@@ -176,7 +176,7 @@ namespace octris\core\tpl {
             fputs($this->errout, sprintf("   token:    %s\n", $prepare(self::$parser->getTokenName($token))));
         
             if (is_array($payload)) {
-                fputs($this->errout, sprintf("   expected: %s\n", implode(', ', array_map(function($token) use ($prepare) {
+                fputs($this->errout, sprintf("   expected: %s\n", implode(', ', array_map(function ($token) use ($prepare) {
                     return $prepare(self::$parser->getTokenName($token));
                 }, $payload))));
             } elseif (isset($payload)) {
@@ -206,14 +206,14 @@ namespace octris\core\tpl {
             
             $last_tokens = array();
             
-            $getNextToken = function(&$tokens) use (&$last_tokens) {
+            $getNextToken = function (&$tokens) use (&$last_tokens) {
                 if (($current = array_shift($tokens))) {
                     $last_tokens[] = $current['token'];
                 }
 
                 return $current;
             };
-            $getLastToken = function($tokens, $idx) {
+            $getLastToken = function ($tokens, $idx) {
                 if (($tmp = array_slice($tokens, $idx, 1))) {
                     $return = array_pop($tmp);
                 } else {
@@ -253,7 +253,7 @@ namespace octris\core\tpl {
                     $code = array();
                     break;
                 case grammar::T_ARRAY_OPEN:
-                    $code = array('[' . array_reduce(array_reverse($code), function($code, $snippet) {
+                    $code = array('[' . array_reduce(array_reverse($code), function ($code, $snippet) {
                         static $last = '';
                         
                         if ($code != '') {
@@ -403,19 +403,19 @@ namespace octris\core\tpl {
             $grammar = new \octris\core\tpl\compiler\grammar();
             self::$parser = new \octris\core\parser($grammar, [grammar::T_WHITESPACE]);
             
-            $grammar->addEvent(grammar::T_IF_OPEN, function($current) use (&$blocks) {
+            $grammar->addEvent(grammar::T_IF_OPEN, function ($current) use (&$blocks) {
                 $blocks['analyzer'][] = $current;
             });
-            $grammar->addEvent(grammar::T_BLOCK_OPEN, function($current) use (&$blocks) {
+            $grammar->addEvent(grammar::T_BLOCK_OPEN, function ($current) use (&$blocks) {
                 $blocks['analyzer'][] = $current;
             });
-            $grammar->addEvent(grammar::T_BLOCK_CLOSE, function($current) use (&$blocks) {
+            $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks) {
                 // closing block only allowed is a block is open
                 if (!(array_pop($blocks['analyzer']))) {
                     $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
                 }
             });
-            $grammar->addEvent(grammar::T_IF_ELSE, function($current) use (&$blocks) {
+            $grammar->addEvent(grammar::T_IF_ELSE, function ($current) use (&$blocks) {
                 if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
                     $this->error(__FILE__, __LINE__, $line, $token, 'only allowed inside an "if" block');
                 } else {
@@ -477,7 +477,7 @@ namespace octris\core\tpl {
                 $parser = new \octris\core\tpl\parser\html($this->filename);
             } else {
                 $parser = new \octris\core\tpl\parser($this->filename);
-                $parser->setFilter(function($command) use ($escape) {
+                $parser->setFilter(function ($command) use ($escape) {
                     $command['escape'] = $escape;
 
                     return $command;
@@ -494,7 +494,7 @@ namespace octris\core\tpl {
                 // all block-commands in a template have to be closed
                 $this->error(__FILE__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
                     grammar::T_BLOCK_CLOSE,
-                    implode(', ', array_map(function($v) {
+                    implode(', ', array_map(function ($v) {
                         return $v['value'];
                     }, array_reverse($blocks['analyzer'])))
                 ));

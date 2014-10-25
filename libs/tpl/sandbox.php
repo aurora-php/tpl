@@ -381,7 +381,7 @@ namespace octris\core\tpl {
             $id = 'trigger:' . $id . ':' . crc32("$steps:$start");
 
             if (!isset($this->meta[$id])) {
-                $get_generator = function() use ($start, $steps, $reset) {
+                $get_generator = function () use ($start, $steps, $reset) {
                     $pos = $start;
 
                     while (true) {
@@ -452,7 +452,7 @@ namespace octris\core\tpl {
                     $array = array_merge($array, array_slice(array_reverse($array), 1, count($array) - 2));
                 }
 
-                $get_generator = function() use ($array, $reset) {
+                $get_generator = function () use ($array, $reset) {
                     $pos = 0; $cnt = count($array);
                     
                     while (true) {

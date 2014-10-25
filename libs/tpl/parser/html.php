@@ -380,7 +380,7 @@ namespace octris\core\tpl\parser {
         protected function prepare($tpl)
         {
             $tpl = parent::prepare($tpl);
-            $tpl = preg_replace_callback('/\{\{(.*?)\}\}/', function($m) {
+            $tpl = preg_replace_callback('/\{\{(.*?)\}\}/', function ($m) {
                 $id = '_c_' . uniqid() . '_';
                 $this->commands[$id] = $m[1];
             
