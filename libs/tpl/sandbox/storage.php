@@ -9,93 +9,94 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl\sandbox {
+namespace octris\core\tpl\sandbox;
+
+/**
+ * Object storage for sandbox.
+ *
+ * @octdoc      c:sandbox/storage
+ * @copyright   copyright (c) 2012 by Harald Lapp
+ * @author      Harald Lapp <harald@octris.org>
+ */
+class storage
+{
     /**
-     * Object storage for sandbox.
+     * Storage for initialization callbacks.
      *
-     * @octdoc      c:sandbox/storage
-     * @copyright   copyright (c) 2012 by Harald Lapp
-     * @author      Harald Lapp <harald@octris.org>
+     * @octdoc  p:storage/$init
+     * @type    array
      */
-    class storage
+    private $init = array();
+    /**/
+
+    /**
+     * Instance of storage class.
+     *
+     * @octdoc  p:storage/$instance
+     * @type    \octris\core\tpl\sandbox\storage|null
+     */
+    private static $instance = null;
+    /**/
+
+    /**
+     * Private constructor, clone method, to make the class singleton.
+     *
+     * @octdoc  m:storage/__construct
+     */
+    private function __construct() {}
+    private function __clone() {}
+    /**/
+
+    /**
+     * Get instance of storage class.
+     *
+     * @octdoc  m:storage/getInstance
+     * @return  \octris\core\tpl\sandbox\storage                Instance of storage class.
+     */
+    public static function getInstance()
     {
-        /**
-         * Storage for initialization callbacks.
-         *
-         * @octdoc  p:storage/$init
-         * @type    array
-         */
-        private $init = array();
-        /**/
-
-        /**
-         * Instance of storage class.
-         *
-         * @octdoc  p:storage/$instance
-         * @type    \octris\core\tpl\sandbox\storage|null
-         */
-        private static $instance = null;
-        /**/
-
-        /**
-         * Private constructor, clone method, to make the class singleton.
-         *
-         * @octdoc  m:storage/__construct
-         */
-        private function __construct() {}
-        private function __clone() {}
-        /**/
-
-        /**
-         * Get instance of storage class.
-         *
-         * @octdoc  m:storage/getInstance
-         * @return  \octris\core\tpl\sandbox\storage                Instance of storage class.
-         */
-        public static function getInstance()
-        {
-            if (is_null(self::$instance)) {
-                self::$instance = new self();
-            }
-
-            return self::$instance;
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
         }
 
-        /**
-         * Getter.
-         *
-         * @octdoc  m:storage/__get
-         * @param   string                  $name                       Name of property to get.
-         * @return  mixed                                               Data stored in property.
-         */
-        public function __get($name)
-        {
-            if (!isset($this->init[$name])) {
-                throw new \Exception('Unknown property "' . $name . '".');
-            }
+        return self::$instance;
+    }
 
-            $cb = $this->init[$name];
-        
-            return ($this->{$name} = $cb());
+    /**
+     * Getter.
+     *
+     * @octdoc  m:storage/__get
+     * @param   string                  $name                       Name of property to get.
+     * @return  mixed                                               Data stored in property.
+     */
+    public function __get($name)
+    {
+        if (!isset($this->init[$name])) {
+            throw new \Exception('Unknown property "' . $name . '".');
         }
 
-        /**
-         * Get a value from storage. Generate it using the specified callback, if the value does not exist.
-         *
-         * @octdoc  m:storage/get
-         * @param   string                  $name                       Name of data to store in storage.
-         * @param   callable                $cb                         Callback to call if data is not available.
-         * @return  mixed                                               Data.
-         */
-        public function get($name, callable $cb)
-        {
-            if (!$name == 'instance' || $name == 'init') {
-                throw new \Exception('Forbidden to access property "' . $name . '".');
-            }
+        $cb = $this->init[$name];
+    
+        return ($this->{$name} = $cb());
+    }
 
-            $this->init[$name] = $cb;
-
-            return $this->{$name};
+    /**
+     * Get a value from storage. Generate it using the specified callback, if the value does not exist.
+     *
+     * @octdoc  m:storage/get
+     * @param   string                  $name                       Name of data to store in storage.
+     * @param   callable                $cb                         Callback to call if data is not available.
+     * @return  mixed                                               Data.
+     */
+    public function get($name, callable $cb)
+    {
+        if (!$name == 'instance' || $name == 'init') {
+            throw new \Exception('Forbidden to access property "' . $name . '".');
         }
+
+        $this->init[$name] = $cb;
+
+        return $this->{$name};
     }
 }
+
