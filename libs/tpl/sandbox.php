@@ -553,7 +553,7 @@ class sandbox
 
         try {
             require($filename);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
         }
     }

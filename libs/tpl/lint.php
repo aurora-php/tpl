@@ -57,7 +57,7 @@ class lint extends \octris\core\tpl\compiler
     {
         try {
             parent::error($ifile, $iline, $line, $token, $payload);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
         }
      
         ++$this->errors;
@@ -92,7 +92,7 @@ class lint extends \octris\core\tpl\compiler
                     $this->error($error['ifile'], $error['iline'], $error['line'], $error['token'], $error['payload']);
                 }
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // dismiss exception to continue lint process
         }
         

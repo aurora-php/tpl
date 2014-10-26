@@ -350,7 +350,7 @@ class rewrite
 
                     return $code;
                 }, $txt, -1, $cnt);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 self::setError('gettext', $e->getMessage());
             }
             
