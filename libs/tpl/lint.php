@@ -117,4 +117,3 @@ class lint extends \octris\core\tpl\compiler
         return ($this->errors == 0);
     }
 }
-

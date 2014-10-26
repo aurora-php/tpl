@@ -536,4 +536,3 @@ class compiler
         return $this->parse($escape);
     }
 }
-

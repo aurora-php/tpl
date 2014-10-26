@@ -152,4 +152,3 @@ macro::registerMacro(
     },
     array('min' => 0, 'max' => 0)
 );
-

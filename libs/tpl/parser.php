@@ -406,4 +406,3 @@ class parser implements \Iterator
         }
     }
 }
-

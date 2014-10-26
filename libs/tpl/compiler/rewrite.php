@@ -707,4 +707,3 @@ class rewrite
         return '($this->l10n->yesno(' . implode(', ', $args) . '))';
     }
 }
-

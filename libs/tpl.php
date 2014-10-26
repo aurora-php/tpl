@@ -335,4 +335,3 @@ class tpl
         file_put_contents($savename, $this->fetch($filename, $escape));
     }
 }
-

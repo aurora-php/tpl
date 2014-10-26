@@ -310,4 +310,3 @@ class grammar extends \octris\core\parser\grammar
         ]]);
     }
 }
-

@@ -391,4 +391,3 @@ class html extends \octris\core\tpl\parser
         return $tpl;
     }
 }
-
