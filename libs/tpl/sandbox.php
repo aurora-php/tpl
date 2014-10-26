@@ -455,7 +455,7 @@ class sandbox
 
             $get_generator = function () use ($array, $reset) {
                 $pos = 0; $cnt = count($array);
-                
+
                 while (true) {
                     if ($reset != ($tmp = yield)) {
                         $pos = 0; $reset = $tmp;

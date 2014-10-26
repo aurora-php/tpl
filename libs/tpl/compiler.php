@@ -30,7 +30,7 @@ class compiler
      */
     protected static $parser = null;
     /**/
-    
+
     /**
      * File handle for error messages output.
      *
@@ -88,7 +88,7 @@ class compiler
         if (!is_resource($errout)) {
             throw new \Exception('Provided argument is not a resource "' . $errout . '"');
         }
-        
+
         $this->errout = $errout;
     }
 
@@ -119,7 +119,7 @@ class compiler
             }
         }
     }
-    
+
     /**
      * Lookup a template file in the configured searchpathes.
      *
@@ -129,21 +129,21 @@ class compiler
     public function findFile($filename)
     {
         $return = false;
-        
+
         foreach ($this->searchpath as $path) {
             $test = $path . '/' . $filename;
-            
+
             if (file_exists($test) && is_readable($test)) {
                 if (($dir = dirname($filename)) !== '') {
                     // add complete path of file for future relativ path lookups
                     $this->addSearchPath($path . '/' . $dir);
                 }
-                
+
                 $return = $test;
                 break;
             }
         }
-        
+
         return $return;
     }
 
@@ -170,12 +170,12 @@ class compiler
                 return $str;
             };
         }
-    
+
         fputs($this->errout, sprintf("\n** ERROR: %s(%d) **\n", $ifile, $iline));
         fputs($this->errout, sprintf("   line :    %d\n", $line));
         fputs($this->errout, sprintf("   file :    %s\n", $prepare($this->filename)));
         fputs($this->errout, sprintf("   token:    %s\n", $prepare(self::$parser->getTokenName($token))));
-    
+
         if (is_array($payload)) {
             fputs($this->errout, sprintf("   expected: %s\n", implode(', ', array_map(function ($token) use ($prepare) {
                 return $prepare(self::$parser->getTokenName($token));
@@ -183,7 +183,7 @@ class compiler
         } elseif (isset($payload)) {
             fputs($this->errout, sprintf("   message:  %s\n", $prepare($payload)));
         }
- 
+
         if ($pre) {
             fputs($this->errout, "</pre>");
         }
@@ -204,9 +204,9 @@ class compiler
     {
         $stack = array();
         $code  = array();
-        
+
         $last_tokens = array();
-        
+
         $getNextToken = function (&$tokens) use (&$last_tokens) {
             if (($current = array_shift($tokens))) {
                 $last_tokens[] = $current['token'];
@@ -226,18 +226,18 @@ class compiler
 
         while (($current = $getNextToken($tokens))) {
             extract($current);
-        
+
             switch ($token) {
             case grammar::T_IF_OPEN:
             case grammar::T_BLOCK_OPEN:
                 // replace/rewrite block call
                 $value = strtolower($value);
-                
+
                 list($_start, $_end) = compiler\rewrite::$value(array_reverse($code));
 
                 $code = array($_start);
                 $blocks['compiler'][] = $_end;
-            
+
                 if (($err = compiler\rewrite::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
@@ -256,16 +256,16 @@ class compiler
             case grammar::T_ARRAY_OPEN:
                 $code = array('[' . array_reduce(array_reverse($code), function ($code, $snippet) {
                     static $last = '';
-                    
+
                     if ($code != '') {
                         $code .= (($last == '=>' || $snippet == '=>') ? '' : ', ');
                     }
 
                     $code .= $last = $snippet;
-                    
+
                     return $code;
                 }, '') . ']');
-                
+
                 if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
                 break;
             case grammar::T_DGETTEXT:
@@ -277,7 +277,7 @@ class compiler
                 $_msg    = array_shift($code);
 
                 $code = array(compiler\rewrite::gettext($this->l10n, $_domain, $_msg, $code));
-                
+
                 if (($err = compiler\rewrite::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
@@ -291,7 +291,7 @@ class compiler
             case grammar::T_METHOD:
                 // replace/rewrite method call
                 $value = strtolower($value);
-                
+
                 if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
                     // ddump and dprint need to be treated a little different from other method calls,
                     // because we include template-filename and template-linenumber in arguments
@@ -304,7 +304,7 @@ class compiler
                 } else {
                     $code = array(compiler\rewrite::$value(array_reverse($code)));
                 }
-                
+
                 if (($err = compiler\rewrite::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
@@ -320,8 +320,8 @@ class compiler
                 $file  = substr($code[0], 1, -1);
                 $code  = array(
                     compiler\macro::execMacro(
-                        $value, 
-                        array($file), 
+                        $value,
+                        array($file),
                         array('compiler' => $this, 'escape' => $escape)
                     )
                 );
@@ -329,25 +329,25 @@ class compiler
                 if (($err = compiler\macro::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
-                
+
                 $code[] = implode(', ', array_pop($stack));
                 break;
             case grammar::T_CONSTANT:
                 $value = strtoupper($value);
                 $tmp   = compiler\constant::getConstant($value);
-            
+
                 if (($err = compiler\constant::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
-            
+
                 $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
                 break;
             case grammar::T_VARIABLE:
                 $tmp = sprintf(
-                    '$this->data["%s"]', 
+                    '$this->data["%s"]',
                     implode('"]["', explode(':', strtolower(substr($value, 1))))
                 );
-                
+
                 // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
                 $code[] = $tmp;
                 break;
@@ -366,15 +366,15 @@ class compiler
                 break;
             }
         }
-        
+
         /*
          * NOTE: Regarding newlines behind PHP closing tag '?>'. this is because PHP 'eats' newslines
          *       after PHP closing tag. For details refer to:
-         *      
+         *
          *      http://shiflett.org/blog/2005/oct/php-stripping-newlines
          */
         $last_token = $getLastToken($last_tokens, -1);
-        
+
         if (in_array($last_token, array(grammar::T_LET, grammar::T_DDUMP, grammar::T_DPRINT))) {
             $code = array('<?php ' . implode('', $code) . '; ?>'."\n");
         } elseif (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
@@ -392,7 +392,7 @@ class compiler
 
         return $code;
     }
-    
+
     /**
      * Setup toolchain.
      *
@@ -403,7 +403,7 @@ class compiler
     {
         $grammar = new \octris\core\tpl\compiler\grammar();
         self::$parser = new \octris\core\parser($grammar, [grammar::T_WHITESPACE]);
-        
+
         $grammar->addEvent(grammar::T_IF_OPEN, function ($current) use (&$blocks) {
             $blocks['analyzer'][] = $current;
         });
@@ -424,7 +424,7 @@ class compiler
             }
         });
     }
-    
+
     /**
      * Execute compiler toolchain for a template snippet.
      *
@@ -458,10 +458,10 @@ class compiler
                 $code   = implode('', $this->compile($tokens, $blocks, $escape));
             }
         }
-        
+
         return $code;
     }
-    
+
     /**
      * Parse template and extract all template functionality to compile.
      *
@@ -502,10 +502,10 @@ class compiler
         }
 
         $tpl = $parser->getTemplate();
-        
+
         return $tpl;
     }
-    
+
     /**
      * Process a template.
      *

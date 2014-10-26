@@ -233,7 +233,7 @@ class tpl
 
         if (($filename = $c->findFile($inp)) !== false) {
             $tpl = $c->process($filename, $escape);
-            
+
             $tpl = tpl\compress::process($tpl, $this->path, $this->resources);
             $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
 

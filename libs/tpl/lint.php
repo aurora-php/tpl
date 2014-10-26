@@ -37,7 +37,7 @@ class lint extends \octris\core\tpl\compiler
     public function __construct()
     {
         parent::__construct();
-        
+
         if (defined('STDERR')) {
             $this->errout = fopen('php://stderr', 'w');
         }
@@ -59,10 +59,10 @@ class lint extends \octris\core\tpl\compiler
             parent::error($ifile, $iline, $line, $token, $payload);
         } catch (\Exception $e) {
         }
-     
+
         ++$this->errors;
     }
-    
+
     /**
      * Execute lint toolchain for a template snippet.
      *
@@ -95,10 +95,10 @@ class lint extends \octris\core\tpl\compiler
         } catch (\Exception $e) {
             // dismiss exception to continue lint process
         }
-        
+
         return '';
     }
-    
+
     /**
      * Process a template.
      *

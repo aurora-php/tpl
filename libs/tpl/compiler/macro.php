@@ -28,7 +28,7 @@ class macro
      */
     protected static $registry = array();
     /**/
-    
+
     /**
      * Last error occured.
      *
@@ -46,7 +46,7 @@ class macro
     protected function __construct() {}
     protected function __clone() {}
     /**/
-    
+
     /**
      * Return last occured error.
      *
@@ -85,7 +85,7 @@ class macro
             'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
         );
     }
-    
+
     /**
      * Execute specified macro with specified arguments.
      *
@@ -97,9 +97,9 @@ class macro
     public static function execMacro($name, $args, array $options = array())
     {
         self::$last_error = '';
-        
+
         $name = strtolower($name);
-        
+
         if (!isset(self::$registry[$name])) {
             self::setError($name, 'unknown macro');
         } elseif (!is_callable(self::$registry[$name]['callback'])) {
@@ -110,11 +110,11 @@ class macro
             self::setError($name, 'too many arguments');
         } else {
             list($ret, $err) = call_user_func_array(self::$registry[$name]['callback'], array($args, $options));
-            
+
             if ($err) {
                 self::setError($name, $err);
             }
-            
+
             return $ret;
         }
     }
@@ -128,19 +128,19 @@ macro::registerMacro(
     function ($args, array $options = array()) {
         $ret = '';
         $err = '';
-        
+
         $c = clone($options['compiler']);
-            
+
         if (($file = $c->findFile($args[0])) !== false) {
             $ret = $c->process($file, $options['escape']);
         } else {
             $err = sprintf(
-                'unable to locate file "%s" in "%s"', 
+                'unable to locate file "%s" in "%s"',
                 $args[0],
                 implode(':', \octris\core\tpl\compiler\searchpath::getPath())
             );
         }
-        
+
         return array($ret, $err);
     },
     array('min' => 1, 'max' => 1)

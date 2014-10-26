@@ -76,7 +76,7 @@ class storage
         }
 
         $cb = $this->init[$name];
-    
+
         return ($this->{$name} = $cb());
     }
 

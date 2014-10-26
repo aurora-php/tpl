@@ -59,17 +59,17 @@ class html extends \octris\core\tpl\parser
         self::T_TAG_END_CLOSE   => '/\s*\/>/',
         self::T_TAG_NAME        => '/(_c_[a-f0-9]+_|(?i:[a-z]+))/',
         self::T_TAG_CLOSE       => '/\/(_c_[a-f0-9]+_|(?i:[a-z]+))>/',
-        
+
         self::T_ATTR_START      => '/(?<=\s)(_c_[a-f0-9]+_|(?i:[a-z:_][a-z:_.-]*))=\"/',
         self::T_ATTR_END        => '/(?!\\\\)\"/',
         self::T_ATTR_COMMAND    => '/(_c_[a-f0-9]+_)/',
-    
+
         self::T_COMMENT_OPEN    => '/<!--/',
         self::T_COMMENT_CLOSE   => '/-->/',
-    
+
         self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
         self::T_CDATA_CLOSE     => '/\]\]>/',
-    
+
         self::T_COMMAND         => '/(_c_[a-f0-9]+_)/',
     );
     /**/
@@ -87,51 +87,51 @@ class html extends \octris\core\tpl\parser
             self::T_COMMENT_OPEN,
             self::T_CDATA_OPEN
         ),
-    
+
         self::T_TAG_START       => array(
             self::T_TAG_NAME,
             self::T_TAG_CLOSE
         ),
-    
+
         self::T_TAG_NAME        => array(
             self::T_TAG_END_OPEN,
             self::T_TAG_END_CLOSE,
             self::T_ATTR_START,
             self::T_COMMAND
         ),
-    
+
         self::T_ATTR_START      => array(
             self::T_ATTR_COMMAND,
             self::T_ATTR_END
         ),
-        
+
         self::T_ATTR_COMMAND    => array(
             self::T_ATTR_COMMAND,
             self::T_ATTR_END
         ),
-        
+
         self::T_ATTR_END        => array(
             self::T_TAG_END_OPEN,
             self::T_TAG_END_CLOSE,
             self::T_ATTR_START,
             self::T_COMMAND
         ),
-        
+
         self::T_COMMENT_OPEN    => array(
             self::T_COMMENT_COMMAND,
             self::T_COMMENT_CLOSE
         ),
-        
+
         self::T_COMMENT_COMMAND => array(
             self::T_COMMENT_COMMAND,
             self::T_COMMENT_CLOSE
         ),
-        
+
         self::T_CDATA_OPEN      => array(
             self::T_CDATA_COMMAND,
             self::T_CDATA_CLOSE
         ),
-        
+
         self::T_CDATA_COMMAND   => array(
             self::T_CDATA_COMMAND,
             self::T_CDATA_CLOSE
@@ -147,8 +147,8 @@ class html extends \octris\core\tpl\parser
      */
     protected static $attributes = array(
         'js' => array(
-            'onload', 'onunload', 'onclick', 'ondblclick', 
-            'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 
+            'onload', 'onunload', 'onclick', 'ondblclick',
+            'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout',
             'onfocus', 'onblur', 'onkeypress', 'onkeydown', 'onkeyup',
             'onsubmit', 'onreset', 'onselect', 'onchange'
         ),
@@ -193,7 +193,7 @@ class html extends \octris\core\tpl\parser
      * @param   string                  $filename                   Filename of HTML document to parse. This will only be used for better error reporting and can also be left empty.
      * @param   int                     $flags                      Optional option flags to set.
      */
-    public function __construct($filename, $flags = 0) 
+    public function __construct($filename, $flags = 0)
     {
         parent::__construct($filename, $flags);
     }
@@ -205,11 +205,11 @@ class html extends \octris\core\tpl\parser
      *
      * @octdoc  p:html/rewind
      */
-    public function rewind() 
+    public function rewind()
     {
         $this->offset     = 0;
         $this->new_offset = 0;
-    
+
         $this->next();
     }
 
@@ -218,10 +218,10 @@ class html extends \octris\core\tpl\parser
      *
      * @octdoc  m:html/next
      */
-    public function next() 
+    public function next()
     {
         $current = null;
-    
+
         while (($state = $this->getNextState())) {
             // parsing in progress
             switch ($state['state']) {
@@ -235,11 +235,11 @@ class html extends \octris\core\tpl\parser
             case self::T_COMMAND:
                 if (!isset($this->commands[$state['payload']])) {
                     $this->error(
-                        __FUNCTION__, __LINE__, $state['line'], $state['state'], 
+                        __FUNCTION__, __LINE__, $state['line'], $state['state'],
                         sprintf('command with id "%s" is unknown', $state['payload'])
                     );
                 }
-                
+
                 $current = array(
                     'snippet' => $this->commands[$state['payload']],
                     'escape'  => end($this->escape),
@@ -253,7 +253,7 @@ class html extends \octris\core\tpl\parser
             case self::T_TAG_NAME:
                 if (substr($state['payload'], 0, 3) == '_c_') {
                     $this->error(
-                        __FUNCTION__, __LINE__, $state['line'], $state['state'], 
+                        __FUNCTION__, __LINE__, $state['line'], $state['state'],
                         'template command not allowed as tag-name'
                     );
                 } else {
@@ -286,18 +286,18 @@ class html extends \octris\core\tpl\parser
                 } else {
                     array_pop($this->escape);
                 }
-        
+
                 $this->state = self::T_DATA;
                 continue(2);
             case self::T_ATTR_START:
                 if (substr($state['payload'], 0, 3) == '_c_') {
                     $this->error(
-                        __FUNCTION__, __LINE__, $state['line'], $state['state'], 
+                        __FUNCTION__, __LINE__, $state['line'], $state['state'],
                         'template command not allowed as attribute-name'
                     );
                 } else {
                     $name = strtolower($state['payload']);
-                    
+
                     if (in_array($name, self::$attributes['js'])) {
                         array_push($this->escape, \octris\core\tpl::T_ESC_JS);
                     } elseif (in_array($name, self::$attributes['uri'])) {
@@ -311,7 +311,7 @@ class html extends \octris\core\tpl\parser
                 array_pop($this->escape);
                 break;
             }
-        
+
             $this->state = $state['state'];
         }
 
@@ -324,18 +324,18 @@ class html extends \octris\core\tpl\parser
     protected function getNextState() {
         if (!isset(self::$rules[$this->state])) {
             $this->error(
-                __FUNCTION__, __LINE__, $this->getLineNumber($this->offset), $this->state, 
+                __FUNCTION__, __LINE__, $this->getLineNumber($this->offset), $this->state,
                 'no rule for current token'
             );
         }
-    
+
         $this->offset = $this->next_offset;
 
         $match = false;
-    
+
         foreach (self::$rules[$this->state] as $new_state) {
             $pattern = self::$patterns[$new_state];
-        
+
             if (preg_match($pattern, $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset)) {
                 if ($match === false || $m[0][1] < $match['offset']) {
                     $match = array(
@@ -347,16 +347,16 @@ class html extends \octris\core\tpl\parser
                         'length'    => strlen($m[0][0]),
                         'line'      => $this->getLineNumber($m[0][1])
                     );
-            
+
                     if ($this->debug) $match['match'] = $m[0][0];
                 }
             }
         }
-    
+
         if ($match !== false) {
             $this->next_offset = $match['offset'] + $match['length'];
         }
-    
+
         return $match;
     }
 
@@ -384,10 +384,10 @@ class html extends \octris\core\tpl\parser
         $tpl = preg_replace_callback('/\{\{(.*?)\}\}/', function ($m) {
             $id = '_c_' . uniqid() . '_';
             $this->commands[$id] = $m[1];
-        
+
             return $id;
         }, $tpl);
-    
+
         return $tpl;
     }
 }

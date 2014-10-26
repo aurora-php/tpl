@@ -34,20 +34,20 @@ class constant
         // pre-defined constants for escaping
         'ESC_NONE' => '',
         'ESC_ATTR' => 'attr',
-        'ESC_CSS'  => 'css', 
+        'ESC_CSS'  => 'css',
         'ESC_JS'   => 'js',
         'ESC_URI'  => 'uri',
 
         // pre-defined constants for json_encode/json_decode
-        'JSON_HEX_QUOT'          => JSON_HEX_QUOT, 
-        'JSON_HEX_TAG'           => JSON_HEX_TAG, 
-        'JSON_HEX_AMP'           => JSON_HEX_AMP, 
-        'JSON_HEX_APOS'          => JSON_HEX_APOS, 
-        'JSON_NUMERIC_CHECK'     => JSON_NUMERIC_CHECK, 
-        'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING, 
-        'JSON_PRETTY_PRINT'      => JSON_PRETTY_PRINT, 
-        'JSON_UNESCAPED_SLASHES' => JSON_UNESCAPED_SLASHES, 
-        'JSON_FORCE_OBJECT'      => JSON_FORCE_OBJECT, 
+        'JSON_HEX_QUOT'          => JSON_HEX_QUOT,
+        'JSON_HEX_TAG'           => JSON_HEX_TAG,
+        'JSON_HEX_AMP'           => JSON_HEX_AMP,
+        'JSON_HEX_APOS'          => JSON_HEX_APOS,
+        'JSON_NUMERIC_CHECK'     => JSON_NUMERIC_CHECK,
+        'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
+        'JSON_PRETTY_PRINT'      => JSON_PRETTY_PRINT,
+        'JSON_UNESCAPED_SLASHES' => JSON_UNESCAPED_SLASHES,
+        'JSON_FORCE_OBJECT'      => JSON_FORCE_OBJECT,
         'JSON_UNESCAPED_UNICODE' => JSON_UNESCAPED_UNICODE,
         'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
 
@@ -77,7 +77,7 @@ class constant
     protected function __construct() {}
     protected function __clone() {}
     /**/
-    
+
     /**
      * Return last occured error.
      *
@@ -111,7 +111,7 @@ class constant
     public static function setConstant($name, $value)
     {
         $name = strtoupper($name);
-        
+
         if (isset(self::$registry[$name])) {
             throw new \Exception("constant '$name' is already defined");
         } else {
@@ -142,7 +142,7 @@ class constant
     public static function getConstant($name)
     {
         self::$last_error = '';
-        
+
         $name = strtoupper($name);
 
         if (!isset(self::$registry[$name])) {

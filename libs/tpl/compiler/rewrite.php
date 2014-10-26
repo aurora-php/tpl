@@ -13,7 +13,7 @@ namespace octris\core\tpl\compiler;
 
 /**
  * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
- * if they are allowed php function calls or calls to functions that have to be registered to 
+ * if they are allowed php function calls or calls to functions that have to be registered to
  * sandbox on template rendering.
  *
  * @octdoc      c:compiler/rewrite
@@ -40,12 +40,12 @@ class rewrite
         '#loop'     => array('min' => 4, 'max' => 5),
         '#onchange' => array('min' => 1, 'max' => 1),
         '#trigger'  => array('min' => 0, 'max' => 3),
-        
+
         // functions
         'if'     => array('min' => 2, 'max' => 3),   // (... ? ... : ...)
         'ifset'  => array('min' => 2, 'max' => 3),   // (isset(...) ? ... : ...)
         'ifnull' => array('min' => 2, 'max' => 3),   // (is_null(...) ? ... : ...)
-                 
+
         'mul'    => array('min' => 2),               // ... * ...
         'div'    => array('min' => 2),               // ... / ...
         'mod'    => array('min' => 2, 'max' => 2),   // ... % ...
@@ -54,19 +54,19 @@ class rewrite
         'incr'   => array('min' => 1, 'max' => 2),   // ++ / +=
         'decr'   => array('min' => 1, 'max' => 2),   // -- / -=
         'neg'    => array('min' => 1, 'max' => 1),   // -...
-                 
+
         'and'    => array('min' => 2),               // ... && ...
         'or'     => array('min' => 2),               // ... || ...
         'xor'    => array('min' => 2, 'max' => 2),   // ... xor ...
         'not'    => array('min' => 1, 'max' => 1),   // !...
-                 
+
         'lt'     => array('min' => 2, 'max' => 2),   // ... < ...
         'gt'     => array('min' => 2, 'max' => 2),   // ... > ...
         'eq'     => array('min' => 2, 'max' => 2),   // ... == ...
         'le'     => array('min' => 2, 'max' => 2),   // ... <= ...
         'ge'     => array('min' => 2, 'max' => 2),   // ... >= ...
         'ne'     => array('min' => 2, 'max' => 2),   // ... != ...
-                 
+
         'bool'       => array('min' => 1, 'max' => 1),  // (bool)...
         'int'        => array('min' => 1, 'max' => 1),  // (int)...
         'float'      => array('min' => 1, 'max' => 1),  // (float)...
@@ -79,9 +79,9 @@ class rewrite
         'ddump'     => array('min' => 1),
         'dprint'    => array('min' => 1),
         'error'     => array('min' => 1, 'max' => 1),
-        
+
         'include'   => array('min' => 1, 'max' => 1),
-        
+
         // string functions
         'explode'   => array('min' => 2, 'max' => 2),
         'implode'   => array('min' => 2, 'max' => 2),
@@ -89,7 +89,7 @@ class rewrite
         'rpad'      => array('min' => 2, 'max' => 3),
         'totitle'   => array('min' => 1, 'max' => 1),
         'concat'    => array('min' => 2),
-        
+
         // array functions
         'array'     => array('min' => 1),
         'cycle'     => array('min' => 1, 'max' => 3),
@@ -137,7 +137,7 @@ class rewrite
         'trim'           => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::trim'),
         'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::ucfirst'),
         'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\octris\core\type\string::vsprintf'),
-        
+
         // numeric functions
         'abs'        => array('min' => 1, 'max' => 1),
         'ceil'       => array('min' => 1, 'max' => 1),
@@ -167,7 +167,7 @@ class rewrite
         '__construct', '__call', 'registermethod', 'render', 'write'
     );
     /**/
-    
+
     /**
      * Last error occured.
      *
@@ -185,7 +185,7 @@ class rewrite
     protected function __construct() {}
     protected function __clone() {}
     /**/
-    
+
     /**
      * Return last occured error.
      *
@@ -219,16 +219,16 @@ class rewrite
     public static function __callStatic($name, $args)
     {
         self::$last_error = '';
-       
+
         $name = strtolower($name);
         $args = $args[0];
-        
+
         if (in_array($name, self::$forbidden)) {
             self::setError($name, 'access denied');
         } elseif (isset(self::$phpfunc[$name])) {
             // call to allowed PHP function
             $cnt = count($args);
-            
+
             if (isset(self::$phpfunc[$name]['min'])) {
                 if ($cnt < self::$phpfunc[$name]['min']) {
                     self::setError($name, 'not enough arguments');
@@ -239,17 +239,17 @@ class rewrite
                     self::setError($name, 'too many arguments');
                 }
             }
-            
+
             if (isset(self::$phpfunc[$name]['map'])) {
                 // resolve 'real' PHP method name
                 $name = self::$phpfunc[$name]['map'];
             }
-            
+
             return $name . '(' . implode(', ', $args) . ')';
         } elseif (isset(self::$inline[$name])) {
             // inline function rewrite
             $cnt = count($args);
-            
+
             if (isset(self::$inline[$name]['min'])) {
                 if ($cnt < self::$inline[$name]['min']) {
                     self::setError($name, 'not enough arguments');
@@ -260,7 +260,7 @@ class rewrite
                     self::setError($name, 'too many arguments');
                 }
             }
-            
+
             $name = '_' . str_replace('#', 'block_', $name);
 
             return self::$name($args);
@@ -275,7 +275,7 @@ class rewrite
             );
         }
     }
-    
+
     /**
      * Helper function to create a uniq identifier required by several functions.
      *
@@ -300,18 +300,18 @@ class rewrite
     public static function gettext($l10n, $domain, $msg, $args)
     {
         self::$last_error = '';
-       
+
         $fn = array('comify', 'enum', 'monf', 'numf', 'perf', 'datef', 'gender', 'quant', 'yesno');
-        
+
         if (preg_match('/^(["\'])(.*?)\1$/', $msg, $match)) {
             $pattern = '/\[(?:(?P<cmd>[a-z]+), *)?_(?P<arg>\d+)(?:, *(?P<str>.*?))?(?<!\\\)\]/s';
 
             $chr = $match[1];                           // quotation character
             $txt = stripcslashes($match[2]);
             $txt = $l10n->lookup($txt, $domain);        // get translated text
-            
+
             $txt = $chr . addcslashes($txt, ($chr == '"' ? '"' : "'")) . $chr;
-            
+
             try {
                 $txt = preg_replace_callback($pattern, function ($m) use ($args, $chr, $fn) {
                     $cmd = (isset($m['cmd']) ? $m['cmd'] : '');
@@ -321,7 +321,7 @@ class rewrite
                         if (!in_array($cmd, $fn)) {
                             throw new \Exception(sprintf('unknown function "%s"', $cmd));
                         }
-                    
+
                         if ($arg > count($args)) {
                             throw new \Exception(sprintf('argument "%d" for function "%s" is not defined', $arg, $cmd));
                         }
@@ -333,14 +333,14 @@ class rewrite
                         array_unshift($tmp, $args[$arg - 1]);
 
                         $cnt = count($tmp);
-            
+
                         if ($cnt < self::$inline[$cmd]['min']) {
                             throw new \Exception(self::getError(sprintf('not enough arguments for function "%s"', $cmd)));
                         }
                         if ($cnt > self::$inline[$cmd]['max']) {
                             throw new \Exception(self::getError(sprintf('too many arguments for function "%s"', $cmd)));
                         }
-            
+
                         $code = $chr . ' . $this->l10n->' . $cmd . '(' . implode(', ', $tmp) . ') . ' . $chr;
                     } elseif ($arg > count($args)) {
                         throw new \Exception(sprintf('argument "%d" is not defined', $arg));
@@ -353,15 +353,15 @@ class rewrite
             } catch (\Exception $e) {
                 self::setError('gettext', $e->getMessage());
             }
-            
+
             $return = $txt;
         } else {
             $return = '$this->l10n->translate(' . $msg . ', array(), ' . $domain . ')';
         }
-        
+
         return $return;
     }
-    
+
     /*
      * inline block functions, that can be converted directly
      */
@@ -399,33 +399,33 @@ class rewrite
                 $key, $esc, $var
             ),
             sprintf(
-                '$this->bufferEnd(); $this->cacheStore(%s, %s, %s); }', 
+                '$this->bufferEnd(); $this->cacheStore(%s, %s, %s); }',
                 $key, $var, $ttl
             )
         );
     }
-    
+
     protected static function _block_copy($args) {
         return array(
-            '$this->bufferStart(' . implode(', ', $args) . ', false);', 
+            '$this->bufferStart(' . implode(', ', $args) . ', false);',
             '$this->bufferEnd();'
         );
     }
-    
+
     protected static function _block_cron($args) {
         return array(
             'if ($this->cron(' . implode(', ', $args) . ')) {',
             '}'
         );
     }
-    
+
     protected static function _block_cut($args) {
         return array(
-            '$this->bufferStart(' . implode(', ', $args) . ', true);', 
+            '$this->bufferStart(' . implode(', ', $args) . ', true);',
             '$this->bufferEnd();'
         );
     }
-    
+
     protected static function _block_foreach($args) {
         $var = self::getUniqId();
         $arg = $args[1];
@@ -434,7 +434,7 @@ class rewrite
         return array(
             sprintf(
                 '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \octris\core\tpl\sandbox\eachiterator(%s);' . 
+                'return new \octris\core\tpl\sandbox\eachiterator(%s);' .
                 '}); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
                 $var, $var, $arg, $var
@@ -442,7 +442,7 @@ class rewrite
             '}'
         );
     }
-    
+
     protected static function _block_if($args) {
         return array(
             'if (' . implode('', $args) . ') {',
@@ -452,7 +452,7 @@ class rewrite
 
     protected static function _block_loop($args) {
         $var = self::getUniqId();
-        
+
         $start = $args[1];
         $end   = $args[2];
         $step  = $args[3];
@@ -466,7 +466,7 @@ class rewrite
                 '$_%s = $this->storage->get("_%s", function () { ' .
                 'return new \octris\core\tpl\sandbox\eachiterator(' .
                 'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
-                '); }); ' . 
+                '); }); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
                 $var, $var, $start, $end, $step, $var
             ),
@@ -480,7 +480,7 @@ class rewrite
             '}'
         );
     }
-    
+
     protected static function _block_trigger($args) {
         return array(
             'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
@@ -490,13 +490,13 @@ class rewrite
 
     protected static function _if($args) {
         return sprintf(
-            '(%s ? %s : %s)', 
-            $args[0], 
-            $args[1], 
+            '(%s ? %s : %s)',
+            $args[0],
+            $args[1],
             (count($args) == 3 ? $args[2] : '')
         );
     }
-    
+
     protected static function _ifset($args) {
         return sprintf(
             '(isset(%s) ? %s : %s)',
@@ -505,7 +505,7 @@ class rewrite
             (count($args) == 3 ? $args[2] : '')
         );
     }
-    
+
     protected static function _ifnull($args) {
         return sprintf(
             '(is_null(%s) ? %s : %s)',
@@ -518,35 +518,35 @@ class rewrite
     protected static function _neg($args) {
         return '(-' . $args[0] . ')';
     }
-    
+
     protected static function _mul($args) {
         return '(' . implode(' * ', $args) . ')';
     }
-    
+
     protected static function _div($args) {
         return '(' . implode(' / ', $args) . ')';
     }
-    
+
     protected static function _mod($args) {
         return '(' . implode(' % ', $args) . ')';
     }
-    
+
     protected static function _add($args) {
         return '(' . implode(' + ', $args) . ')';
     }
-    
+
     protected static function _sub($args) {
         return '(' . implode(' - ', $args) . ')';
     }
-    
+
     protected static function _incr($args) {
         return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' += ' + $args[1] : '++' . $args[0]));
     }
-    
+
     protected static function _decr($args) {
         return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' -= ' + $args[1] : '--' . $args[0]));
     }
-    
+
     protected static function _and($args) {
         return '(' . implode(' && ', $args) . ')';
     }
@@ -562,100 +562,100 @@ class rewrite
     protected static function _not($args) {
         return '!' . $args[0];
     }
-    
+
     protected static function _lt($args) {
         return '(' . implode(' < ', $args) . ')';
     }
-    
+
     protected static function _gt($args) {
         return '(' . implode(' > ', $args) . ')';
     }
-    
+
     protected static function _eq($args) {
         return '(' . implode(' == ', $args) . ')';
     }
-    
+
     protected static function _le($args) {
         return '(' . implode(' <= ', $args) . ')';
     }
-    
+
     protected static function _ge($args) {
         return '(' . implode(' >= ', $args) . ')';
     }
-    
+
     protected static function _ne($args) {
         return '(' . implode(' != ', $args) . ')';
     }
-    
+
     protected static function _bool($args) {
         return '((bool)' . $args[0] . ')';
     }
-    
+
     protected static function _int($args) {
         return '((int)' . $args[0] . ')';
     }
-    
+
     protected static function _float($args) {
         return '((float)' . $args[0] . ')';
     }
-    
+
     protected static function _string($args) {
         return '((string)' . $args[0] . ')';
     }
-    
+
     protected static function _collection($args) {
         return '\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
     }
-    
+
     protected static function _now() {
         return '(time())';
     }
-    
+
     protected static function _uniqid() {
         return '(uniqid(mt_rand()))';
     }
-    
+
     protected static function _let($args) {
         return '(' . implode(' = ', $args) . ')';
     }
-    
+
     protected static function _ddump($args) {
         return '\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
     }
-    
+
     protected static function _dprint($args) {
         return '\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
     }
-    
+
     protected static function _error($args) {
         return '$this->error(' . implode(', ', $args) . ', __LINE__)';
     }
-    
+
     protected static function _include($args) {
         return '$this->includetpl(' . implode('', $args) . ')';
     }
-    
+
     // string functions
     protected static function _explode($args) {
         return 'new \\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
     }
-    
+
     protected static function _implode($args) {
         return '(implode(' . $args[0] . ', \\octris\\core\\type::settype(' . $args[1] . ', "array")))';
     }
-    
+
     protected static function _lpad($args) {
         $args = $args + array(null, null, ' ');
-        
+
         return '(str_pad(' . implode(', ', $args) . ', STR_PAD_LEFT))';
     }
-    
+
     protected static function _rpad($args) {
         $args = $args + array(null, null, ' ');
-        
+
         return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
     }
-    
+
     protected static function _totitle($args) {
         return '\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
     }
@@ -663,12 +663,12 @@ class rewrite
     protected static function _concat($args) {
         return '(' . implode(' . ', $args) . ')';
     }
-    
+
     // array functions
     protected static function _array($args) {
         return 'new \\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
     }
-    
+
     protected static function _cycle($args) {
         return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
     }
@@ -684,7 +684,7 @@ class rewrite
     }
     protected static function _enum($args) {
         return '($this->l10n->enum(' . implode(', ', $args) . '))';
-    }        
+    }
     protected static function _monf($args) {
         return '($this->l10n->monf(' . implode(', ', $args) . '))';
     }
