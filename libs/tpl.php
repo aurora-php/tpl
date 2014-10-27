@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core;
+namespace Octris\Core;
 
-use \octris\core\tpl\compiler as compiler;
+use \Octris\Core\Tpl\Compiler as compiler;
 
 /**
  * Main class of template engine.
@@ -20,7 +20,7 @@ use \octris\core\tpl\compiler as compiler;
  * @copyright   copyright (c) 2010-2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class tpl
+class Tpl
 {
     /**
      * Escape types.
@@ -106,16 +106,16 @@ class tpl
      */
     public function __construct()
     {
-        $this->sandbox = new tpl\sandbox();
+        $this->sandbox = new Tpl\Sandbox();
     }
 
     /**
      * Set l10n dependency.
      *
      * @octdoc  m:tpl/setL10n
-     * @param   \octris\core\l10n       $l10n       Instance of l10n class.
+     * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
      */
-    public function setL10n(\octris\core\l10n $l10n)
+    public function setL10n(\Octris\Core\L10n $l10n)
     {
         $this->sandbox->setL10n($l10n);
         $this->l10n = $l10n;
@@ -207,9 +207,9 @@ class tpl
      * Set cache for template snippets.
      *
      * @octdoc  m:tpl/setSnippetCache
-     * @param   \octris\core\cache      $cache          Caching instance.
+     * @param   \Octris\Core\Cache      $cache          Caching instance.
      */
-    public function setSnippetCache(\octris\core\cache $cache)
+    public function setSnippetCache(\Octris\Core\Cache $cache)
     {
         $this->sandbox->setSnippetCache($cache);
     }
@@ -224,17 +224,17 @@ class tpl
      */
     protected function process($inp, $out, $escape)
     {
-        // tpl\compiler\constant::setConstants($this->constants);
+        // Tpl\Compiler\Constant::setConstants($this->constants);
         $sandbox = $this->sandbox;
 
-        $c = new tpl\compiler();
+        $c = new Tpl\Compiler();
         if (!is_null($this->l10n)) $c->setL10n($this->l10n);
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($inp)) !== false) {
             $tpl = $c->process($filename, $escape);
 
-            $tpl = tpl\compress::process($tpl, $this->path, $this->resources);
+            $tpl = Tpl\Compress::process($tpl, $this->path, $this->resources);
             $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
 
             file_put_contents($out, $tpl);
@@ -264,7 +264,7 @@ class tpl
 
         $sandbox = $this->sandbox;
 
-        $c = new tpl\compiler();
+        $c = new Tpl\Compiler();
         $c->setL10n($this->l10n);
         $c->addSearchPath($this->searchpath);
 

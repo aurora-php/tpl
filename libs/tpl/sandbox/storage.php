@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl\sandbox;
+namespace Octris\Core\Tpl\Sandbox;
 
 /**
  * Object storage for sandbox.
@@ -18,7 +18,7 @@ namespace octris\core\tpl\sandbox;
  * @copyright   copyright (c) 2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class storage
+class Storage
 {
     /**
      * Storage for initialization callbacks.

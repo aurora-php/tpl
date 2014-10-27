@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl;
+namespace Octris\Core\Tpl;
 
-use \octris\core\tpl\compiler\grammar;
+use \Octris\Core\Tpl\Compiler\Grammar;
 
 /**
  * Implementation of template compiler.
@@ -20,7 +20,7 @@ use \octris\core\tpl\compiler\grammar;
  * @copyright   copyright (c) 2010-2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class compiler
+class Compiler
 {
     /**
      * Instance of parser class.
@@ -96,9 +96,9 @@ class compiler
      * Set l10n dependency.
      *
      * @octdoc  m:compiler/setL10n
-     * @param   \octris\core\l10n       $l10n       Instance of l10n class.
+     * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
      */
-    public function setL10n(\octris\core\l10n $l10n)
+    public function setL10n(\Octris\Core\L10n $l10n)
     {
         $this->l10n = $l10n;
     }
@@ -233,12 +233,12 @@ class compiler
                 // replace/rewrite block call
                 $value = strtolower($value);
 
-                list($_start, $_end) = compiler\rewrite::$value(array_reverse($code));
+                list($_start, $_end) = Compiler\Rewrite::$value(array_reverse($code));
 
                 $code = array($_start);
                 $blocks['compiler'][] = $_end;
 
-                if (($err = compiler\rewrite::getError()) != '') {
+                if (($err = Compiler\Rewrite::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
                 break;
@@ -276,9 +276,9 @@ class compiler
                             : 'null');
                 $_msg    = array_shift($code);
 
-                $code = array(compiler\rewrite::gettext($this->l10n, $_domain, $_msg, $code));
+                $code = array(Compiler\Rewrite::gettext($this->l10n, $_domain, $_msg, $code));
 
-                if (($err = compiler\rewrite::getError()) != '') {
+                if (($err = Compiler\Rewrite::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
 
@@ -295,17 +295,17 @@ class compiler
                 if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
                     // ddump and dprint need to be treated a little different from other method calls,
                     // because we include template-filename and template-linenumber in arguments
-                    $code = array(compiler\rewrite::$value(
+                    $code = array(Compiler\Rewrite::$value(
                         array_merge(
                             array('"' . $file . '"', (int)$line),
                             array_reverse($code)
                         )
                     ));
                 } else {
-                    $code = array(compiler\rewrite::$value(array_reverse($code)));
+                    $code = array(Compiler\Rewrite::$value(array_reverse($code)));
                 }
 
-                if (($err = compiler\rewrite::getError()) != '') {
+                if (($err = Compiler\Rewrite::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
 
@@ -319,14 +319,14 @@ class compiler
                 $value = strtolower(substr($value, 1));
                 $file  = substr($code[0], 1, -1);
                 $code  = array(
-                    compiler\macro::execMacro(
+                    Compiler\Macro::execMacro(
                         $value,
                         array($file),
                         array('compiler' => $this, 'escape' => $escape)
                     )
                 );
 
-                if (($err = compiler\macro::getError()) != '') {
+                if (($err = Compiler\Macro::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
 
@@ -334,9 +334,9 @@ class compiler
                 break;
             case grammar::T_CONSTANT:
                 $value = strtoupper($value);
-                $tmp   = compiler\constant::getConstant($value);
+                $tmp   = Compiler\Constant::getConstant($value);
 
-                if (($err = compiler\constant::getError()) != '') {
+                if (($err = Compiler\Constant::getError()) != '') {
                     $this->error(__FILE__, __LINE__, $line, $token, $err);
                 }
 
@@ -401,8 +401,8 @@ class compiler
      */
     protected function setup(array &$blocks)
     {
-        $grammar = new \octris\core\tpl\compiler\grammar();
-        self::$parser = new \octris\core\parser($grammar, [grammar::T_WHITESPACE]);
+        $grammar = new \Octris\Core\Tpl\Compiler\Grammar();
+        self::$parser = new \Octris\Core\Parser($grammar, [grammar::T_WHITESPACE]);
 
         $grammar->addEvent(grammar::T_IF_OPEN, function ($current) use (&$blocks) {
             $blocks['analyzer'][] = $current;
@@ -473,11 +473,11 @@ class compiler
     {
         $blocks = array('analyzer' => array(), 'compiler' => array());
 
-        if ($escape == \octris\core\tpl::T_ESC_HTML) {
+        if ($escape == \Octris\Core\Tpl::T_ESC_HTML) {
             // parser for auto-escaping turned on
-            $parser = new \octris\core\tpl\parser\html($this->filename);
+            $parser = new \Octris\Core\Tpl\Parser\Html($this->filename);
         } else {
-            $parser = new \octris\core\tpl\parser($this->filename);
+            $parser = new \Octris\Core\Tpl\Parser($this->filename);
             $parser->setFilter(function ($command) use ($escape) {
                 $command['escape'] = $escape;
 
@@ -518,18 +518,18 @@ class compiler
     {
         $this->filename = $filename;
 
-        if ($escape == \octris\core\tpl::T_ESC_AUTO) {
+        if ($escape == \Octris\Core\Tpl::T_ESC_AUTO) {
             // auto-escaping, try to determine escaping from file extension
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
             if ($ext == 'html' || $ext == 'htm') {
-                $escape = \octris\core\tpl::T_ESC_HTML;
+                $escape = \Octris\Core\Tpl::T_ESC_HTML;
             } elseif ($ext == 'css') {
-                $escape = \octris\core\tpl::T_ESC_CSS;
+                $escape = \Octris\Core\Tpl::T_ESC_CSS;
             } elseif ($ext == 'js') {
-                $escape = \octris\core\tpl::T_ESC_JS;
+                $escape = \Octris\Core\Tpl::T_ESC_JS;
             } else {
-                $escape = \octris\core\tpl::T_ESC_NONE;
+                $escape = \Octris\Core\Tpl::T_ESC_NONE;
             }
         }
 

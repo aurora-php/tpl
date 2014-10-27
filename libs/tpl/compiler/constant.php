@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl\compiler;
+namespace Octris\Core\Tpl\Compiler;
 
 /**
  * Library for handling template constants.
@@ -18,7 +18,7 @@ namespace octris\core\tpl\compiler;
  * @copyright   copyright (c) 2010-2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class constant
+class Constant
 {
     /**
      * Constant registry.
@@ -52,11 +52,11 @@ class constant
         'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
 
         // pre-defined constants for string functions
-        'CASE_UPPER'             => \octris\core\type\string::T_CASE_UPPER,
-        'CASE_LOWER'             => \octris\core\type\string::T_CASE_LOWER,
-        'CASE_TITLE'             => \octris\core\type\string::T_CASE_TITLE,
-        'CASE_UPPER_FIRST'       => \octris\core\type\string::T_CASE_UPPER_FIRST,
-        'CASE_LOWER_FIRST'       => \octris\core\type\string::T_CASE_LOWER_FIRST,
+        'CASE_UPPER'             => \Octris\Core\Type\String::T_CASE_UPPER,
+        'CASE_LOWER'             => \Octris\Core\Type\String::T_CASE_LOWER,
+        'CASE_TITLE'             => \Octris\Core\Type\String::T_CASE_TITLE,
+        'CASE_UPPER_FIRST'       => \Octris\Core\Type\String::T_CASE_UPPER_FIRST,
+        'CASE_LOWER_FIRST'       => \Octris\Core\Type\String::T_CASE_LOWER_FIRST,
     );
     /**/
 

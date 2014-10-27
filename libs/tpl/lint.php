@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl;
+namespace Octris\Core\Tpl;
 
 /**
  * Lint for templates.
@@ -18,7 +18,7 @@ namespace octris\core\tpl;
  * @copyright   copyright (c) 2010-2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class lint extends \octris\core\tpl\compiler
+class Lint extends \Octris\Core\Tpl\Compiler
 {
     /**
      * Number of errors occured.

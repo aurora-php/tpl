@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl\compiler;
+namespace Octris\Core\Tpl\Compiler;
 
 /**
  * Library for handling template macros.
@@ -18,7 +18,7 @@ namespace octris\core\tpl\compiler;
  * @copyright   copyright (c) 2010-2011 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class macro
+class Macro
 {
     /**
      * Macro registry.
@@ -137,7 +137,7 @@ macro::registerMacro(
             $err = sprintf(
                 'unable to locate file "%s" in "%s"',
                 $args[0],
-                implode(':', \octris\core\tpl\compiler\searchpath::getPath())
+                implode(':', \Octris\Core\Tpl\Compiler\Searchpath::getPath())
             );
         }
 

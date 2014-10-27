@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl;
+namespace Octris\Core\Tpl;
 
 /**
  * Sandbox to execute templates in.
@@ -18,7 +18,7 @@ namespace octris\core\tpl;
  * @copyright   copyright (c) 2010-2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class sandbox
+class Sandbox
 {
     /**
      * Template data.
@@ -99,16 +99,16 @@ class sandbox
      */
     public function __construct()
     {
-        $this->storage = \octris\core\tpl\sandbox\storage::getInstance();
+        $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
     }
 
     /**
      * Set l10n dependency.
      *
      * @octdoc  m:compiler/setL10n
-     * @param   \octris\core\l10n       $l10n       Instance of l10n class.
+     * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
      */
-    public function setL10n(\octris\core\l10n $l10n)
+    public function setL10n(\Octris\Core\L10n $l10n)
     {
         $this->l10n = $l10n;
     }
@@ -200,7 +200,7 @@ class sandbox
         } elseif (is_resource($value)) {
             $this->error(sprintf('"%s" -- type resource is not allowed', $name), 0, __LINE__);
         } else {
-            $this->data[$name] = new \octris\core\type\collection($value);
+            $this->data[$name] = new \Octris\Core\Type\Collection($value);
         }
     }
 
@@ -208,9 +208,9 @@ class sandbox
      * Set cache for template snippets.
      *
      * @octdoc  m:sandbox/setSnippetCache
-     * @param   \octris\core\cache      $cache          Caching instance.
+     * @param   \Octris\Core\Cache      $cache          Caching instance.
      */
-    public function setSnippetCache(\octris\core\cache $cache)
+    public function setSnippetCache(\Octris\Core\Cache $cache)
     {
         $this->cache = $cache;
     }
@@ -232,12 +232,12 @@ class sandbox
      * template block.
      *
      * @octdoc  m:sandbox/each
-     * @param   \octris\core\tpl\sandbox\eachiterator   $iterator       Iterator to use.
+     * @param   \Octris\Core\Tpl\Sandbox\Eachiterator   $iterator       Iterator to use.
      * @param   mixed                                       $ctrl           Control variable is overwritten and used by this method.
      * @param   array                                       $meta           Optional variable for meta information storage.
      * @return  bool                                                        Returns 'true' as long as iterator did not reach end of array.
      */
-    public function each(\octris\core\tpl\sandbox\eachiterator $iterator, &$ctrl, &$meta = null)
+    public function each(\Octris\Core\Tpl\Sandbox\Eachiterator $iterator, &$ctrl, &$meta = null)
     {
         if (($return = $iterator->valid())) {
             $ctrl = $iterator->current();
@@ -304,7 +304,7 @@ class sandbox
      * @param   string      $escape         Optional escaping to use for output.
      * @return  bool                        Returns true, if key was available in cache.
      */
-    public function cacheLookup($key, $escape = \octris\core\tpl::T_ESC_NONE)
+    public function cacheLookup($key, $escape = \Octris\Core\Tpl::T_ESC_NONE)
     {
         if (!($return = is_null($this->cache))) {
             if (($return = $this->cache->exists($key))) {
@@ -488,23 +488,23 @@ class sandbox
     public function escape($val, $escape)
     {
         switch ($escape) {
-        case \octris\core\tpl::T_ESC_ATTR:
-            $val = \octris\core\tpl\escape::escapeAttributeValue($val);
+        case \Octris\Core\Tpl::T_ESC_ATTR:
+            $val = \Octris\Core\Tpl\Escape::escapeAttributeValue($val);
             break;
-        case \octris\core\tpl::T_ESC_CSS:
-            $val = \octris\core\tpl\escape::escapeCss($val);
+        case \Octris\Core\Tpl::T_ESC_CSS:
+            $val = \Octris\Core\Tpl\Escape::escapeCss($val);
             break;
-        case \octris\core\tpl::T_ESC_HTML:
-            $val = \octris\core\tpl\escape::escapeHtml($val);
+        case \Octris\Core\Tpl::T_ESC_HTML:
+            $val = \Octris\Core\Tpl\Escape::escapeHtml($val);
             break;
-        case \octris\core\tpl::T_ESC_JS:
-            $val = \octris\core\tpl\escape::escapeJavascript($val);
+        case \Octris\Core\Tpl::T_ESC_JS:
+            $val = \Octris\Core\Tpl\Escape::escapeJavascript($val);
             break;
-        case \octris\core\tpl::T_ESC_TAG:
-            $val = \octris\core\tpl\escape::escapeAttribute($val);
+        case \Octris\Core\Tpl::T_ESC_TAG:
+            $val = \Octris\Core\Tpl\Escape::escapeAttribute($val);
             break;
-        case \octris\core\tpl::T_ESC_URI:
-            $val = \octris\core\tpl\escape::escapeUri($val);
+        case \Octris\Core\Tpl::T_ESC_URI:
+            $val = \Octris\Core\Tpl\Escape::escapeUri($val);
             break;
         }
 
@@ -520,7 +520,7 @@ class sandbox
      */
     public function write($val = '', $escape = '')
     {
-        if ($escape !== \octris\core\tpl::T_ESC_NONE) {
+        if ($escape !== \Octris\Core\Tpl::T_ESC_NONE) {
             $val = $this->escape($val, $escape);
         }
 

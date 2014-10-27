@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl\compiler;
+namespace Octris\Core\Tpl\Compiler;
 
 /**
  * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
@@ -20,7 +20,7 @@ namespace octris\core\tpl\compiler;
  * @copyright   copyright (c) 2010-2011 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class rewrite
+class Rewrite
 {
     /**
      * Inline method rewrite.
@@ -118,25 +118,25 @@ class rewrite
      */
     protected static $phpfunc = array(
         // string functions
-        'chunk'          => array('min' => 3, 'max' => 3, 'map' => '\octris\core\type\string::chunk_split'),
-        'chunk_id'       => array('min' => 1, 'max' => 5, 'map' => '\octris\core\type\string::chunk_id'),
-        'cut'            => array('min' => 2, 'max' => 4, 'map' => '\octris\core\type\string::cut'),
+        'chunk'          => array('min' => 3, 'max' => 3, 'map' => '\Octris\Core\Type\String::chunk_split'),
+        'chunk_id'       => array('min' => 1, 'max' => 5, 'map' => '\Octris\Core\Type\String::chunk_id'),
+        'cut'            => array('min' => 2, 'max' => 4, 'map' => '\Octris\Core\Type\String::cut'),
         'escapeshellarg' => array('min' => 1, 'max' => 1, 'map' => 'escapeshellarg'),
-        'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::lcfirst'),
+        'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::lcfirst'),
         'length'         => array('min' => 1, 'max' => 1, 'map' => 'strlen'),
-        'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::ltrim'),
-        'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\octris\core\type\string::obliterate'),
+        'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\String::ltrim'),
+        'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\Octris\Core\Type\String::obliterate'),
         'repeat'         => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
-        'replace'        => array('min' => 3, 'max' => 3, 'map' => '\octris\core\type\string::str_replace'),
-        'rtrim'          => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::rtrim'),
-        'shorten'        => array('min' => 1, 'max' => 3, 'map' => '\octris\core\type\string::shorten'),
-        'sprintf'        => array('min' => 1,             'map' => '\octris\core\type\string::sprintf'),
-        'substr'         => array('min' => 2, 'max' => 3, 'map' => '\octris\core\type\string::substr'),
-        'tolower'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::strtolower'),
-        'toupper'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::strtoupper'),
-        'trim'           => array('min' => 1, 'max' => 2, 'map' => '\octris\core\type\string::trim'),
-        'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\octris\core\type\string::ucfirst'),
-        'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\octris\core\type\string::vsprintf'),
+        'replace'        => array('min' => 3, 'max' => 3, 'map' => '\Octris\Core\Type\String::str_replace'),
+        'rtrim'          => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\String::rtrim'),
+        'shorten'        => array('min' => 1, 'max' => 3, 'map' => '\Octris\Core\Type\String::shorten'),
+        'sprintf'        => array('min' => 1,             'map' => '\Octris\Core\Type\String::sprintf'),
+        'substr'         => array('min' => 2, 'max' => 3, 'map' => '\Octris\Core\Type\String::substr'),
+        'tolower'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::strtolower'),
+        'toupper'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::strtoupper'),
+        'trim'           => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\String::trim'),
+        'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::ucfirst'),
+        'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\Octris\Core\Type\String::vsprintf'),
 
         // numeric functions
         'abs'        => array('min' => 1, 'max' => 1),
@@ -291,7 +291,7 @@ class rewrite
      * Implementation of gettext compiler.
      *
      * @octdoc  m:rewrite/_gettext
-     * @param   \octris\core\l10n       $l10n           Instance of l10n class.
+     * @param   \Octris\Core\L10n       $l10n           Instance of l10n class.
      * @param   string                      $domain         Text domain to use.
      * @param   string                      $msg            Message to translate.
      * @param   array                       $args           Parameters for inline functions.
@@ -391,7 +391,7 @@ class rewrite
         $var = '$_' . self::getUniqId();
         $key = $args[0];
         $ttl = $args[1];
-        $esc = (isset($args[2]) ? $args[2] : \octris\core\tpl::T_ESC_NONE);
+        $esc = (isset($args[2]) ? $args[2] : \Octris\Core\Tpl::T_ESC_NONE);
 
         return array(
             sprintf(
@@ -434,7 +434,7 @@ class rewrite
         return array(
             sprintf(
                 '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \octris\core\tpl\sandbox\eachiterator(%s);' .
+                'return new \Octris\Core\Tpl\Sandbox\Eachiterator(%s);' .
                 '}); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
                 $var, $var, $arg, $var
@@ -464,7 +464,7 @@ class rewrite
         return array(
             sprintf(
                 '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \octris\core\tpl\sandbox\eachiterator(' .
+                'return new \Octris\Core\Tpl\Sandbox\Eachiterator(' .
                 'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
                 '); }); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',

@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace octris\core\tpl\compiler;
+namespace Octris\Core\Tpl\Compiler;
 
-use \octris\core\tpl\compiler as c;
+use \Octris\Core\Tpl\Compiler as c;
 
 /**
  * Class for defining a template parser grammar.
@@ -20,7 +20,7 @@ use \octris\core\tpl\compiler as c;
  * @copyright   copyright (c) 2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class grammar extends \octris\core\parser\grammar
+class Grammar extends \Octris\Core\Parser\Grammar
 {
     /**
      * Known tokens.
