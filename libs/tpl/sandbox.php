@@ -488,24 +488,24 @@ class Sandbox
     public function escape($val, $escape)
     {
         switch ($escape) {
-        case \Octris\Core\Tpl::T_ESC_ATTR:
-            $val = \Octris\Core\Tpl\Escape::escapeAttributeValue($val);
-            break;
-        case \Octris\Core\Tpl::T_ESC_CSS:
-            $val = \Octris\Core\Tpl\Escape::escapeCss($val);
-            break;
-        case \Octris\Core\Tpl::T_ESC_HTML:
-            $val = \Octris\Core\Tpl\Escape::escapeHtml($val);
-            break;
-        case \Octris\Core\Tpl::T_ESC_JS:
-            $val = \Octris\Core\Tpl\Escape::escapeJavascript($val);
-            break;
-        case \Octris\Core\Tpl::T_ESC_TAG:
-            $val = \Octris\Core\Tpl\Escape::escapeAttribute($val);
-            break;
-        case \Octris\Core\Tpl::T_ESC_URI:
-            $val = \Octris\Core\Tpl\Escape::escapeUri($val);
-            break;
+            case \Octris\Core\Tpl::T_ESC_ATTR:
+                $val = \Octris\Core\Tpl\Escape::escapeAttributeValue($val);
+                break;
+            case \Octris\Core\Tpl::T_ESC_CSS:
+                $val = \Octris\Core\Tpl\Escape::escapeCss($val);
+                break;
+            case \Octris\Core\Tpl::T_ESC_HTML:
+                $val = \Octris\Core\Tpl\Escape::escapeHtml($val);
+                break;
+            case \Octris\Core\Tpl::T_ESC_JS:
+                $val = \Octris\Core\Tpl\Escape::escapeJavascript($val);
+                break;
+            case \Octris\Core\Tpl::T_ESC_TAG:
+                $val = \Octris\Core\Tpl\Escape::escapeAttribute($val);
+                break;
+            case \Octris\Core\Tpl::T_ESC_URI:
+                $val = \Octris\Core\Tpl\Escape::escapeUri($val);
+                break;
         }
 
         return $val;

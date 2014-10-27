@@ -235,8 +235,12 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_COMMAND:
                     if (!isset($this->commands[$state['payload']])) {
                         $this->error(
-                            __FUNCTION__, __LINE__, $state['line'], $state['state'],
-                            sprintf('command with id "%s" is unknown', $state['payload'])
+                            __FUNCTION__,
+                            __LINE__,
+                            $state['line'],
+                            $state['state'],
+                            sprintf('command with id "%s" is unknown',
+                            $state['payload'])
                         );
                     }
 
@@ -258,15 +262,15 @@ class Html extends \Octris\Core\Tpl\Parser
                         );
                     } else {
                         switch (strtolower($state['payload'])) {
-                        case 'script':
-                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
-                            break;
-                        case 'style':
-                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_CSS);
-                            break;
-                        default:
-                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_HTML);
-                            break;
+                            case 'script':
+                                array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
+                                break;
+                            case 'style':
+                                array_push($this->escape, \Octris\Core\Tpl::T_ESC_CSS);
+                                break;
+                            default:
+                                array_push($this->escape, \Octris\Core\Tpl::T_ESC_HTML);
+                                break;
                         }
                     }
                     break;
