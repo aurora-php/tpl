@@ -182,8 +182,12 @@ class Rewrite
      *
      * @octdoc  m:rewrite/__construct, __clone
      */
-    protected function __construct() {}
-    protected function __clone() {}
+    protected function __construct()
+    {
+    }
+    protected function __clone()
+    {
+    }
     /**/
 
     /**
@@ -365,7 +369,8 @@ class Rewrite
     /*
      * inline block functions, that can be converted directly
      */
-    protected static function _block_bench($args) {
+    protected static function _block_bench($args)
+    {
         $var1 = '$_' . self::getUniqId();
         $var2 = '$_' . self::getUniqId();
 
@@ -387,7 +392,8 @@ class Rewrite
         );
     }
 
-    protected static function _block_cache($args) {
+    protected static function _block_cache($args)
+    {
         $var = '$_' . self::getUniqId();
         $key = $args[0];
         $ttl = $args[1];
@@ -405,28 +411,32 @@ class Rewrite
         );
     }
 
-    protected static function _block_copy($args) {
+    protected static function _block_copy($args)
+    {
         return array(
             '$this->bufferStart(' . implode(', ', $args) . ', false);',
             '$this->bufferEnd();'
         );
     }
 
-    protected static function _block_cron($args) {
+    protected static function _block_cron($args)
+    {
         return array(
             'if ($this->cron(' . implode(', ', $args) . ')) {',
             '}'
         );
     }
 
-    protected static function _block_cut($args) {
+    protected static function _block_cut($args)
+    {
         return array(
             '$this->bufferStart(' . implode(', ', $args) . ', true);',
             '$this->bufferEnd();'
         );
     }
 
-    protected static function _block_foreach($args) {
+    protected static function _block_foreach($args)
+    {
         $var = self::getUniqId();
         $arg = $args[1];
         unset($args[1]);
@@ -443,14 +453,16 @@ class Rewrite
         );
     }
 
-    protected static function _block_if($args) {
+    protected static function _block_if($args)
+    {
         return array(
             'if (' . implode('', $args) . ') {',
             '}'
         );
     }
 
-    protected static function _block_loop($args) {
+    protected static function _block_loop($args)
+    {
         $var = self::getUniqId();
 
         $start = $args[1];
@@ -474,21 +486,24 @@ class Rewrite
         );
     }
 
-    protected static function _block_onchange($args) {
+    protected static function _block_onchange($args)
+    {
         return array(
             'if ($this->onchange("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
             '}'
         );
     }
 
-    protected static function _block_trigger($args) {
+    protected static function _block_trigger($args)
+    {
         return array(
             'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
             '}'
         );
     }
 
-    protected static function _if($args) {
+    protected static function _if($args)
+    {
         return sprintf(
             '(%s ? %s : %s)',
             $args[0],
@@ -497,7 +512,8 @@ class Rewrite
         );
     }
 
-    protected static function _ifset($args) {
+    protected static function _ifset($args)
+    {
         return sprintf(
             '(isset(%s) ? %s : %s)',
             $args[0],
@@ -506,7 +522,8 @@ class Rewrite
         );
     }
 
-    protected static function _ifnull($args) {
+    protected static function _ifnull($args)
+    {
         return sprintf(
             '(is_null(%s) ? %s : %s)',
             $args[0],
@@ -515,195 +532,250 @@ class Rewrite
         );
     }
 
-    protected static function _neg($args) {
+    protected static function _neg($args)
+    {
         return '(-' . $args[0] . ')';
     }
 
-    protected static function _mul($args) {
+    protected static function _mul($args)
+    {
         return '(' . implode(' * ', $args) . ')';
     }
 
-    protected static function _div($args) {
+    protected static function _div($args)
+    {
         return '(' . implode(' / ', $args) . ')';
     }
 
-    protected static function _mod($args) {
+    protected static function _mod($args)
+    {
         return '(' . implode(' % ', $args) . ')';
     }
 
-    protected static function _add($args) {
+    protected static function _add($args)
+    {
         return '(' . implode(' + ', $args) . ')';
     }
 
-    protected static function _sub($args) {
+    protected static function _sub($args)
+    {
         return '(' . implode(' - ', $args) . ')';
     }
 
-    protected static function _incr($args) {
+    protected static function _incr($args)
+    {
         return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' += ' + $args[1] : '++' . $args[0]));
     }
 
-    protected static function _decr($args) {
+    protected static function _decr($args)
+    {
         return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' -= ' + $args[1] : '--' . $args[0]));
     }
 
-    protected static function _and($args) {
+    protected static function _and($args)
+    {
         return '(' . implode(' && ', $args) . ')';
     }
 
-    protected static function _or($args) {
+    protected static function _or($args)
+    {
         return '(' . implode(' || ', $args) . ')';
     }
 
-    protected static function _xor($args) {
+    protected static function _xor($args)
+    {
         return sprintf('(%d != %d)', !!$args[0], !!$args[1]);
     }
 
-    protected static function _not($args) {
+    protected static function _not($args)
+    {
         return '!' . $args[0];
     }
 
-    protected static function _lt($args) {
+    protected static function _lt($args)
+    {
         return '(' . implode(' < ', $args) . ')';
     }
 
-    protected static function _gt($args) {
+    protected static function _gt($args)
+    {
         return '(' . implode(' > ', $args) . ')';
     }
 
-    protected static function _eq($args) {
+    protected static function _eq($args)
+    {
         return '(' . implode(' == ', $args) . ')';
     }
 
-    protected static function _le($args) {
+    protected static function _le($args)
+    {
         return '(' . implode(' <= ', $args) . ')';
     }
 
-    protected static function _ge($args) {
+    protected static function _ge($args)
+    {
         return '(' . implode(' >= ', $args) . ')';
     }
 
-    protected static function _ne($args) {
+    protected static function _ne($args)
+    {
         return '(' . implode(' != ', $args) . ')';
     }
 
-    protected static function _bool($args) {
+    protected static function _bool($args)
+    {
         return '((bool)' . $args[0] . ')';
     }
 
-    protected static function _int($args) {
+    protected static function _int($args)
+    {
         return '((int)' . $args[0] . ')';
     }
 
-    protected static function _float($args) {
+    protected static function _float($args)
+    {
         return '((float)' . $args[0] . ')';
     }
 
-    protected static function _string($args) {
+    protected static function _string($args)
+    {
         return '((string)' . $args[0] . ')';
     }
 
-    protected static function _collection($args) {
-        return '\\octris\\core\\type::settype(' . $args[0] . ', "collection")';
+    protected static function _collection($args)
+    {
+        return '\\Octris\\Core\\Type::settype(' . $args[0] . ', "collection")';
     }
 
-    protected static function _now() {
+    protected static function _now()
+    {
         return '(time())';
     }
 
-    protected static function _uniqid() {
+    protected static function _uniqid()
+    {
         return '(uniqid(mt_rand()))';
     }
 
-    protected static function _let($args) {
+    protected static function _let($args)
+    {
         return '(' . implode(' = ', $args) . ')';
     }
 
-    protected static function _ddump($args) {
-        return '\\octris\\core\\debug::ddump(' . implode(', ', $args) . ')';
+    protected static function _ddump($args)
+    {
+        return '\\Octris\\Core\\Debug::ddump(' . implode(', ', $args) . ')';
     }
 
-    protected static function _dprint($args) {
-        return '\\octris\\core\\debug::dprint(' . implode(', ', $args) . ')';
+    protected static function _dprint($args)
+    {
+        return '\\Octris\\Core\\Debug::dprint(' . implode(', ', $args) . ')';
     }
 
-    protected static function _error($args) {
+    protected static function _error($args)
+    {
         return '$this->error(' . implode(', ', $args) . ', __LINE__)';
     }
 
-    protected static function _include($args) {
+    protected static function _include($args)
+    {
         return '$this->includetpl(' . implode('', $args) . ')';
     }
 
     // string functions
-    protected static function _explode($args) {
-        return 'new \\octris\\core\\type\\collection(explode(' . implode(', ', $args) . '))';
+    protected static function _explode($args)
+    {
+        return 'new \\Octris\\Core\\Type\\Collection(explode(' . implode(', ', $args) . '))';
     }
 
-    protected static function _implode($args) {
-        return '(implode(' . $args[0] . ', \\octris\\core\\type::settype(' . $args[1] . ', "array")))';
+    protected static function _implode($args)
+    {
+        return '(implode(' . $args[0] . ', \\Octris\\Core\\Type::settype(' . $args[1] . ', "array")))';
     }
 
-    protected static function _lpad($args) {
+    protected static function _lpad($args)
+    {
         $args = $args + array(null, null, ' ');
 
         return '(str_pad(' . implode(', ', $args) . ', STR_PAD_LEFT))';
     }
 
-    protected static function _rpad($args) {
+    protected static function _rpad($args)
+    {
         $args = $args + array(null, null, ' ');
 
         return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
     }
 
-    protected static function _totitle($args) {
-        return '\\octris\\core\\type\\string::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+    protected static function _totitle($args)
+    {
+        return '\\Octris\\Core\\Type\\String::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
     }
 
-    protected static function _concat($args) {
+    protected static function _concat($args)
+    {
         return '(' . implode(' . ', $args) . ')';
     }
 
     // array functions
-    protected static function _array($args) {
-        return 'new \\octris\\core\\type\\collection(array(' . implode(', ', $args) . '))';
+    protected static function _array($args)
+    {
+        return 'new \\Octris\\Core\\Type\\Collection(array(' . implode(', ', $args) . '))';
     }
 
-    protected static function _cycle($args) {
+    protected static function _cycle($args)
+    {
         return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
     }
 
     // misc functions
-    protected static function _escape($args) {
+    protected static function _escape($args)
+    {
         return '($this->escape(' . implode(', ', $args) . '))';
     }
 
     // localization functions
-    protected static function _comify($args) {
+    protected static function _comify($args)
+    {
         return '($this->l10n->comify(' . implode(', ', $args) . '))';
     }
-    protected static function _enum($args) {
+
+    protected static function _enum($args)
+    {
         return '($this->l10n->enum(' . implode(', ', $args) . '))';
     }
-    protected static function _monf($args) {
+
+    protected static function _monf($args)
+    {
         return '($this->l10n->monf(' . implode(', ', $args) . '))';
     }
-    protected static function _numf($args) {
+
+    protected static function _numf($args)
+    {
         return '($this->l10n->numf(' . implode(', ', $args) . '))';
     }
-    protected static function _perf($args) {
+
+    protected static function _perf($args)
+    {
         return '($this->l10n->perf(' . implode(', ', $args) . '))';
     }
-    protected static function _datef($args) {
+
+    protected static function _datef($args)
+    {
         return '($this->l10n->datef(' . implode(', ', $args) . '))';
     }
+
     protected static function _gender($args) {
         return '($this->l10n->gender(' . implode(', ', $args) . '))';
     }
-    protected static function _quant($args) {
+
+    protected static function _quant($args)
+    {
         return '($this->l10n->quant(' . implode(', ', $args) . '))';
     }
-    protected static function _yesno($args) {
+
+    protected static function _yesno($args)
+    {
         return '($this->l10n->yesno(' . implode(', ', $args) . '))';
     }
 }

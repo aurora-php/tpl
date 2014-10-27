@@ -225,91 +225,91 @@ class Html extends \Octris\Core\Tpl\Parser
         while (($state = $this->getNextState())) {
             // parsing in progress
             switch ($state['state']) {
-            case self::T_COMMENT_COMMAND:
-                if ($this->ignore_comments) {
-                    continue(2);
-                }
-                /** FALL THRU **/
-            case self::T_CDATA_COMMAND:
-            case self::T_ATTR_COMMAND:
-            case self::T_COMMAND:
-                if (!isset($this->commands[$state['payload']])) {
-                    $this->error(
-                        __FUNCTION__, __LINE__, $state['line'], $state['state'],
-                        sprintf('command with id "%s" is unknown', $state['payload'])
-                    );
-                }
-
-                $current = array(
-                    'snippet' => $this->commands[$state['payload']],
-                    'escape'  => end($this->escape),
-                    'line'    => $state['line'],
-                    'offset'  => $state['offset'],
-                    'length'  => $state['length']
-                );
-                break(2);
-            case self::T_TAG_START:
-                break;
-            case self::T_TAG_NAME:
-                if (substr($state['payload'], 0, 3) == '_c_') {
-                    $this->error(
-                        __FUNCTION__, __LINE__, $state['line'], $state['state'],
-                        'template command not allowed as tag-name'
-                    );
-                } else {
-                    switch (strtolower($state['payload'])) {
-                    case 'script':
-                        array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
-                        break;
-                    case 'style':
-                        array_push($this->escape, \Octris\Core\Tpl::T_ESC_CSS);
-                        break;
-                    default:
-                        array_push($this->escape, \Octris\Core\Tpl::T_ESC_HTML);
-                        break;
+                case self::T_COMMENT_COMMAND:
+                    if ($this->ignore_comments) {
+                        continue(2);
                     }
-                }
-                break;
-            case self::T_CDATA_CLOSE:
-            case self::T_COMMENT_CLOSE:
-            case self::T_TAG_END_CLOSE:
-                array_pop($this->escape);
-                /** FALL THRU **/
-            case self::T_TAG_END_OPEN:
-                $this->state = self::T_DATA;
-                continue(2);
-            case self::T_TAG_CLOSE:
-                if (count($this->escape) == 1) {
-                    if ($this->escape[0] != \Octris\Core\Tpl::T_ESC_HTML) {
-                        $this->escape[0] = \Octris\Core\Tpl::T_ESC_HTML;
+                    /** FALL THRU **/
+                case self::T_CDATA_COMMAND:
+                case self::T_ATTR_COMMAND:
+                case self::T_COMMAND:
+                    if (!isset($this->commands[$state['payload']])) {
+                        $this->error(
+                            __FUNCTION__, __LINE__, $state['line'], $state['state'],
+                            sprintf('command with id "%s" is unknown', $state['payload'])
+                        );
                     }
-                } else {
-                    array_pop($this->escape);
-                }
 
-                $this->state = self::T_DATA;
-                continue(2);
-            case self::T_ATTR_START:
-                if (substr($state['payload'], 0, 3) == '_c_') {
-                    $this->error(
-                        __FUNCTION__, __LINE__, $state['line'], $state['state'],
-                        'template command not allowed as attribute-name'
+                    $current = array(
+                        'snippet' => $this->commands[$state['payload']],
+                        'escape'  => end($this->escape),
+                        'line'    => $state['line'],
+                        'offset'  => $state['offset'],
+                        'length'  => $state['length']
                     );
-                } else {
-                    $name = strtolower($state['payload']);
-
-                    if (in_array($name, self::$attributes['js'])) {
-                        array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
-                    } elseif (in_array($name, self::$attributes['uri'])) {
-                        array_push($this->escape, \Octris\Core\Tpl::T_ESC_URI);
+                    break(2);
+                case self::T_TAG_START:
+                    break;
+                case self::T_TAG_NAME:
+                    if (substr($state['payload'], 0, 3) == '_c_') {
+                        $this->error(
+                            __FUNCTION__, __LINE__, $state['line'], $state['state'],
+                            'template command not allowed as tag-name'
+                        );
                     } else {
-                        array_push($this->escape, \Octris\Core\Tpl::T_ESC_ATTR);
+                        switch (strtolower($state['payload'])) {
+                        case 'script':
+                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
+                            break;
+                        case 'style':
+                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_CSS);
+                            break;
+                        default:
+                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_HTML);
+                            break;
+                        }
                     }
-                }
-                break;
-            case self::T_ATTR_END:
-                array_pop($this->escape);
-                break;
+                    break;
+                case self::T_CDATA_CLOSE:
+                case self::T_COMMENT_CLOSE:
+                case self::T_TAG_END_CLOSE:
+                    array_pop($this->escape);
+                    /** FALL THRU **/
+                case self::T_TAG_END_OPEN:
+                    $this->state = self::T_DATA;
+                    continue(2);
+                case self::T_TAG_CLOSE:
+                    if (count($this->escape) == 1) {
+                        if ($this->escape[0] != \Octris\Core\Tpl::T_ESC_HTML) {
+                            $this->escape[0] = \Octris\Core\Tpl::T_ESC_HTML;
+                        }
+                    } else {
+                        array_pop($this->escape);
+                    }
+
+                    $this->state = self::T_DATA;
+                    continue(2);
+                case self::T_ATTR_START:
+                    if (substr($state['payload'], 0, 3) == '_c_') {
+                        $this->error(
+                            __FUNCTION__, __LINE__, $state['line'], $state['state'],
+                            'template command not allowed as attribute-name'
+                        );
+                    } else {
+                        $name = strtolower($state['payload']);
+
+                        if (in_array($name, self::$attributes['js'])) {
+                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
+                        } elseif (in_array($name, self::$attributes['uri'])) {
+                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_URI);
+                        } else {
+                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_ATTR);
+                        }
+                    }
+                    break;
+                case self::T_ATTR_END:
+                    array_pop($this->escape);
+                    break;
             }
 
             $this->state = $state['state'];

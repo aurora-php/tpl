@@ -228,142 +228,142 @@ class Compiler
             extract($current);
 
             switch ($token) {
-            case grammar::T_IF_OPEN:
-            case grammar::T_BLOCK_OPEN:
-                // replace/rewrite block call
-                $value = strtolower($value);
+                case grammar::T_IF_OPEN:
+                case grammar::T_BLOCK_OPEN:
+                    // replace/rewrite block call
+                    $value = strtolower($value);
 
-                list($_start, $_end) = Compiler\Rewrite::$value(array_reverse($code));
+                    list($_start, $_end) = Compiler\Rewrite::$value(array_reverse($code));
 
-                $code = array($_start);
-                $blocks['compiler'][] = $_end;
+                    $code = array($_start);
+                    $blocks['compiler'][] = $_end;
 
-                if (($err = Compiler\Rewrite::getError()) != '') {
-                    $this->error(__FILE__, __LINE__, $line, $token, $err);
-                }
-                break;
-            case grammar::T_IF_ELSE:
-                $code[] = '} else {';
-                break;
-            case grammar::T_BLOCK_CLOSE:
-                $code[] = array_pop($blocks['compiler']);
-                break;
-            case grammar::T_ARRAY_CLOSE:
-            case grammar::T_BRACE_CLOSE:
-                array_push($stack, $code);
-                $code = array();
-                break;
-            case grammar::T_ARRAY_OPEN:
-                $code = array('[' . array_reduce(array_reverse($code), function ($code, $snippet) {
-                    static $last = '';
+                    if (($err = Compiler\Rewrite::getError()) != '') {
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    }
+                    break;
+                case grammar::T_IF_ELSE:
+                    $code[] = '} else {';
+                    break;
+                case grammar::T_BLOCK_CLOSE:
+                    $code[] = array_pop($blocks['compiler']);
+                    break;
+                case grammar::T_ARRAY_CLOSE:
+                case grammar::T_BRACE_CLOSE:
+                    array_push($stack, $code);
+                    $code = array();
+                    break;
+                case grammar::T_ARRAY_OPEN:
+                    $code = array('[' . array_reduce(array_reverse($code), function ($code, $snippet) {
+                        static $last = '';
 
-                    if ($code != '') {
-                        $code .= (($last == '=>' || $snippet == '=>') ? '' : ', ');
+                        if ($code != '') {
+                            $code .= (($last == '=>' || $snippet == '=>') ? '' : ', ');
+                        }
+
+                        $code .= $last = $snippet;
+
+                        return $code;
+                    }, '') . ']');
+
+                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    break;
+                case grammar::T_DGETTEXT:
+                case grammar::T_GETTEXT:
+                    $code    = array_reverse($code);
+                    $_domain = ($token == grammar::T_DGETTEXT
+                                ? array_shift($code)
+                                : 'null');
+                    $_msg    = array_shift($code);
+
+                    $code = array(Compiler\Rewrite::gettext($this->l10n, $_domain, $_msg, $code));
+
+                    if (($err = Compiler\Rewrite::getError()) != '') {
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
 
-                    $code .= $last = $snippet;
+                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    break;
+                case grammar::T_DDUMP:
+                case grammar::T_DPRINT:
+                case grammar::T_ESCAPE:
+                case grammar::T_LET:
+                case grammar::T_METHOD:
+                    // replace/rewrite method call
+                    $value = strtolower($value);
 
-                    return $code;
-                }, '') . ']');
+                    if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
+                        // ddump and dprint need to be treated a little different from other method calls,
+                        // because we include template-filename and template-linenumber in arguments
+                        $code = array(Compiler\Rewrite::$value(
+                            array_merge(
+                                array('"' . $file . '"', (int)$line),
+                                array_reverse($code)
+                            )
+                        ));
+                    } else {
+                        $code = array(Compiler\Rewrite::$value(array_reverse($code)));
+                    }
 
-                if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
-                break;
-            case grammar::T_DGETTEXT:
-            case grammar::T_GETTEXT:
-                $code    = array_reverse($code);
-                $_domain = ($token == grammar::T_DGETTEXT
-                            ? array_shift($code)
-                            : 'null');
-                $_msg    = array_shift($code);
+                    if (($err = Compiler\Rewrite::getError()) != '') {
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    }
 
-                $code = array(Compiler\Rewrite::gettext($this->l10n, $_domain, $_msg, $code));
-
-                if (($err = Compiler\Rewrite::getError()) != '') {
-                    $this->error(__FILE__, __LINE__, $line, $token, $err);
-                }
-
-                if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
-                break;
-            case grammar::T_DDUMP:
-            case grammar::T_DPRINT:
-            case grammar::T_ESCAPE:
-            case grammar::T_LET:
-            case grammar::T_METHOD:
-                // replace/rewrite method call
-                $value = strtolower($value);
-
-                if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
-                    // ddump and dprint need to be treated a little different from other method calls,
-                    // because we include template-filename and template-linenumber in arguments
-                    $code = array(Compiler\Rewrite::$value(
-                        array_merge(
-                            array('"' . $file . '"', (int)$line),
-                            array_reverse($code)
+                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    break;
+                case grammar::T_ARRAY_OPEN:
+                    $code[] = '[';
+                    break;
+                case grammar::T_MACRO:
+                    // resolve macro
+                    $value = strtolower(substr($value, 1));
+                    $file  = substr($code[0], 1, -1);
+                    $code  = array(
+                        Compiler\Macro::execMacro(
+                            $value,
+                            array($file),
+                            array('compiler' => $this, 'escape' => $escape)
                         )
-                    ));
-                } else {
-                    $code = array(Compiler\Rewrite::$value(array_reverse($code)));
-                }
+                    );
 
-                if (($err = Compiler\Rewrite::getError()) != '') {
-                    $this->error(__FILE__, __LINE__, $line, $token, $err);
-                }
+                    if (($err = Compiler\Macro::getError()) != '') {
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    }
 
-                if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
-                break;
-            case grammar::T_ARRAY_OPEN:
-                $code[] = '[';
-                break;
-            case grammar::T_MACRO:
-                // resolve macro
-                $value = strtolower(substr($value, 1));
-                $file  = substr($code[0], 1, -1);
-                $code  = array(
-                    Compiler\Macro::execMacro(
-                        $value,
-                        array($file),
-                        array('compiler' => $this, 'escape' => $escape)
-                    )
-                );
+                    $code[] = implode(', ', array_pop($stack));
+                    break;
+                case grammar::T_CONSTANT:
+                    $value = strtoupper($value);
+                    $tmp   = Compiler\Constant::getConstant($value);
 
-                if (($err = Compiler\Macro::getError()) != '') {
-                    $this->error(__FILE__, __LINE__, $line, $token, $err);
-                }
+                    if (($err = Compiler\Constant::getError()) != '') {
+                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    }
 
-                $code[] = implode(', ', array_pop($stack));
-                break;
-            case grammar::T_CONSTANT:
-                $value = strtoupper($value);
-                $tmp   = Compiler\Constant::getConstant($value);
+                    $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
+                    break;
+                case grammar::T_VARIABLE:
+                    $tmp = sprintf(
+                        '$this->data["%s"]',
+                        implode('"]["', explode(':', strtolower(substr($value, 1))))
+                    );
 
-                if (($err = Compiler\Constant::getError()) != '') {
-                    $this->error(__FILE__, __LINE__, $line, $token, $err);
-                }
-
-                $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
-                break;
-            case grammar::T_VARIABLE:
-                $tmp = sprintf(
-                    '$this->data["%s"]',
-                    implode('"]["', explode(':', strtolower(substr($value, 1))))
-                );
-
-                // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
-                $code[] = $tmp;
-                break;
-            case grammar::T_BOOL:
-            case grammar::T_STRING:
-            case grammar::T_NUMBER:
-            case grammar::T_ARRAY_KEY:
-                $code[] = $value;
-                break;
-            case grammar::T_PUNCT:
-            case grammar::T_BRACE_OPEN:
-                // nothing to do for these tokens
-                break;
-            default:
-                $this->error(__FILE__, __LINE__, $line, $token, 'unknown token');
-                break;
+                    // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
+                    $code[] = $tmp;
+                    break;
+                case grammar::T_BOOL:
+                case grammar::T_STRING:
+                case grammar::T_NUMBER:
+                case grammar::T_ARRAY_KEY:
+                    $code[] = $value;
+                    break;
+                case grammar::T_PUNCT:
+                case grammar::T_BRACE_OPEN:
+                    // nothing to do for these tokens
+                    break;
+                default:
+                    $this->error(__FILE__, __LINE__, $line, $token, 'unknown token');
+                    break;
             }
         }
 
