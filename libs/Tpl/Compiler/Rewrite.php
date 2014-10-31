@@ -364,19 +364,20 @@ class Rewrite
                 'for (%s = 0; %s < abs(%s); ++%s) { ' .
                 'if (%s == 1) ob_start();',
                 $var1,
-                $var2, 
-                $var2, 
-                $args[0], $var2,
+                $var2,
+                $var2,
+                $args[0],
+                $var2,
                 $var2
             ),
             sprintf(
                 '} %s = microtime(true) - %s; ' .
                 'if (abs(%s) > 0) ob_end_clean(); ' .
                 'printf("[benchmark iterations: %%s, time: %%1.6f]", abs(%s), %s);',
-                $var1, 
-                $var1, 
-                $args[0], 
-                $args[0], 
+                $var1,
+                $var1,
+                $args[0],
+                $args[0],
                 $var1
             )
         );
@@ -392,11 +393,15 @@ class Rewrite
         return array(
             sprintf(
                 'if (!$this->cacheLookup(%s, "%s")) { $this->bufferStart(%s, false);',
-                $key, $esc, $var
+                $key,
+                $esc,
+                $var
             ),
             sprintf(
                 '$this->bufferEnd(); $this->cacheStore(%s, %s, %s); }',
-                $key, $var, $ttl
+                $key,
+                $var,
+                $ttl
             )
         );
     }
@@ -437,7 +442,10 @@ class Rewrite
                 'return new \Octris\Core\Tpl\Sandbox\Eachiterator(%s);' .
                 '}); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
-                $var, $var, $arg, $var
+                $var,
+                $var,
+                $arg,
+                $var
             ),
             '}'
         );
@@ -470,7 +478,12 @@ class Rewrite
                 'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
                 '); }); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
-                $var, $var, $start, $end, $step, $var
+                $var,
+                $var,
+                $start,
+                $end,
+                $step,
+                $var
             ),
             '}'
         );
@@ -755,7 +768,8 @@ class Rewrite
         return '($this->l10n->datef(' . implode(', ', $args) . '))';
     }
 
-    protected static function _gender($args) {
+    protected static function _gender($args)
+    {
         return '($this->l10n->gender(' . implode(', ', $args) . '))';
     }
 
