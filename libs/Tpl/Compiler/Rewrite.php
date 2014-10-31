@@ -251,7 +251,9 @@ class Rewrite
                 }
             }
 
-            $name = '_' . str_replace('#', 'block_', $name);
+            $name = preg_replace('/^#(.*)$/', function ($match) {
+                return 'block' . ucfirst($match[1]);
+            }, $name);
 
             return self::$name($args);
         } elseif (substr($name, 0, 1) == '#') {
@@ -351,9 +353,9 @@ class Rewrite
     }
 
     /*
-     * inline block functions, that can be converted directly
+     * inline block definitions, that can be converted directly
      */
-    protected static function _block_bench($args)
+    protected static function blockBench($args)
     {
         $var1 = '$_' . self::getUniqId();
         $var2 = '$_' . self::getUniqId();
@@ -383,7 +385,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_cache($args)
+    protected static function blockCache($args)
     {
         $var = '$_' . self::getUniqId();
         $key = $args[0];
@@ -406,7 +408,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_copy($args)
+    protected static function blockCopy($args)
     {
         return array(
             '$this->bufferStart(' . implode(', ', $args) . ', false);',
@@ -414,7 +416,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_cron($args)
+    protected static function blockCron($args)
     {
         return array(
             'if ($this->cron(' . implode(', ', $args) . ')) {',
@@ -422,7 +424,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_cut($args)
+    protected static function blockCut($args)
     {
         return array(
             '$this->bufferStart(' . implode(', ', $args) . ', true);',
@@ -430,7 +432,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_foreach($args)
+    protected static function blockForeach($args)
     {
         $var = self::getUniqId();
         $arg = $args[1];
@@ -451,7 +453,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_if($args)
+    protected static function blockIf($args)
     {
         return array(
             'if (' . implode('', $args) . ') {',
@@ -459,7 +461,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_loop($args)
+    protected static function blockLoop($args)
     {
         $var = self::getUniqId();
 
@@ -489,7 +491,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_onchange($args)
+    protected static function blockOnchange($args)
     {
         return array(
             'if ($this->onchange("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
@@ -497,7 +499,7 @@ class Rewrite
         );
     }
 
-    protected static function _block_trigger($args)
+    protected static function blockTrigger($args)
     {
         return array(
             'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
@@ -505,6 +507,9 @@ class Rewrite
         );
     }
 
+    /*
+     * inline functions, that can be converted directly
+     */
     protected static function _if($args)
     {
         return sprintf(
