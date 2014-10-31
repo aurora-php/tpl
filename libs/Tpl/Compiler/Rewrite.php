@@ -251,9 +251,11 @@ class Rewrite
                 }
             }
 
-            $name = preg_replace('/^#(.*)$/', function ($match) {
-                return 'block' . ucfirst($match[1]);
-            }, $name);
+            if (substr($name, 0, 1) == '#') {
+                $name = 'block' . ucfirst(substr($name, 1));
+            } else {
+                $name = 'func' . ucFirst($name);
+            }
 
             return self::$name($args);
         } elseif (substr($name, 0, 1) == '#') {
@@ -510,7 +512,7 @@ class Rewrite
     /*
      * inline functions, that can be converted directly
      */
-    protected static function _if($args)
+    protected static function funcIf($args)
     {
         return sprintf(
             '(%s ? %s : %s)',
@@ -520,7 +522,7 @@ class Rewrite
         );
     }
 
-    protected static function _ifset($args)
+    protected static function funcIfset($args)
     {
         return sprintf(
             '(isset(%s) ? %s : %s)',
@@ -530,7 +532,7 @@ class Rewrite
         );
     }
 
-    protected static function _ifnull($args)
+    protected static function funcIfnull($args)
     {
         return sprintf(
             '(is_null(%s) ? %s : %s)',
@@ -540,250 +542,250 @@ class Rewrite
         );
     }
 
-    protected static function _neg($args)
+    protected static function funcNeg($args)
     {
         return '(-' . $args[0] . ')';
     }
 
-    protected static function _mul($args)
+    protected static function funcMul($args)
     {
         return '(' . implode(' * ', $args) . ')';
     }
 
-    protected static function _div($args)
+    protected static function funcDiv($args)
     {
         return '(' . implode(' / ', $args) . ')';
     }
 
-    protected static function _mod($args)
+    protected static function funcMod($args)
     {
         return '(' . implode(' % ', $args) . ')';
     }
 
-    protected static function _add($args)
+    protected static function funcAdd($args)
     {
         return '(' . implode(' + ', $args) . ')';
     }
 
-    protected static function _sub($args)
+    protected static function funcSub($args)
     {
         return '(' . implode(' - ', $args) . ')';
     }
 
-    protected static function _incr($args)
+    protected static function funcIncr($args)
     {
         return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' += ' + $args[1] : '++' . $args[0]));
     }
 
-    protected static function _decr($args)
+    protected static function funcDecr($args)
     {
         return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' -= ' + $args[1] : '--' . $args[0]));
     }
 
-    protected static function _and($args)
+    protected static function funcAnd($args)
     {
         return '(' . implode(' && ', $args) . ')';
     }
 
-    protected static function _or($args)
+    protected static function funcOr($args)
     {
         return '(' . implode(' || ', $args) . ')';
     }
 
-    protected static function _xor($args)
+    protected static function funcXor($args)
     {
         return sprintf('(%d != %d)', !!$args[0], !!$args[1]);
     }
 
-    protected static function _not($args)
+    protected static function funcNot($args)
     {
         return '!' . $args[0];
     }
 
-    protected static function _lt($args)
+    protected static function funcLt($args)
     {
         return '(' . implode(' < ', $args) . ')';
     }
 
-    protected static function _gt($args)
+    protected static function funcGt($args)
     {
         return '(' . implode(' > ', $args) . ')';
     }
 
-    protected static function _eq($args)
+    protected static function funcEq($args)
     {
         return '(' . implode(' == ', $args) . ')';
     }
 
-    protected static function _le($args)
+    protected static function funcLe($args)
     {
         return '(' . implode(' <= ', $args) . ')';
     }
 
-    protected static function _ge($args)
+    protected static function funcGe($args)
     {
         return '(' . implode(' >= ', $args) . ')';
     }
 
-    protected static function _ne($args)
+    protected static function funcNe($args)
     {
         return '(' . implode(' != ', $args) . ')';
     }
 
-    protected static function _bool($args)
+    protected static function funcBool($args)
     {
         return '((bool)' . $args[0] . ')';
     }
 
-    protected static function _int($args)
+    protected static function funcInt($args)
     {
         return '((int)' . $args[0] . ')';
     }
 
-    protected static function _float($args)
+    protected static function funcFloat($args)
     {
         return '((float)' . $args[0] . ')';
     }
 
-    protected static function _string($args)
+    protected static function funcString($args)
     {
         return '((string)' . $args[0] . ')';
     }
 
-    protected static function _collection($args)
+    protected static function funcCollection($args)
     {
         return '\\Octris\\Core\\Type::settype(' . $args[0] . ', "collection")';
     }
 
-    protected static function _now()
+    protected static function funcNow()
     {
         return '(time())';
     }
 
-    protected static function _uniqid()
+    protected static function funcUniqid()
     {
         return '(uniqid(mt_rand()))';
     }
 
-    protected static function _let($args)
+    protected static function funcLet($args)
     {
         return '(' . implode(' = ', $args) . ')';
     }
 
-    protected static function _ddump($args)
+    protected static function funcDdump($args)
     {
         return '\\Octris\\Core\\Debug::ddump(' . implode(', ', $args) . ')';
     }
 
-    protected static function _dprint($args)
+    protected static function funcDprint($args)
     {
         return '\\Octris\\Core\\Debug::dprint(' . implode(', ', $args) . ')';
     }
 
-    protected static function _error($args)
+    protected static function funcError($args)
     {
         return '$this->error(' . implode(', ', $args) . ', __LINE__)';
     }
 
-    protected static function _include($args)
+    protected static function funcInclude($args)
     {
         return '$this->includetpl(' . implode('', $args) . ')';
     }
 
     // string functions
-    protected static function _explode($args)
+    protected static function funcExplode($args)
     {
         return 'new \\Octris\\Core\\Type\\Collection(explode(' . implode(', ', $args) . '))';
     }
 
-    protected static function _implode($args)
+    protected static function funcImplode($args)
     {
         return '(implode(' . $args[0] . ', \\Octris\\Core\\Type::settype(' . $args[1] . ', "array")))';
     }
 
-    protected static function _lpad($args)
+    protected static function funcLpad($args)
     {
         $args = $args + array(null, null, ' ');
 
         return '(str_pad(' . implode(', ', $args) . ', STR_PAD_LEFT))';
     }
 
-    protected static function _rpad($args)
+    protected static function funcRpad($args)
     {
         $args = $args + array(null, null, ' ');
 
         return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
     }
 
-    protected static function _totitle($args)
+    protected static function funcTotitle($args)
     {
         return '\\Octris\\Core\\Type\\String::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
     }
 
-    protected static function _concat($args)
+    protected static function funcConcat($args)
     {
         return '(' . implode(' . ', $args) . ')';
     }
 
     // array functions
-    protected static function _array($args)
+    protected static function funcArray($args)
     {
         return 'new \\Octris\\Core\\Type\\Collection(array(' . implode(', ', $args) . '))';
     }
 
-    protected static function _cycle($args)
+    protected static function funcCycle($args)
     {
         return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
     }
 
     // misc functions
-    protected static function _escape($args)
+    protected static function funcEscape($args)
     {
         return '($this->escape(' . implode(', ', $args) . '))';
     }
 
     // localization functions
-    protected static function _comify($args)
+    protected static function funcComify($args)
     {
         return '($this->l10n->comify(' . implode(', ', $args) . '))';
     }
 
-    protected static function _enum($args)
+    protected static function funcEnum($args)
     {
         return '($this->l10n->enum(' . implode(', ', $args) . '))';
     }
 
-    protected static function _monf($args)
+    protected static function funcMonf($args)
     {
         return '($this->l10n->monf(' . implode(', ', $args) . '))';
     }
 
-    protected static function _numf($args)
+    protected static function funcNumf($args)
     {
         return '($this->l10n->numf(' . implode(', ', $args) . '))';
     }
 
-    protected static function _perf($args)
+    protected static function funcPerf($args)
     {
         return '($this->l10n->perf(' . implode(', ', $args) . '))';
     }
 
-    protected static function _datef($args)
+    protected static function funcDatef($args)
     {
         return '($this->l10n->datef(' . implode(', ', $args) . '))';
     }
 
-    protected static function _gender($args)
+    protected static function funcGender($args)
     {
         return '($this->l10n->gender(' . implode(', ', $args) . '))';
     }
 
-    protected static function _quant($args)
+    protected static function funcQuant($args)
     {
         return '($this->l10n->quant(' . implode(', ', $args) . '))';
     }
 
-    protected static function _yesno($args)
+    protected static function funcYesno($args)
     {
         return '($this->l10n->yesno(' . implode(', ', $args) . '))';
     }
