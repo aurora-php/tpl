@@ -14,7 +14,7 @@ namespace Octris\Core\Tpl\Sandbox;
 /**
  * Object storage for sandbox.
  *
- * @copyright   copyright (c) 2012 by Harald Lapp
+ * @copyright   copyright (c) 2012-2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Storage

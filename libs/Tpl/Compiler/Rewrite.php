@@ -16,7 +16,7 @@ namespace Octris\Core\Tpl\Compiler;
  * if they are allowed php function calls or calls to functions that have to be registered to
  * sandbox on template rendering.
  *
- * @copyright   copyright (c) 2010-2011 by Harald Lapp
+ * @copyright   copyright (c) 2010-2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Rewrite
