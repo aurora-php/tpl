@@ -14,7 +14,6 @@ namespace Octris\Core\Tpl\Compiler;
 /**
  * Library for handling template macros.
  *
- * @octdoc      c:compiler/macro
  * @copyright   copyright (c) 2010-2011 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -23,34 +22,27 @@ class Macro
     /**
      * Macro registry.
      *
-     * @octdoc  p:macro/$registry
      * @type    array
      */
     protected static $registry = array();
-    /**/
-
+    
     /**
      * Last error occured.
      *
-     * @octdoc  p:macro/$last_error
      * @type    string
      */
     protected static $last_error = '';
-    /**/
-
+    
     /**
      * Constructor and clone magic method are protected to prevent instantiating of class.
      *
-     * @octdoc  m:macro/__construct, __clone
      */
     protected function __construct() {}
     protected function __clone() {}
-    /**/
-
+    
     /**
      * Return last occured error.
      *
-     * @octdoc  m:macro/getError
      * @return  string                  Last occured error.
      */
     public static function getError()
@@ -61,7 +53,6 @@ class Macro
     /**
      * Set error.
      *
-     * @octdoc  m:macro/setError
      * @param   string      $name       Name of macro the error occured for.
      * @param   string      $msg        Additional error message.
      */
@@ -73,7 +64,6 @@ class Macro
     /**
      * Register a macro.
      *
-     * @octdoc  m:macro/registerMacro
      * @param   string      $name       Name of macro to register.
      * @param   callable    $callback   Callback to call when macro is requested.
      * @param   array       $args       For testing min/max number of arguments required for macro.
@@ -89,7 +79,6 @@ class Macro
     /**
      * Execute specified macro with specified arguments.
      *
-     * @octdoc  m:macro/execMacro
      * @param   string      $name       Name of macro to execute.
      * @param   array       $args       Arguments for macro.
      * @param   array       $options    Optional additional options for macro.

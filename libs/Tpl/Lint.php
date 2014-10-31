@@ -14,7 +14,6 @@ namespace Octris\Core\Tpl;
 /**
  * Lint for templates.
  *
- * @octdoc      c:tpl/lint
  * @copyright   copyright (c) 2010-2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -23,16 +22,13 @@ class Lint extends \Octris\Core\Tpl\Compiler
     /**
      * Number of errors occured.
      *
-     * @octdoc  p:lint/$errors
      * @type    int
      */
     protected $errors = 0;
-    /**/
-
+    
     /**
      * Constructor.
      *
-     * @octdoc  m:lint/__construct
      */
     public function __construct()
     {
@@ -46,7 +42,6 @@ class Lint extends \Octris\Core\Tpl\Compiler
     /**
      * Trigger an error.
      *
-     * @octdoc  m:lint/error
      * @param   string      $ifile      Internal filename the error occured in.
      * @param   int         $iline      Internal line number the error occured in.
      * @param   int         $line       Line in template the error was triggered for.
@@ -66,7 +61,6 @@ class Lint extends \Octris\Core\Tpl\Compiler
     /**
      * Execute lint toolchain for a template snippet.
      *
-     * @octdoc  m:lint/toolchain
      * @param   string      $snippet        Template snippet to process.
      * @param   int         $line           Line in template processed.
      * @param   array       $blocks         Block information required by analyzer / compiler.
@@ -102,7 +96,6 @@ class Lint extends \Octris\Core\Tpl\Compiler
     /**
      * Process a template.
      *
-     * @octdoc  m:lint/process
      * @param   string      $filename       Name of template file to lint.
      * @param   string      $escape         Escaping to use.
      * @param   string      $err            Destination for error reporting.

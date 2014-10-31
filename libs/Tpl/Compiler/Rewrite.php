@@ -16,7 +16,6 @@ namespace Octris\Core\Tpl\Compiler;
  * if they are allowed php function calls or calls to functions that have to be registered to
  * sandbox on template rendering.
  *
- * @octdoc      c:compiler/rewrite
  * @copyright   copyright (c) 2010-2011 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -25,7 +24,6 @@ class Rewrite
     /**
      * Inline method rewrite.
      *
-     * @octdoc  p:rewrite/$inline
      * @type    array
      */
     protected static $inline = array(
@@ -108,12 +106,10 @@ class Rewrite
         'quant'     => array('min' => 2, 'max' => 4),
         'yesno'     => array('min' => 2, 'max' => 3),
     );
-    /**/
-
+    
     /**
      * Allowed PHP functions and optional mapping to an PHP or framework internal name.
      *
-     * @octdoc  p:rewrite/$phpfunc
      * @type    array
      */
     protected static $phpfunc = array(
@@ -154,33 +150,27 @@ class Rewrite
         'jsonencode' => array('min' => 1, 'max' => 2, 'map' => 'json_encode'),
         'jsondecode' => array('min' => 1, 'max' => 4, 'map' => 'json_decode'),
     );
-    /**/
-
+    
     /**
      * Forbidden function names.
      *
-     * @octdoc  p:rewrite/$forbidden
      * @type    array
      */
     protected static $forbidden = array(
         'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
         '__construct', '__call', 'registermethod', 'render', 'write'
     );
-    /**/
-
+    
     /**
      * Last error occured.
      *
-     * @octdoc  p:rewrite/$last_error
      * @type    string
      */
     protected static $last_error = '';
-    /**/
-
+    
     /**
      * Constructor and clone magic method are protected to prevent instantiating of class.
      *
-     * @octdoc  m:rewrite/__construct, __clone
      */
     protected function __construct()
     {
@@ -188,12 +178,10 @@ class Rewrite
     protected function __clone()
     {
     }
-    /**/
-
+    
     /**
      * Return last occured error.
      *
-     * @octdoc  m:rewrite/getError
      * @return  string                  Last occured error.
      */
     public static function getError()
@@ -204,7 +192,6 @@ class Rewrite
     /**
      * Set error.
      *
-     * @octdoc  m:rewrite/setError
      * @param   string      $name       Name of method the error occured for.
      * @param   string      $msg        Additional error message.
      */
@@ -216,7 +203,6 @@ class Rewrite
     /**
      * Wrapper for methods that can be rewritten.
      *
-     * @octdoc  m:rewrite/__callStatic
      * @param   string      $name       Name of method to rewrite.
      * @param   array       $args       Arguments for method.
      */
@@ -283,7 +269,6 @@ class Rewrite
     /**
      * Helper function to create a uniq identifier required by several functions.
      *
-     * @octdoc  m:rewrite/getUniqId
      * @return  string                  Uniq identifier
      */
     protected static function getUniqId()
@@ -294,7 +279,6 @@ class Rewrite
     /**
      * Implementation of gettext compiler.
      *
-     * @octdoc  m:rewrite/_gettext
      * @param   \Octris\Core\L10n       $l10n           Instance of l10n class.
      * @param   string                      $domain         Text domain to use.
      * @param   string                      $msg            Message to translate.

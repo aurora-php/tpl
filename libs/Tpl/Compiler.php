@@ -16,7 +16,6 @@ use \Octris\Core\Tpl\Compiler\Grammar;
 /**
  * Implementation of template compiler.
  *
- * @octdoc      c:tpl/compiler
  * @copyright   copyright (c) 2010-2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -25,52 +24,41 @@ class Compiler
     /**
      * Instance of parser class.
      *
-     * @octdoc  p:compiler/$parser
      * @type    \octris\core\parser|null
      */
     protected static $parser = null;
-    /**/
-
+    
     /**
      * File handle for error messages output.
      *
-     * @octdoc  p:compiler/$errout
      * @type    resource
      */
     protected $errout = null;
-    /**/
-
+    
     /**
      * Name of file currently compiled.
      *
-     * @octdoc  p:compiler/$filename
      * @type    string
      */
     protected $filename = '';
-    /**/
-
+    
     /**
      * Stores pathes to look into when searching for template to load.
      *
-     * @octdoc  p:compiler/$searchpath
      * @type    array
      */
     protected $searchpath = array();
-    /**/
-
+    
     /**
      * Instance of locale class.
      *
-     * @octdoc  p:compiler/$l10n
      * @type    \octris\core\l10n
      */
     protected $l10n;
-    /**/
-
+    
     /**
      * Constructor.
      *
-     * @octdoc  m:compiler/__construct
      */
     public function __construct()
     {
@@ -80,7 +68,6 @@ class Compiler
     /**
      * Set location for error output.
      *
-     * @octdoc  m:compiler/setErrorOutput
      * @param   string|resource             $errout     Location for error output.
      */
     public function setErrorOutput($errout)
@@ -95,7 +82,6 @@ class Compiler
     /**
      * Set l10n dependency.
      *
-     * @octdoc  m:compiler/setL10n
      * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
      */
     public function setL10n(\Octris\Core\L10n $l10n)
@@ -106,7 +92,6 @@ class Compiler
     /**
      * Register pathname for looking up templates in.
      *
-     * @octdoc  m:compiler/addSearchPath
      * @param   mixed       $pathname       Name of path to register.
      */
     public function addSearchPath($pathname)
@@ -123,7 +108,6 @@ class Compiler
     /**
      * Lookup a template file in the configured searchpathes.
      *
-     * @octdoc  m:compiler/findFile
      * @param   string      $filename       Name of file to lookup.
      */
     public function findFile($filename)
@@ -150,7 +134,6 @@ class Compiler
     /**
      * Trigger an error and halt execution.
      *
-     * @octdoc  m:compiler/error
      * @param   string      $ifile      Internal filename the error occured in.
      * @param   int         $iline      Internal line number the error occured in.
      * @param   int         $line       Line in template the error was triggered for.
@@ -194,7 +177,6 @@ class Compiler
     /**
      * Compile tokens to PHP code.
      *
-     * @octdoc  m:compiler/compile
      * @param   array       $tokens     Array of tokens to compile.
      * @param   array       $blocks     Block information required by analyzer / compiler.
      * @param   string      $escape     Escaping to use.
@@ -396,7 +378,6 @@ class Compiler
     /**
      * Setup toolchain.
      *
-     * @octdoc  m:compiler/setup
      * @param   array       $blocks         Block information required by analyzer / compiler.
      */
     protected function setup(array &$blocks)
@@ -428,7 +409,6 @@ class Compiler
     /**
      * Execute compiler toolchain for a template snippet.
      *
-     * @octdoc  m:compiler/toolchain
      * @param   string      $snippet        Template snippet to process.
      * @param   int         $line           Line in template processed.
      * @param   array       $blocks         Block information required by analyzer / compiler.
@@ -465,7 +445,6 @@ class Compiler
     /**
      * Parse template and extract all template functionality to compile.
      *
-     * @octdoc  m:compiler/parse
      * @param   string      $escape         Escaping to use.
      * @return  string                      Processed / compiled template.
      */
@@ -509,7 +488,6 @@ class Compiler
     /**
      * Process a template.
      *
-     * @octdoc  m:compiler/process
      * @param   string      $filename       Name of template file to process.
      * @param   string      $escape         Escaping to use.
      * @return  string                      Compiled template.

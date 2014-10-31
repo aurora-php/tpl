@@ -16,7 +16,6 @@ use \Octris\Core\Tpl\Compiler as compiler;
 /**
  * Main class of template engine.
  *
- * @octdoc      c:core/tpl
  * @copyright   copyright (c) 2010-2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -25,7 +24,6 @@ class Tpl
     /**
      * Escape types.
      *
-     * @octdoc  d:tpl/T_ESC_NONE, T_ESC_AUTO, T_ESC_ATTR, T_ESC_CSS, T_ESC_HTML, T_ESC_JS, T_ESC_TAG, T_ESC_URI
      */
     const T_ESC_NONE = '';
     const T_ESC_AUTO = 'auto';
@@ -35,48 +33,38 @@ class Tpl
     const T_ESC_JS   = 'js';
     const T_ESC_TAG  = 'tag';
     const T_ESC_URI  = 'uri';
-    /**/
-
+    
     /**
      * Instance of sandbox for executing template in.
      *
-     * @octdoc  p:tpl/$sandbox
      * @type    \octris\core\tpl\sandbox
      */
     protected $sandbox;
-    /**/
-
+    
     /**
      * Whether to fetch compiled template from cache.
      *
-     * @octdoc  p:tpl/$use_cache
      * @type    bool
      */
     protected $use_cache = false;
-    /**/
-
+    
     /**
      * Stores pathes to look into when searching for template to load.
      *
-     * @octdoc  p:tpl/$searchpath
      * @type    array
      */
     protected $searchpath = array();
-    /**/
-
+    
     /**
      * Instance of locale class.
      *
-     * @octdoc  p:tpl/$l10n
      * @type    \octris\core\l10n
      */
     protected $l10n;
-    /**/
-
+    
     /**
      * Output path for various file types.
      *
-     * @octdoc  p:tpl/$path
      * @type    array
      */
     protected $path = array(
@@ -84,12 +72,10 @@ class Tpl
         'js'    => '/tmp',      // output path for compressed javascript
         'css'   => '/tmp'       // output path for compressed css
     );
-    /**/
-
+    
     /**
      * Resource pathes for various file types.
      *
-     * @octdoc  p:tpl/$resources
      * @type    array
      */
     protected $resources = array(
@@ -97,12 +83,10 @@ class Tpl
         'js'    => '',
         'css'   => ''
     );
-    /**/
-
+    
     /**
      * Constructor.
      *
-     * @octdoc  m:tpl/__construct
      */
     public function __construct()
     {
@@ -112,7 +96,6 @@ class Tpl
     /**
      * Set l10n dependency.
      *
-     * @octdoc  m:tpl/setL10n
      * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
      */
     public function setL10n(\Octris\Core\L10n $l10n)
@@ -124,7 +107,6 @@ class Tpl
     /**
      * Set values for multiple template variables.
      *
-     * @octdoc  m:tpl/setValues
      * @param   array       $array      Key/value array with values.
      */
     public function setValues($array)
@@ -135,7 +117,6 @@ class Tpl
     /**
      * Set value for one template variable.
      *
-     * @octdoc  m:tpl/setValue
      * @param   string      $name       Name of template variable to set value of.
      * @param   mixed       $value      Value to set for template variable.
      */
@@ -147,7 +128,6 @@ class Tpl
     /**
      * Register a custom template method.
      *
-     * @octdoc  m:sandbox/registerMethod
      * @param   string      $name       Name of template method to register.
      * @param   mixed       $callback   Callback to map to template method.
      * @param   array       $args       Optional parametert for specifying min/max number of arguments required for callback method.
@@ -160,7 +140,6 @@ class Tpl
     /**
      * Register pathname for looking up templates in.
      *
-     * @octdoc  m:tpl/addSearchPath
      * @param   mixed       $pathname       Name of path to register.
      */
     public function addSearchPath($pathname)
@@ -178,7 +157,6 @@ class Tpl
      * Set path for a resource like stylesheets, images according to the
      * specified extension.
      *
-     * @octdoc  m:tpl/setResourcePath
      * @param   string      $ext        Extension of file to set path for.
      * @param   string      $pathname   Name of path to register.
      */
@@ -192,7 +170,6 @@ class Tpl
     /**
      * Set output path for compiled templates and compressed files.
      *
-     * @octdoc  m:tpl/setOutputPath
      * @param   string      $ext        Extension of file to set path for.
      * @param   string      $pathname   Name of path to register.
      */
@@ -206,7 +183,6 @@ class Tpl
     /**
      * Set cache for template snippets.
      *
-     * @octdoc  m:tpl/setSnippetCache
      * @param   \Octris\Core\Cache      $cache          Caching instance.
      */
     public function setSnippetCache(\Octris\Core\Cache $cache)
@@ -217,7 +193,6 @@ class Tpl
     /**
      * Executes template toolchain -- compiler and compressors.
      *
-     * @octdoc  m:tpl/process
      * @param   string      $inp        Input filename.
      * @param   string      $out        Output filename.
      * @param   string      $escape     Escaping to use.
@@ -252,7 +227,6 @@ class Tpl
     /**
      * Compile template and return compiled template as string.
      *
-     * @octdoc  m:tpl/compile
      * @param   string      $filename       Name of template file to compile.
      * @param   string      $escape         Optional escaping to use.
      * @return  string                      Compiled template.
@@ -284,7 +258,6 @@ class Tpl
     /**
      * Render a template and send output to stdout.
      *
-     * @octdoc  m:tpl/render
      * @param   string      $filename       Filename of template to render.
      * @param   string      $escape         Optional escaping to use.
      */
@@ -305,7 +278,6 @@ class Tpl
     /**
      * Render a template and return output as string.
      *
-     * @octdoc  m:tpl/fetch
      * @param   string      $filename       Filename of template to render.
      * @param   string      $escape         Optional escaping to use.
      * @return  string                      Rendered template.
@@ -325,7 +297,6 @@ class Tpl
     /**
      * Render a template and save output to a file.
      *
-     * @octdoc  m:tpl/save
      * @param   string      $savename       Filename to save output to.
      * @param   string      $filename       Filename of template to render.
      * @param   string      $escape         Optional escaping to use.

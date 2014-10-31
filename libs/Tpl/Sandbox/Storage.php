@@ -14,7 +14,6 @@ namespace Octris\Core\Tpl\Sandbox;
 /**
  * Object storage for sandbox.
  *
- * @octdoc      c:sandbox/storage
  * @copyright   copyright (c) 2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -23,34 +22,27 @@ class Storage
     /**
      * Storage for initialization callbacks.
      *
-     * @octdoc  p:storage/$init
      * @type    array
      */
     private $init = array();
-    /**/
-
+    
     /**
      * Instance of storage class.
      *
-     * @octdoc  p:storage/$instance
      * @type    \octris\core\tpl\sandbox\storage|null
      */
     private static $instance = null;
-    /**/
-
+    
     /**
      * Private constructor, clone method, to make the class singleton.
      *
-     * @octdoc  m:storage/__construct
      */
     private function __construct() {}
     private function __clone() {}
-    /**/
-
+    
     /**
      * Get instance of storage class.
      *
-     * @octdoc  m:storage/getInstance
      * @return  \octris\core\tpl\sandbox\storage                Instance of storage class.
      */
     public static function getInstance()
@@ -65,7 +57,6 @@ class Storage
     /**
      * Getter.
      *
-     * @octdoc  m:storage/__get
      * @param   string                  $name                       Name of property to get.
      * @return  mixed                                               Data stored in property.
      */
@@ -83,7 +74,6 @@ class Storage
     /**
      * Get a value from storage. Generate it using the specified callback, if the value does not exist.
      *
-     * @octdoc  m:storage/get
      * @param   string                  $name                       Name of data to store in storage.
      * @param   callable                $cb                         Callback to call if data is not available.
      * @return  mixed                                               Data.

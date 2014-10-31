@@ -16,7 +16,6 @@ use \Octris\Core\Tpl\Compiler as c;
 /**
  * Class for defining a template parser grammar.
  *
- * @octdoc      c:compiler/grammar
  * @copyright   copyright (c) 2014 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -25,7 +24,6 @@ class Grammar extends \Octris\Core\Parser\Grammar
     /**
      * Known tokens.
      *
-     * @octdoc  d:grammar/T_...
      * @type    string
      */
     const T_START                = '<syntax>';
@@ -78,12 +76,10 @@ class Grammar extends \Octris\Core\Parser\Grammar
     const T_IF_ELSE              = '"#else"';
     const T_BLOCK_CLOSE          = '"#end"';
     const T_BLOCK_OPEN           = '"#[a-z][a-z-0-9_]*"';
-    /**/
-
+    
     /**
      * Constructor.
      *
-     * @octdoc  m:grammar/__construct
      */
     public function __construct()
     {

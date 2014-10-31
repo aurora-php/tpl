@@ -14,7 +14,6 @@ namespace Octris\Core\Tpl;
 /**
  * Sandbox to execute templates in.
  *
- * @octdoc      c:tpl/sandbox
  * @copyright   copyright (c) 2010-2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -23,79 +22,62 @@ class Sandbox
     /**
      * Template data.
      *
-     * @octdoc  p:sandbox/$data
      * @type    array
      */
     public $data = array();
-    /**/
-
+    
     /**
      * Storage for sandbox internal data objects.
      *
-     * @octdoc  p:sandbox/$storage
      * @type    \octris\core\tpl\sandbox\storage
      */
     protected $storage;
-    /**/
-
+    
     /**
      * Internal storage for meta data required for block functions.
      *
-     * @octdoc  p:sandbox/$meta
      * @type    array
      */
     protected $meta = array();
-    /**/
-
+    
     /**
      * Internal storage for cut/copied buffers.
      *
-     * @octdoc  p:sandbox/$pastebin
      * @type    array
      */
     protected $pastebin = array();
-    /**/
-
+    
     /**
      * Function registry.
      *
-     * @octdoc  p:sandbox/$registry
      * @type    array
      */
     protected $registry = array();
-    /**/
-
+    
     /**
      * Name of file that is rendered by the sandbox instance.
      *
-     * @octdoc  p:sandbox/$filename
      * @type    string
      */
     protected $filename = '';
-    /**/
-
+    
     /**
      * Instance of locale class.
      *
-     * @octdoc  p:compiler/$l10n
      * @type    \octris\core\l10n
      */
     protected $l10n;
-    /**/
-
+    
     /**
      * Instance of caching backend for template snippets.
      *
-     * @octdoc  p:sandbox/$cache
      * @type    \octris\core\cache|null
      */
     protected $cache = null;
-    /**/
-
+    
     /**
      * Constructor
      *
-     * @octdoc  m:sandbox/__construct
      */
     public function __construct()
     {
@@ -105,7 +87,6 @@ class Sandbox
     /**
      * Set l10n dependency.
      *
-     * @octdoc  m:compiler/setL10n
      * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
      */
     public function setL10n(\Octris\Core\L10n $l10n)
@@ -116,7 +97,6 @@ class Sandbox
     /**
      * Magic caller for registered template functions.
      *
-     * @octdoc  m:sandbox/__call
      * @param   string      $name       Name of function to call.
      * @param   mixed       $args       Function arguments.
      * @return  mixed                   Return value of called function.
@@ -139,7 +119,6 @@ class Sandbox
     /**
      * Trigger an error and stop processing template.
      *
-     * @octdoc  m:sandbox/error
      * @param   string      $msg        Additional error message.
      * @param   int         $line       Line in template the error occured (0, if it's in the class library).
      * @param   int         $cline      Line in the class that triggered the error.
@@ -157,7 +136,6 @@ class Sandbox
     /**
      * Register a custom template method.
      *
-     * @octdoc  m:sandbox/registerMethod
      * @param   string      $name       Name of template method to register.
      * @param   mixed       $callback   Callback to map to template method.
      * @param   array       $args       For specifying min/max number of arguments required for callback method.
@@ -175,7 +153,6 @@ class Sandbox
     /**
      * Set values for multiple template variables.
      *
-     * @octdoc  m:tpl/setValues
      * @param   array|\Traversable       $array      Key/value array with values.
      */
     public function setValues($array)
@@ -189,7 +166,6 @@ class Sandbox
      * unless an 'object' implements the interface '\Traversable'. Traversable objects will
      * be used without casting.
      *
-     * @octdoc  m:tpl/setValue
      * @param   string      $name       Name of template variable to set value of.
      * @param   mixed       $value      Value to set for template variable.
      */
@@ -207,7 +183,6 @@ class Sandbox
     /**
      * Set cache for template snippets.
      *
-     * @octdoc  m:sandbox/setSnippetCache
      * @param   \Octris\Core\Cache      $cache          Caching instance.
      */
     public function setSnippetCache(\Octris\Core\Cache $cache)
@@ -218,7 +193,6 @@ class Sandbox
     /**
      * Gettext implementation.
      *
-     * @octdoc  m:sandbox/gettext
      * @param   string      $msg        Message to translate.
      * @return  string                  Translated message.
      */
@@ -231,7 +205,6 @@ class Sandbox
      * Implementation for '#foreach' block function. Iterates over an array and repeats an enclosed
      * template block.
      *
-     * @octdoc  m:sandbox/each
      * @param   \Octris\Core\Tpl\Sandbox\Eachiterator   $iterator       Iterator to use.
      * @param   mixed                                       $ctrl           Control variable is overwritten and used by this method.
      * @param   array                                       $meta           Optional variable for meta information storage.
@@ -263,7 +236,6 @@ class Sandbox
     /**
      * Implementation for '#cut' and '#copy' block functions. Starts output buffer.
      *
-     * @octdoc  m:sandbox/bufferStart
      * @param   mixed       $ctrl       Control variable to store buffer data in.
      * @param   bool        $cut        Optional flag that indicates if buffer should be cut or copied.
      */
@@ -280,7 +252,6 @@ class Sandbox
     /**
      * Stop output buffer.
      *
-     * @octdoc  m:sandbox/bufferEnd
      */
     public function bufferEnd()
     {
@@ -299,7 +270,6 @@ class Sandbox
      * by specified key or generates cached content, if cache content is not available. An optional
      * escaping method may be specified.
      *
-     * @octdoc  m:sandbox/cacheLookup
      * @param   string      $key            Cache-key to lookup.
      * @param   string      $escape         Optional escaping to use for output.
      * @return  bool                        Returns true, if key was available in cache.
@@ -326,7 +296,6 @@ class Sandbox
      * - 0: no cache.
      * - -1: cache never expires.
      *
-     * @octdoc  m:sandbox/cacheStore
      * @param   string      $key            Key to use for storing buffer in cache.
      * @param   mixed       $data           Data to store in cache.
      * @param   int         $timeout        Cache timeout.
@@ -341,7 +310,6 @@ class Sandbox
     /**
      * Implementation for '#cron' block function. Display block for a period of time.
      *
-     * @octdoc  m:sandbox/cron
      * @param   mixed       $start          Start date/time as string or unix timestamp.
      * @param   mixed       $end            Optional end date/time as string or unix timestamp.
      * @return  bool                        Returns true if cron block creation succeeded.
@@ -370,7 +338,6 @@ class Sandbox
      * Implementation for '#trigger' block function. The trigger can be used inside a block of type '#loop' or '#each'. An
      * internal counter will be increased for each loop cycle. The trigger will return 'true' for very $steps steps.
      *
-     * @octdoc  m:sandbox/trigger
      * @param   string      $id         Uniq identifier of trigger.
      * @param   int         $steps      Optional number of steps trigger should go until signal is raised.
      * @param   int         $start      Optional step to start trigger at.
@@ -410,7 +377,6 @@ class Sandbox
     /**
      * Implementation for '#onchange' block function. Triggers an event if the contents of a variable changes.
      *
-     * @octdoc  m:sandbox/onchange
      * @param   string      $id         Uniq identifier of event.
      * @param   mixed       $value      Value of observed variable.
      * @return  bool                    Returns true if variable value change was detected.
@@ -435,7 +401,6 @@ class Sandbox
      * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list
      * according to the internal pointer position.
      *
-     * @octdoc  m:sandbox/cycle
      * @param   string      $id         Uniq identifier for cycle.
      * @param   array       $array      List of elements to use for cycling.
      * @param   bool        $pingpong   Optional flag indicates whether to start with first element or moving pointer
@@ -481,7 +446,6 @@ class Sandbox
     /**
      * Escape a value according to the specified escaping context.
      *
-     * @octdoc  m:sandbox/escape
      * @param   string          $val            Value to escape.
      * @param   string          $escape         Escaping to use.
      */
@@ -514,7 +478,6 @@ class Sandbox
     /**
      * Output specified value.
      *
-     * @octdoc  m:sandbox/write
      * @param   string          $val            Optional value to output.
      * @param   string          $escape         Optional escaping to use.
      */
@@ -530,7 +493,6 @@ class Sandbox
     /**
      * Read a file and return it as string.
      *
-     * @octdoc  m:sandbox/includetpl
      * @param   string      $file       File to include.
      * @return  string                  File contents.
      */
@@ -544,7 +506,6 @@ class Sandbox
     /**
      * Render a template and output rendered template to stdout.
      *
-     * @octdoc  m:sandbox/render
      * @param   string      $filename       Filename of template to render.
      */
     public function render($filename)

@@ -14,7 +14,6 @@ namespace Octris\Core\Tpl\Compiler;
 /**
  * Library for handling template constants.
  *
- * @octdoc      c:compiler/constant
  * @copyright   copyright (c) 2010-2012 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
@@ -23,7 +22,6 @@ class Constant
     /**
      * Constant registry.
      *
-     * @octdoc  p:constant/$registry
      * @type    array
      */
     protected static $registry = array(
@@ -58,30 +56,24 @@ class Constant
         'CASE_UPPER_FIRST'       => \Octris\Core\Type\String::T_CASE_UPPER_FIRST,
         'CASE_LOWER_FIRST'       => \Octris\Core\Type\String::T_CASE_LOWER_FIRST,
     );
-    /**/
-
+    
     /**
      * Last occured error.
      *
-     * @octdoc  p:constant/$last_error
      * @type    string
      */
     protected static $last_error = '';
-    /**/
-
+    
     /**
      * Constructor and clone magic method are protected to prevent instantiating of class.
      *
-     * @octdoc  m:constant/__construct, __clone
      */
     protected function __construct() {}
     protected function __clone() {}
-    /**/
-
+    
     /**
      * Return last occured error.
      *
-     * @octdoc  m:constant/getError
      * @return  string                  Last occured error.
      */
     public static function getError()
@@ -92,7 +84,6 @@ class Constant
     /**
      * Set error.
      *
-     * @octdoc  m:constant/setError
      * @param   string      $name       Name of constant the error occured for.
      * @param   string      $msg        Additional error message.
      */
@@ -104,7 +95,6 @@ class Constant
     /**
      * Set a constant.
      *
-     * @octdoc  m:constant/setConstant
      * @param   string      $name       Name of constant to set.
      * @param   mixed       $value      Value of constant.
      */
@@ -122,7 +112,6 @@ class Constant
     /**
      * Set multiple constants.
      *
-     * @octdoc  m:constant/setConstants
      * @param   array       $constants  Key/value array defining constants.
      */
     public static function setConstants(array $constants)
@@ -135,7 +124,6 @@ class Constant
     /**
      * Return value of a constant. An error will be set if the requested constant is not defined.
      *
-     * @octdoc  m:constant/getConstant
      * @param   string      $name       Name of constant to return value of.
      * @return  mixed                   Value of constant.
      */
