@@ -86,37 +86,37 @@ class Grammar extends \Octris\Core\Parser\Grammar
         parent::__construct();
 
         // define tokens
-        $this->addToken(self::T_IF_OPEN,            '#if');
-        $this->addToken(self::T_IF_ELSE,            '#else');
-        $this->addToken(self::T_BLOCK_CLOSE,        '#end');
-        $this->addToken(self::T_BLOCK_OPEN,         '#[a-zA-Z][a-zA-Z0-9_]*(?=\()');
+        $this->addToken(self::T_IF_OPEN, '#if');
+        $this->addToken(self::T_IF_ELSE, '#else');
+        $this->addToken(self::T_BLOCK_CLOSE, '#end');
+        $this->addToken(self::T_BLOCK_OPEN, '#[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
-        $this->addToken(self::T_BRACE_OPEN,         '\(');
-        $this->addToken(self::T_BRACE_CLOSE,        '\)');
-        $this->addToken(self::T_PUNCT,              '\,');
+        $this->addToken(self::T_BRACE_OPEN, '\(');
+        $this->addToken(self::T_BRACE_CLOSE, '\)');
+        $this->addToken(self::T_PUNCT, '\,');
 
-        $this->addToken(self::T_DDUMP,              'ddump(?=\()');
-        $this->addToken(self::T_DPRINT,             'dprint(?=\()');
-        $this->addToken(self::T_ESCAPE,             'escape(?=\()');
-        $this->addToken(self::T_LET,                'let(?=\()');
-        $this->addToken(self::T_GETTEXT,            '(_|gettext)(?=\()');
-        $this->addToken(self::T_DGETTEXT,           '(_d|dgettext)(?=\()');
-        $this->addToken(self::T_METHOD,             '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
-        $this->addToken(self::T_MACRO,              '@[a-zA-Z][a-zA-Z0-9_]*(?=\()');
+        $this->addToken(self::T_DDUMP, 'ddump(?=\()');
+        $this->addToken(self::T_DPRINT, 'dprint(?=\()');
+        $this->addToken(self::T_ESCAPE, 'escape(?=\()');
+        $this->addToken(self::T_LET, 'let(?=\()');
+        $this->addToken(self::T_GETTEXT, '(_|gettext)(?=\()');
+        $this->addToken(self::T_DGETTEXT, '(_d|dgettext)(?=\()');
+        $this->addToken(self::T_METHOD, '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
+        $this->addToken(self::T_MACRO, '@[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
-        $this->addToken(self::T_BOOL,               '(true|false)');
-        $this->addToken(self::T_NULL,               'null');
-        $this->addToken(self::T_NUMBER,             '[+-]?[0-9]+(\.[0-9]+|)');
-        $this->addToken(self::T_STRING,             "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
+        $this->addToken(self::T_BOOL, '(true|false)');
+        $this->addToken(self::T_NULL, 'null');
+        $this->addToken(self::T_NUMBER, '[+-]?[0-9]+(\.[0-9]+|)');
+        $this->addToken(self::T_STRING, "(?:(?:\"(?:\\\\\"|[^\"])*\")|(?:\'(?:\\\\\'|[^\'])*\'))");
 
-        $this->addToken(self::T_VARIABLE,           '\$[a-zA-Z_][a-zA-Z0-9_]*(:\$?[a-zA-Z_][a-zA-Z0-9_]*|:[0-9]+|)+');
-        $this->addToken(self::T_CONSTANT,           '[A-Z_][A-Z0-9_]*');
+        $this->addToken(self::T_VARIABLE, '\$[a-zA-Z_][a-zA-Z0-9_]*(:\$?[a-zA-Z_][a-zA-Z0-9_]*|:[0-9]+|)+');
+        $this->addToken(self::T_CONSTANT, '[A-Z_][A-Z0-9_]*');
 
-        $this->addToken(self::T_ARRAY_OPEN,         '\[');
-        $this->addToken(self::T_ARRAY_CLOSE,        '\]');
-        $this->addToken(self::T_ARRAY_KEY,          '=>');
+        $this->addToken(self::T_ARRAY_OPEN, '\[');
+        $this->addToken(self::T_ARRAY_CLOSE, '\]');
+        $this->addToken(self::T_ARRAY_KEY, '=>');
 
-        $this->addToken(self::T_WHITESPACE,         '\s+');
+        $this->addToken(self::T_WHITESPACE, '\s+');
 
         // define grammar rules
         $this->addRule(self::T_START, ['$alternation' => [

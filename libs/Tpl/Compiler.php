@@ -488,10 +488,15 @@ class Compiler
                 sprintf(
                     'missing %s for %s',
                     grammar::T_BLOCK_CLOSE,
-                    implode(', ', array_map(function ($v) {
-                        return $v['value'];
-                    },
-                    array_reverse($blocks['analyzer'])))
+                    implode(
+                        ', ',
+                        array_map(
+                            function ($v) {
+                                return $v['value'];
+                            },
+                            array_reverse($blocks['analyzer'])
+                        )
+                    )
                 )
             );
         }
