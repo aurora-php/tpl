@@ -356,7 +356,7 @@ class Sandbox
 
                 while (true) {
                     if ($reset != ($tmp = yield)) {
-                        $pos = $start
+                        $pos = $start;
                         $reset = $tmp;
                     } else {
                         $pos = $pos % $steps;
