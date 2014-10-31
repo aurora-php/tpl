@@ -260,7 +260,9 @@ class Parser implements \Iterator
     {
         $return = array();
 
-        foreach ($tokens as $token) $return[] = $this->getTokenName($token);
+        foreach ($tokens as $token) {
+            $return[] = $this->getTokenName($token);
+        }
 
         return $return;
     }
@@ -295,7 +297,7 @@ class Parser implements \Iterator
      * @param   int         $token      ID of token that triggered the error.
      * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
      */
-    protected function error($type, $cline, $line, $token, $payload = NULL)
+    protected function error($type, $cline, $line, $token, $payload = null)
     {
         printf("\n** ERROR: %s(%d) **\n", $type, $cline);
         printf("   line :    %d\n", $line);

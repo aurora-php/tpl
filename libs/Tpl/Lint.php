@@ -48,7 +48,7 @@ class Lint extends \Octris\Core\Tpl\Compiler
      * @param   int         $token      ID of token that triggered the error.
      * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
      */
-    protected function error($ifile, $iline, $line, $token, $payload = NULL)
+    protected function error($ifile, $iline, $line, $token, $payload = null)
     {
         try {
             parent::error($ifile, $iline, $line, $token, $payload);

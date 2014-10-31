@@ -157,7 +157,9 @@ class Sandbox
      */
     public function setValues($array)
     {
-        foreach ($array as $k => $v) $this->setValue($k, $v);
+        foreach ($array as $k => $v) {
+            $this->setValue($k, $v);
+        }
     }
 
     /**
@@ -354,7 +356,8 @@ class Sandbox
 
                 while (true) {
                     if ($reset != ($tmp = yield)) {
-                        $pos = $start; $reset = $tmp;
+                        $pos = $start
+                        $reset = $tmp;
                     } else {
                         $pos = $pos % $steps;
                     }
@@ -386,7 +389,7 @@ class Sandbox
         $id = 'onchange:' . $id;
 
         if (!isset($this->meta[$id])) {
-            $this->meta[$id] = NULL;
+            $this->meta[$id] = null;
         }
 
         $return = ($this->meta[$id] !== $value);
@@ -423,7 +426,8 @@ class Sandbox
 
                 while (true) {
                     if ($reset != ($tmp = yield)) {
-                        $pos = 0; $reset = $tmp;
+                        $pos = 0;
+                        $reset = $tmp;
                     }
 
                     yield $array[$pos++];

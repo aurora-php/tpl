@@ -68,8 +68,12 @@ class Constant
      * Constructor and clone magic method are protected to prevent instantiating of class.
      *
      */
-    protected function __construct() {}
-    protected function __clone() {}
+    protected function __construct()
+    {
+    }
+    protected function __clone() 
+    {
+    }
     
     /**
      * Return last occured error.

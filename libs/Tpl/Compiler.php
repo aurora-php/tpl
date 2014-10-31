@@ -97,7 +97,9 @@ class Compiler
     public function addSearchPath($pathname)
     {
         if (is_array($pathname)) {
-            foreach ($pathname as $path) $this->addSearchPath($path);
+            foreach ($pathname as $path) {
+                $this->addSearchPath($path);
+            }
         } else {
             if (!in_array($pathname, $this->searchpath)) {
                 $this->searchpath[] = $pathname;
@@ -140,7 +142,7 @@ class Compiler
      * @param   mixed       $token      Token that triggered the error.
      * @param   mixed       $payload    Optional additional information. Either an array of expected token IDs or an additional message to output.
      */
-    protected function error($ifile, $iline, $line, $token, $payload = NULL)
+    protected function error($ifile, $iline, $line, $token, $payload = null)
     {
         if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
             fputs($this->errout, "<pre>");

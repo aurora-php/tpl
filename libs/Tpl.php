@@ -145,7 +145,9 @@ class Tpl
     public function addSearchPath($pathname)
     {
         if (is_array($pathname)) {
-            foreach ($pathname as $path) $this->addSearchPath($path);
+            foreach ($pathname as $path) {
+                $this->addSearchPath($path);
+            }
         } else {
             if (!in_array($pathname, $this->searchpath)) {
                 $this->searchpath[] = $pathname;
@@ -203,7 +205,11 @@ class Tpl
         $sandbox = $this->sandbox;
 
         $c = new Tpl\Compiler();
-        if (!is_null($this->l10n)) $c->setL10n($this->l10n);
+        
+        if (!is_null($this->l10n)) {
+            $c->setL10n($this->l10n);
+        }
+        
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($inp)) !== false) {

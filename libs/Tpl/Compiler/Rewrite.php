@@ -364,14 +364,20 @@ class Rewrite
                 'for (%s = 0; %s < abs(%s); ++%s) { ' .
                 'if (%s == 1) ob_start();',
                 $var1,
-                $var2, $var2, $args[0], $var2,
+                $var2, 
+                $var2, 
+                $args[0], $var2,
                 $var2
             ),
             sprintf(
                 '} %s = microtime(true) - %s; ' .
                 'if (abs(%s) > 0) ob_end_clean(); ' .
                 'printf("[benchmark iterations: %%s, time: %%1.6f]", abs(%s), %s);',
-                $var1, $var1, $args[0], $args[0], $var1
+                $var1, 
+                $var1, 
+                $args[0], 
+                $args[0], 
+                $var1
             )
         );
     }

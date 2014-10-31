@@ -221,8 +221,10 @@ class Html extends \Octris\Core\Tpl\Parser
                             __LINE__,
                             $state['line'],
                             $state['state'],
-                            sprintf('command with id "%s" is unknown',
-                            $state['payload'])
+                            sprintf(
+                                'command with id "%s" is unknown',
+                                $state['payload']
+                            )
                         );
                     }
 
