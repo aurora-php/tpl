@@ -211,7 +211,7 @@ class Html extends \Octris\Core\Tpl\Parser
                     if ($this->ignore_comments) {
                         continue(2);
                     }
-                    /** FALL THRU **/
+                    // FALL THRU
                 case self::T_CDATA_COMMAND:
                 case self::T_ATTR_COMMAND:
                 case self::T_COMMAND:
@@ -265,7 +265,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_COMMENT_CLOSE:
                 case self::T_TAG_END_CLOSE:
                     array_pop($this->escape);
-                    /** FALL THRU **/
+                    // FALL THRU
                 case self::T_TAG_END_OPEN:
                     $this->state = self::T_DATA;
                     continue(2);
@@ -315,7 +315,7 @@ class Html extends \Octris\Core\Tpl\Parser
 
     /** Helper methods for parser **/
 
-    protected function getNextState() 
+    protected function getNextState()
     {
         if (!isset(self::$rules[$this->state])) {
             $this->error(
