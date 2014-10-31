@@ -241,7 +241,10 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_TAG_NAME:
                     if (substr($state['payload'], 0, 3) == '_c_') {
                         $this->error(
-                            __FUNCTION__, __LINE__, $state['line'], $state['state'],
+                            __FUNCTION__,
+                            __LINE__,
+                            $state['line'],
+                            $state['state'],
                             'template command not allowed as tag-name'
                         );
                     } else {
@@ -280,7 +283,10 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_ATTR_START:
                     if (substr($state['payload'], 0, 3) == '_c_') {
                         $this->error(
-                            __FUNCTION__, __LINE__, $state['line'], $state['state'],
+                            __FUNCTION__,
+                            __LINE__,
+                            $state['line'],
+                            $state['state'],
                             'template command not allowed as attribute-name'
                         );
                     } else {
@@ -309,10 +315,14 @@ class Html extends \Octris\Core\Tpl\Parser
 
     /** Helper methods for parser **/
 
-    protected function getNextState() {
+    protected function getNextState() 
+    {
         if (!isset(self::$rules[$this->state])) {
             $this->error(
-                __FUNCTION__, __LINE__, $this->getLineNumber($this->offset), $this->state,
+                __FUNCTION__,
+                __LINE__,
+                $this->getLineNumber($this->offset),
+                $this->state,
                 'no rule for current token'
             );
         }
@@ -336,7 +346,9 @@ class Html extends \Octris\Core\Tpl\Parser
                         'line'      => $this->getLineNumber($m[0][1])
                     );
 
-                    if ($this->debug) $match['match'] = $m[0][0];
+                    if ($this->debug) {
+                        $match['match'] = $m[0][0];
+                    }
                 }
             }
         }

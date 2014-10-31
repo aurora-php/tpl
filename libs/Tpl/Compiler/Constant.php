@@ -71,7 +71,7 @@ class Constant
     protected function __construct()
     {
     }
-    protected function __clone() 
+    protected function __clone()
     {
     }
     

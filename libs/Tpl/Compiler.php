@@ -250,7 +250,9 @@ class Compiler
                         return $code;
                     }, '') . ']');
 
-                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    if (($tmp = array_pop($stack))) {
+                        $code = array_merge($tmp, $code);
+                    }
                     break;
                 case grammar::T_DGETTEXT:
                 case grammar::T_GETTEXT:
@@ -266,7 +268,9 @@ class Compiler
                         $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
 
-                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    if (($tmp = array_pop($stack))) {
+                        $code = array_merge($tmp, $code);
+                    }
                     break;
                 case grammar::T_DDUMP:
                 case grammar::T_DPRINT:
@@ -293,7 +297,9 @@ class Compiler
                         $this->error(__FILE__, __LINE__, $line, $token, $err);
                     }
 
-                    if (($tmp = array_pop($stack))) $code = array_merge($tmp, $code);
+                    if (($tmp = array_pop($stack))) {
+                        $code = array_merge($tmp, $code);
+                    }
                     break;
                 case grammar::T_ARRAY_OPEN:
                     $code[] = '[';
@@ -474,12 +480,20 @@ class Compiler
 
         if (count($blocks['analyzer']) > 0) {
             // all block-commands in a template have to be closed
-            $this->error(__FILE__, __LINE__, $parser->getTotalLines(), 0, sprintf('missing %s for %s',
-                grammar::T_BLOCK_CLOSE,
-                implode(', ', array_map(function ($v) {
-                    return $v['value'];
-                }, array_reverse($blocks['analyzer'])))
-            ));
+            $this->error(
+                __FILE__,
+                __LINE__,
+                $parser->getTotalLines(),
+                0,
+                sprintf(
+                    'missing %s for %s',
+                    grammar::T_BLOCK_CLOSE,
+                    implode(', ', array_map(function ($v) {
+                        return $v['value'];
+                    },
+                    array_reverse($blocks['analyzer'])))
+                )
+            );
         }
 
         $tpl = $parser->getTemplate();

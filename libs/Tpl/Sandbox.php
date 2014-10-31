@@ -362,7 +362,7 @@ class Sandbox
                         $pos = $pos % $steps;
                     }
 
-                    yield (($steps - 1) == $pos++);
+                    yield(($steps - 1) == $pos++);
                 }
             };
 
@@ -422,7 +422,8 @@ class Sandbox
             }
 
             $get_generator = function () use ($array, $reset) {
-                $pos = 0; $cnt = count($array);
+                $pos = 0;
+                $cnt = count($array);
 
                 while (true) {
                     if ($reset != ($tmp = yield)) {
@@ -432,7 +433,9 @@ class Sandbox
 
                     yield $array[$pos++];
 
-                    if ($pos >= $cnt) $pos = 0;
+                    if ($pos >= $cnt) {
+                        $pos = 0;
+                    }
                 }
             };
 

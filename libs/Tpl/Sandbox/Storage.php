@@ -37,8 +37,12 @@ class Storage
      * Private constructor, clone method, to make the class singleton.
      *
      */
-    private function __construct() {}
-    private function __clone() {}
+    private function __construct()
+    {
+    }
+    private function __clone()
+    {
+    }
     
     /**
      * Get instance of storage class.
