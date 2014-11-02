@@ -206,12 +206,12 @@ class Sandbox
      * Implementation for '#foreach' block function. Iterates over an array and repeats an enclosed
      * template block.
      *
-     * @param   \Octris\Core\Tpl\Sandbox\Eachiterator   $iterator       Iterator to use.
+     * @param   \Octris\Core\Tpl\Sandbox\EachIterator   $iterator       Iterator to use.
      * @param   mixed                                       $ctrl           Control variable is overwritten and used by this method.
      * @param   array                                       $meta           Optional variable for meta information storage.
      * @return  bool                                                        Returns 'true' as long as iterator did not reach end of array.
      */
-    public function each(\Octris\Core\Tpl\Sandbox\Eachiterator $iterator, &$ctrl, &$meta = null)
+    public function each(\Octris\Core\Tpl\Sandbox\EachIterator $iterator, &$ctrl, &$meta = null)
     {
         if (($return = $iterator->valid())) {
             $ctrl = $iterator->current();
