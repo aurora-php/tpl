@@ -442,7 +442,7 @@ class Rewrite
         return array(
             sprintf(
                 '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \Octris\Core\Tpl\Sandbox\Eachiterator(%s);' .
+                'return new \Octris\Core\Tpl\Sandbox\EachIterator(%s);' .
                 '}); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
                 $var,
@@ -477,7 +477,7 @@ class Rewrite
         return array(
             sprintf(
                 '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \Octris\Core\Tpl\Sandbox\Eachiterator(' .
+                'return new \Octris\Core\Tpl\Sandbox\EachIterator(' .
                 'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
                 '); }); ' .
                 'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
