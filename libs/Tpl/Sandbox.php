@@ -29,7 +29,7 @@ class Sandbox
     /**
      * Storage for sandbox internal data objects.
      *
-     * @type    \octris\core\tpl\sandbox\storage
+     * @type    \Octris\Core\Tpl\Sandbox\Storage
      */
     protected $storage;
 
@@ -64,14 +64,14 @@ class Sandbox
     /**
      * Instance of locale class.
      *
-     * @type    \octris\core\l10n
+     * @type    \Octris\Core\L10n
      */
     protected $l10n;
 
     /**
      * Instance of caching backend for template snippets.
      *
-     * @type    \octris\core\cache|null
+     * @type    \Octris\Core\Cache|null
      */
     protected $cache = null;
 
@@ -163,7 +163,7 @@ class Sandbox
 
     /**
      * Set value for one template variable. Note, that resources are not allowed as values.
-     * Values of type 'array' and 'object' will be casted to '\octris\core\type\collection'
+     * Values of type 'array' and 'object' will be casted to '\Octris\Core\Type\Collection\collection'
      * unless an 'object' implements the interface '\Traversable'. Traversable objects will
      * be used without casting.
      *

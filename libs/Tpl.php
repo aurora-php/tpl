@@ -36,7 +36,7 @@ class Tpl
     /**
      * Instance of sandbox for executing template in.
      *
-     * @type    \octris\core\tpl\sandbox
+     * @type    \Octris\Core\Tpl\Sandbox
      */
     protected $sandbox;
 
@@ -57,7 +57,7 @@ class Tpl
     /**
      * Instance of locale class.
      *
-     * @type    \octris\core\l10n
+     * @type    \Octris\Core\L10n
      */
     protected $l10n;
 

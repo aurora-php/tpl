@@ -24,7 +24,7 @@ class Compiler
     /**
      * Instance of parser class.
      *
-     * @type    \octris\core\parser|null
+     * @type    \Octris\Core\Parser|null
      */
     protected static $parser = null;
 
@@ -52,7 +52,7 @@ class Compiler
     /**
      * Instance of locale class.
      *
-     * @type    \octris\core\l10n
+     * @type    \Octris\Core\L10n
      */
     protected $l10n;
 

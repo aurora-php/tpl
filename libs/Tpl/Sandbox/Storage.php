@@ -29,7 +29,7 @@ class Storage
     /**
      * Instance of storage class.
      *
-     * @type    \octris\core\tpl\sandbox\storage|null
+     * @type    \Octris\Core\Tpl\Sandbox\Storage|null
      */
     private static $instance = null;
 
@@ -46,7 +46,7 @@ class Storage
     /**
      * Get instance of storage class.
      *
-     * @return  \octris\core\tpl\sandbox\storage                Instance of storage class.
+     * @return  \Octris\Core\Tpl\Sandbox\Storage                Instance of storage class.
      */
     public static function getInstance()
     {
