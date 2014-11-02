@@ -25,59 +25,58 @@ class Sandbox
      * @type    array
      */
     public $data = array();
-    
+
     /**
      * Storage for sandbox internal data objects.
      *
      * @type    \octris\core\tpl\sandbox\storage
      */
     protected $storage;
-    
+
     /**
      * Internal storage for meta data required for block functions.
      *
      * @type    array
      */
     protected $meta = array();
-    
+
     /**
      * Internal storage for cut/copied buffers.
      *
      * @type    array
      */
     protected $pastebin = array();
-    
+
     /**
      * Function registry.
      *
      * @type    array
      */
     protected $registry = array();
-    
+
     /**
      * Name of file that is rendered by the sandbox instance.
      *
      * @type    string
      */
     protected $filename = '';
-    
+
     /**
      * Instance of locale class.
      *
      * @type    \octris\core\l10n
      */
     protected $l10n;
-    
+
     /**
      * Instance of caching backend for template snippets.
      *
      * @type    \octris\core\cache|null
      */
     protected $cache = null;
-    
+
     /**
      * Constructor
-     *
      */
     public function __construct()
     {
@@ -253,7 +252,6 @@ class Sandbox
 
     /**
      * Stop output buffer.
-     *
      */
     public function bufferEnd()
     {

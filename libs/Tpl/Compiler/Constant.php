@@ -56,17 +56,16 @@ class Constant
         'CASE_UPPER_FIRST'       => \Octris\Core\Type\String::T_CASE_UPPER_FIRST,
         'CASE_LOWER_FIRST'       => \Octris\Core\Type\String::T_CASE_LOWER_FIRST,
     );
-    
+
     /**
      * Last occured error.
      *
      * @type    string
      */
     protected static $last_error = '';
-    
+
     /**
      * Constructor and clone magic method are protected to prevent instantiating of class.
-     *
      */
     protected function __construct()
     {
@@ -74,7 +73,7 @@ class Constant
     protected function __clone()
     {
     }
-    
+
     /**
      * Return last occured error.
      *

@@ -25,17 +25,16 @@ class Storage
      * @type    array
      */
     private $init = array();
-    
+
     /**
      * Instance of storage class.
      *
      * @type    \octris\core\tpl\sandbox\storage|null
      */
     private static $instance = null;
-    
+
     /**
      * Private constructor, clone method, to make the class singleton.
-     *
      */
     private function __construct()
     {
@@ -43,7 +42,7 @@ class Storage
     private function __clone()
     {
     }
-    
+
     /**
      * Get instance of storage class.
      *

@@ -106,7 +106,7 @@ class Rewrite
         'quant'     => array('min' => 2, 'max' => 4),
         'yesno'     => array('min' => 2, 'max' => 3),
     );
-    
+
     /**
      * Allowed PHP functions and optional mapping to an PHP or framework internal name.
      *
@@ -150,7 +150,7 @@ class Rewrite
         'jsonencode' => array('min' => 1, 'max' => 2, 'map' => 'json_encode'),
         'jsondecode' => array('min' => 1, 'max' => 4, 'map' => 'json_decode'),
     );
-    
+
     /**
      * Forbidden function names.
      *
@@ -160,17 +160,16 @@ class Rewrite
         'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
         '__construct', '__call', 'registermethod', 'render', 'write'
     );
-    
+
     /**
      * Last error occured.
      *
      * @type    string
      */
     protected static $last_error = '';
-    
+
     /**
      * Constructor and clone magic method are protected to prevent instantiating of class.
-     *
      */
     protected function __construct()
     {
@@ -178,7 +177,7 @@ class Rewrite
     protected function __clone()
     {
     }
-    
+
     /**
      * Return last occured error.
      *

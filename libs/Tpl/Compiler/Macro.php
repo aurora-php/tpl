@@ -25,17 +25,16 @@ class Macro
      * @type    array
      */
     protected static $registry = array();
-    
+
     /**
      * Last error occured.
      *
      * @type    string
      */
     protected static $last_error = '';
-    
+
     /**
      * Constructor and clone magic method are protected to prevent instantiating of class.
-     *
      */
     protected function __construct()
     {
@@ -43,7 +42,7 @@ class Macro
     protected function __clone()
     {
     }
-    
+
     /**
      * Return last occured error.
      *

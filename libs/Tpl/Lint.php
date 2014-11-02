@@ -25,10 +25,9 @@ class Lint extends \Octris\Core\Tpl\Compiler
      * @type    int
      */
     protected $errors = 0;
-    
+
     /**
      * Constructor.
-     *
      */
     public function __construct()
     {

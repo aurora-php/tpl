@@ -27,38 +27,37 @@ class Compiler
      * @type    \octris\core\parser|null
      */
     protected static $parser = null;
-    
+
     /**
      * File handle for error messages output.
      *
      * @type    resource
      */
     protected $errout = null;
-    
+
     /**
      * Name of file currently compiled.
      *
      * @type    string
      */
     protected $filename = '';
-    
+
     /**
      * Stores pathes to look into when searching for template to load.
      *
      * @type    array
      */
     protected $searchpath = array();
-    
+
     /**
      * Instance of locale class.
      *
      * @type    \octris\core\l10n
      */
     protected $l10n;
-    
+
     /**
      * Constructor.
-     *
      */
     public function __construct()
     {

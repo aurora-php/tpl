@@ -21,7 +21,6 @@ class Html extends \Octris\Core\Tpl\Parser
 {
     /**
      * Parser states.
-     *
      */
     const T_DATA            = 1;
     const T_COMMAND         = 2;
@@ -43,7 +42,7 @@ class Html extends \Octris\Core\Tpl\Parser
     const T_CDATA_OPEN      = 40;
     const T_CDATA_CLOSE     = 41;
     const T_CDATA_COMMAND   = 42;
-    
+
     /**
      * Parser patterns
      *
@@ -68,7 +67,7 @@ class Html extends \Octris\Core\Tpl\Parser
 
         self::T_COMMAND         => '/(_c_[a-f0-9]+_)/',
     );
-    
+
     /**
      * Parser rules.
      *
@@ -131,7 +130,7 @@ class Html extends \Octris\Core\Tpl\Parser
             self::T_CDATA_CLOSE
         )
     );
-    
+
     /**
      * Attributes and their relevant context information.
      *
@@ -149,28 +148,28 @@ class Html extends \Octris\Core\Tpl\Parser
             'href', 'longdesc', 'profile', 'src', 'usemap'
         )
     );
-    
+
     /**
      * Current state of parser in document.
      *
      * @type    int
      */
     protected $state = self::T_DATA;
-    
+
     /**
      * Stack for escaping modes.
      *
      * @type    array
      */
     protected $escape = array(\Octris\Core\Tpl::T_ESC_HTML);
-    
+
     /**
      * Array for storing normalized template commands.
      *
      * @type    array
      */
     protected $commands = array();
-    
+
     /**
      * Constructor.
      *
@@ -186,7 +185,6 @@ class Html extends \Octris\Core\Tpl\Parser
 
     /**
      * Set offset to 0 to parse template again.
-     *
      */
     public function rewind()
     {
@@ -198,7 +196,6 @@ class Html extends \Octris\Core\Tpl\Parser
 
     /**
      * This methods parses the template until a template command is reached. The template command is than evailable as iterator item.
-     *
      */
     public function next()
     {

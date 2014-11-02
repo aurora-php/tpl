@@ -23,7 +23,6 @@ class Tpl
 {
     /**
      * Escape types.
-     *
      */
     const T_ESC_NONE = '';
     const T_ESC_AUTO = 'auto';
@@ -33,35 +32,35 @@ class Tpl
     const T_ESC_JS   = 'js';
     const T_ESC_TAG  = 'tag';
     const T_ESC_URI  = 'uri';
-    
+
     /**
      * Instance of sandbox for executing template in.
      *
      * @type    \octris\core\tpl\sandbox
      */
     protected $sandbox;
-    
+
     /**
      * Whether to fetch compiled template from cache.
      *
      * @type    bool
      */
     protected $use_cache = false;
-    
+
     /**
      * Stores pathes to look into when searching for template to load.
      *
      * @type    array
      */
     protected $searchpath = array();
-    
+
     /**
      * Instance of locale class.
      *
      * @type    \octris\core\l10n
      */
     protected $l10n;
-    
+
     /**
      * Output path for various file types.
      *
@@ -72,7 +71,7 @@ class Tpl
         'js'    => '/tmp',      // output path for compressed javascript
         'css'   => '/tmp'       // output path for compressed css
     );
-    
+
     /**
      * Resource pathes for various file types.
      *
@@ -83,10 +82,9 @@ class Tpl
         'js'    => '',
         'css'   => ''
     );
-    
+
     /**
      * Constructor.
-     *
      */
     public function __construct()
     {
@@ -205,11 +203,11 @@ class Tpl
         $sandbox = $this->sandbox;
 
         $c = new Tpl\Compiler();
-        
+
         if (!is_null($this->l10n)) {
             $c->setL10n($this->l10n);
         }
-        
+
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($inp)) !== false) {
