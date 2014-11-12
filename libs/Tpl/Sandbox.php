@@ -274,7 +274,7 @@ class Sandbox
      * @param   string      $escape         Optional escaping to use for output.
      * @return  bool                        Returns true, if key was available in cache.
      */
-    public function cacheLookup($key, $escape = \Octris\Core\Tpl::T_ESC_NONE)
+    public function cacheLookup($key, $escape = \Octris\Core\Tpl::ESC_NONE)
     {
         if (!($return = is_null($this->cache))) {
             if (($return = $this->cache->exists($key))) {
@@ -457,22 +457,22 @@ class Sandbox
     public function escape($val, $escape)
     {
         switch ($escape) {
-            case \Octris\Core\Tpl::T_ESC_ATTR:
+            case \Octris\Core\Tpl::ESC_ATTR:
                 $val = \Octris\Core\Tpl\Escape::escapeAttributeValue($val);
                 break;
-            case \Octris\Core\Tpl::T_ESC_CSS:
+            case \Octris\Core\Tpl::ESC_CSS:
                 $val = \Octris\Core\Tpl\Escape::escapeCss($val);
                 break;
-            case \Octris\Core\Tpl::T_ESC_HTML:
+            case \Octris\Core\Tpl::ESC_HTML:
                 $val = \Octris\Core\Tpl\Escape::escapeHtml($val);
                 break;
-            case \Octris\Core\Tpl::T_ESC_JS:
+            case \Octris\Core\Tpl::ESC_JS:
                 $val = \Octris\Core\Tpl\Escape::escapeJavascript($val);
                 break;
-            case \Octris\Core\Tpl::T_ESC_TAG:
+            case \Octris\Core\Tpl::ESC_TAG:
                 $val = \Octris\Core\Tpl\Escape::escapeAttribute($val);
                 break;
-            case \Octris\Core\Tpl::T_ESC_URI:
+            case \Octris\Core\Tpl::ESC_URI:
                 $val = \Octris\Core\Tpl\Escape::escapeUri($val);
                 break;
         }
@@ -488,7 +488,7 @@ class Sandbox
      */
     public function write($val = '', $escape = '')
     {
-        if ($escape !== \Octris\Core\Tpl::T_ESC_NONE) {
+        if ($escape !== \Octris\Core\Tpl::ESC_NONE) {
             $val = $this->escape($val, $escape);
         }
 
