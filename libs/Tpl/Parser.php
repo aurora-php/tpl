@@ -22,8 +22,8 @@ class Parser implements \Iterator
     /**
      * Option flags.
      */
-    const T_DEBUG           = 1;    // for switching on debug mode
-    const T_IGNORE_COMMENTS = 2;    // for ignoring commands in comments
+    const DEBUG           = 1;    // for switching on debug mode
+    const IGNORE_COMMENTS = 2;    // for ignoring commands in comments
 
     /**
      * RegExp pattern for matching template snippets.
@@ -130,8 +130,8 @@ class Parser implements \Iterator
         $this->filename = $filename;
 
         // option flags
-        $this->debug           = (($flags & self::T_DEBUG) === self::T_DEBUG);
-        $this->ignore_comments = (($flags & self::T_IGNORE_COMMENTS) === self::T_IGNORE_COMMENTS);
+        $this->debug           = (($flags & self::DEBUG) === self::DEBUG);
+        $this->ignore_comments = (($flags & self::IGNORE_COMMENTS) === self::IGNORE_COMMENTS);
     }
 
     /** Implementation of methods required for Iterator interface **/
