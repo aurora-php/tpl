@@ -459,7 +459,7 @@ class Compiler
     {
         $blocks = array('analyzer' => array(), 'compiler' => array());
 
-        if ($escape == \Octris\Core\Tpl::T_ESC_HTML) {
+        if ($escape == \Octris\Core\Tpl::ESC_HTML) {
             // parser for auto-escaping turned on
             $parser = new \Octris\Core\Tpl\Parser\Html($this->filename);
         } else {
@@ -516,18 +516,18 @@ class Compiler
     {
         $this->filename = $filename;
 
-        if ($escape == \Octris\Core\Tpl::T_ESC_AUTO) {
+        if ($escape == \Octris\Core\Tpl::ESC_AUTO) {
             // auto-escaping, try to determine escaping from file extension
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
             if ($ext == 'html' || $ext == 'htm') {
-                $escape = \Octris\Core\Tpl::T_ESC_HTML;
+                $escape = \Octris\Core\Tpl::ESC_HTML;
             } elseif ($ext == 'css') {
-                $escape = \Octris\Core\Tpl::T_ESC_CSS;
+                $escape = \Octris\Core\Tpl::ESC_CSS;
             } elseif ($ext == 'js') {
-                $escape = \Octris\Core\Tpl::T_ESC_JS;
+                $escape = \Octris\Core\Tpl::ESC_JS;
             } else {
-                $escape = \Octris\Core\Tpl::T_ESC_NONE;
+                $escape = \Octris\Core\Tpl::ESC_NONE;
             }
         }
 

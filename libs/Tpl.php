@@ -24,14 +24,14 @@ class Tpl
     /**
      * Escape types.
      */
-    const T_ESC_NONE = '';
-    const T_ESC_AUTO = 'auto';
-    const T_ESC_ATTR = 'attr';
-    const T_ESC_CSS  = 'css';
-    const T_ESC_HTML = 'html';
-    const T_ESC_JS   = 'js';
-    const T_ESC_TAG  = 'tag';
-    const T_ESC_URI  = 'uri';
+    const ESC_NONE = '';
+    const ESC_AUTO = 'auto';
+    const ESC_ATTR = 'attr';
+    const ESC_CSS  = 'css';
+    const ESC_HTML = 'html';
+    const ESC_JS   = 'js';
+    const ESC_TAG  = 'tag';
+    const ESC_URI  = 'uri';
 
     /**
      * Instance of sandbox for executing template in.
@@ -235,7 +235,7 @@ class Tpl
      * @param   string      $escape         Optional escaping to use.
      * @return  string                      Compiled template.
      */
-    public function compile($filename, $escape = self::T_ESC_HTML)
+    public function compile($filename, $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
         $tpl = '';
@@ -265,7 +265,7 @@ class Tpl
      * @param   string      $filename       Filename of template to render.
      * @param   string      $escape         Optional escaping to use.
      */
-    public function render($filename, $escape = self::T_ESC_HTML)
+    public function render($filename, $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
         $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
@@ -286,7 +286,7 @@ class Tpl
      * @param   string      $escape         Optional escaping to use.
      * @return  string                      Rendered template.
      */
-    public function fetch($filename, $escape = self::T_ESC_HTML)
+    public function fetch($filename, $escape = self::ESC_HTML)
     {
         ob_start();
 
@@ -305,7 +305,7 @@ class Tpl
      * @param   string      $filename       Filename of template to render.
      * @param   string      $escape         Optional escaping to use.
      */
-    public function save($savename, $filename, $escape = self::T_ESC_HTML)
+    public function save($savename, $filename, $escape = self::ESC_HTML)
     {
         file_put_contents($savename, $this->fetch($filename, $escape));
     }

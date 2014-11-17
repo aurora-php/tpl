@@ -161,7 +161,7 @@ class Html extends \Octris\Core\Tpl\Parser
      *
      * @type    array
      */
-    protected $escape = array(\Octris\Core\Tpl::T_ESC_HTML);
+    protected $escape = array(\Octris\Core\Tpl::ESC_HTML);
 
     /**
      * Array for storing normalized template commands.
@@ -247,13 +247,13 @@ class Html extends \Octris\Core\Tpl\Parser
                     } else {
                         switch (strtolower($state['payload'])) {
                             case 'script':
-                                array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
+                                array_push($this->escape, \Octris\Core\Tpl::ESC_JS);
                                 break;
                             case 'style':
-                                array_push($this->escape, \Octris\Core\Tpl::T_ESC_CSS);
+                                array_push($this->escape, \Octris\Core\Tpl::ESC_CSS);
                                 break;
                             default:
-                                array_push($this->escape, \Octris\Core\Tpl::T_ESC_HTML);
+                                array_push($this->escape, \Octris\Core\Tpl::ESC_HTML);
                                 break;
                         }
                     }
@@ -268,8 +268,8 @@ class Html extends \Octris\Core\Tpl\Parser
                     continue(2);
                 case self::T_TAG_CLOSE:
                     if (count($this->escape) == 1) {
-                        if ($this->escape[0] != \Octris\Core\Tpl::T_ESC_HTML) {
-                            $this->escape[0] = \Octris\Core\Tpl::T_ESC_HTML;
+                        if ($this->escape[0] != \Octris\Core\Tpl::ESC_HTML) {
+                            $this->escape[0] = \Octris\Core\Tpl::ESC_HTML;
                         }
                     } else {
                         array_pop($this->escape);
@@ -290,11 +290,11 @@ class Html extends \Octris\Core\Tpl\Parser
                         $name = strtolower($state['payload']);
 
                         if (in_array($name, self::$attributes['js'])) {
-                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_JS);
+                            array_push($this->escape, \Octris\Core\Tpl::ESC_JS);
                         } elseif (in_array($name, self::$attributes['uri'])) {
-                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_URI);
+                            array_push($this->escape, \Octris\Core\Tpl::ESC_URI);
                         } else {
-                            array_push($this->escape, \Octris\Core\Tpl::T_ESC_ATTR);
+                            array_push($this->escape, \Octris\Core\Tpl::ESC_ATTR);
                         }
                     }
                     break;

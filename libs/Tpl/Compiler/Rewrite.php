@@ -391,7 +391,7 @@ class Rewrite
         $var = '$_' . self::getUniqId();
         $key = $args[0];
         $ttl = $args[1];
-        $esc = (isset($args[2]) ? $args[2] : \Octris\Core\Tpl::T_ESC_NONE);
+        $esc = (isset($args[2]) ? $args[2] : \Octris\Core\Tpl::ESC_NONE);
 
         return array(
             sprintf(
