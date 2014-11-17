@@ -49,6 +49,9 @@ class Html extends \Octris\Core\Tpl\Parser
      * @type    array
      */
     protected static $patterns = array(
+        self::T_COMMENT_OPEN    => '/<!--/',
+        self::T_COMMENT_CLOSE   => '/-->/',
+
         self::T_TAG_START       => '/</',
         self::T_TAG_END_OPEN    => '/\s*>/',
         self::T_TAG_END_CLOSE   => '/\s*\/>/',
@@ -58,9 +61,6 @@ class Html extends \Octris\Core\Tpl\Parser
         self::T_ATTR_START      => '/(?<=\s)(_c_[a-f0-9]+_|(?i:[a-z:_][a-z:_.-]*))=\"/',
         self::T_ATTR_END        => '/(?!\\\\)\"/',
         self::T_ATTR_COMMAND    => '/(_c_[a-f0-9]+_)/',
-
-        self::T_COMMENT_OPEN    => '/<!--/',
-        self::T_COMMENT_CLOSE   => '/-->/',
 
         self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
         self::T_CDATA_CLOSE     => '/\]\]>/',
@@ -233,6 +233,9 @@ class Html extends \Octris\Core\Tpl\Parser
                         'length'  => $state['length']
                     );
                     break(2);
+                case self::T_COMMENT_OPEN:
+                    array_push($this->escape, \Octris\Core\Tpl::ESC_HTMLCOMMENT);
+                    break;
                 case self::T_TAG_START:
                     break;
                 case self::T_TAG_NAME:

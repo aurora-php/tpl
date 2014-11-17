@@ -24,14 +24,15 @@ class Tpl
     /**
      * Escape types.
      */
-    const ESC_NONE = '';
-    const ESC_AUTO = 'auto';
-    const ESC_ATTR = 'attr';
-    const ESC_CSS  = 'css';
-    const ESC_HTML = 'html';
-    const ESC_JS   = 'js';
-    const ESC_TAG  = 'tag';
-    const ESC_URI  = 'uri';
+    const ESC_NONE        = '';
+    const ESC_AUTO        = 'auto';
+    const ESC_ATTR        = 'attr';
+    const ESC_CSS         = 'css';
+    const ESC_HTML        = 'html';
+    const ESC_HTMLCOMMENT = 'htmlcomment';
+    const ESC_JS          = 'js';
+    const ESC_TAG         = 'tag';
+    const ESC_URI         = 'uri';
 
     /**
      * Instance of sandbox for executing template in.
