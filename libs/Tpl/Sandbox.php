@@ -523,4 +523,26 @@ class Sandbox
             $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
         }
     }
+
+    /**
+     * Render a template and return the output.
+     *
+     * @param   string      $filename       Filename of template to render.
+     * @return  string                      Rendered template.
+     */
+    public function fetch($filename)
+    {
+        try {
+            ob_start();
+
+            require($filename);
+
+            $content = ob_get_contents();
+            ob_end_clean();
+        } catch (\Exception $e) {
+            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
+        }
+
+        return $content;
+    }
 }
