@@ -261,6 +261,22 @@ class Tpl
     }
 
     /**
+     * Check if a template exists.
+     * 
+     * @param   string      $filename       Filename of template to check.
+     * @return  bool                        Returns true if template exists.
+     */
+    public function templateExists($filename)
+    {
+        $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
+
+        $c = new Tpl\Compiler();
+        $c->addSearchPath($this->searchpath);
+
+        return (($filename = $c->findFile($inp)) !== false);
+    }
+
+    /**
      * Render a template and send output to stdout.
      *
      * @param   string      $filename       Filename of template to render.
