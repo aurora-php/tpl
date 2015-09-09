@@ -144,3 +144,10 @@ macro::registerMacro(
     },
     array('min' => 0, 'max' => 0)
 );
+macro::registerMacro(
+    'date',
+    function ($args, array $options = array()) {
+        return strftime('%Y-%m-%d %H:%M:%S');
+    },
+    array('min' => 0, 'max' => 0)
+);
