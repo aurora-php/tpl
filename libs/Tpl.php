@@ -250,7 +250,7 @@ class Tpl
     }
 
     /**
-     * Compile template and return compiled template as string.
+     * Compile template.
      *
      * @param   string      $filename       Name of template file to compile.
      * @param   string      $escape         Optional escaping to use.
@@ -259,25 +259,9 @@ class Tpl
     public function compile($filename, $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
-        $tpl = '';
+        $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
 
-        $sandbox = $this->sandbox;
-
-        $c = new Tpl\Compiler();
-        $c->setL10n($this->l10n);
-        $c->addSearchPath($this->searchpath);
-
-        if (($filename = $c->findFile($inp)) !== false) {
-            $tpl = $c->process($filename, $escape);
-        } else {
-            die(sprintf(
-                'unable to locate file "%s" in "%s"',
-                $inp,
-                implode(':', $this->searchpath)
-            ));
-        }
-
-        return $tpl;
+        $out = $this->process($inp, $out, $escape);
     }
 
     /**
