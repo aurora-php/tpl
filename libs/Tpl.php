@@ -201,8 +201,6 @@ class Tpl
     protected function process($inp, $out, $escape)
     {
         // Tpl\Compiler\Constant::setConstants($this->constants);
-        $sandbox = $this->sandbox;
-
         $c = new Tpl\Compiler();
 
         if (!is_null($this->l10n)) {
@@ -262,7 +260,7 @@ class Tpl
 
     /**
      * Check if a template exists.
-     * 
+     *
      * @param   string      $filename       Filename of template to check.
      * @return  bool                        Returns true if template exists.
      */
