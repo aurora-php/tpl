@@ -16,7 +16,7 @@ use \Octris\Core\Tpl\Compiler as compiler;
 /**
  * Main class of template engine.
  *
- * @copyright   copyright (c) 2010-2014 by Harald Lapp
+ * @copyright   copyright (c) 2010-2015 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Tpl
@@ -247,6 +247,36 @@ class Tpl
         }
 
         return $out;
+    }
+
+    /**
+     * Lint template.
+     *
+     * @param   string      $filename       Name of template file to compile.
+     * @param   string      $escape         Optional escaping to use.
+     */
+    public function lint($filename, $escape = self::ESC_HTML)
+    {
+        $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
+
+        // Tpl\Compiler\Constant::setConstants($this->constants);
+        $c = new Tpl\Lint();
+
+        if (!is_null($this->l10n)) {
+            $c->setL10n($this->l10n);
+        }
+
+        $c->addSearchPath($this->searchpath);
+
+        if (($filename = $c->findFile($inp)) !== false) {
+            $tpl = $c->process($filename, $escape);
+        } else {
+            die(sprintf(
+                'unable to locate file "%s" in "%s"',
+                $inp,
+                implode(':', $this->searchpath)
+            ));
+        }
     }
 
     /**
