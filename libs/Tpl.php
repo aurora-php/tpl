@@ -155,6 +155,28 @@ class Tpl
     }
 
     /**
+     * Returns iterator for iterating over all templates in all search pathes.
+     *
+     * @return  \ArrayIterator                                  Instance of ArrayIterator.
+     */
+    public function getTemplatesIterator()
+    {
+        foreach ($this->searchpath as $path) {
+            $len = strlen($path);
+
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $filename => $cur) {
+                $rel = substr($filename, $len);
+
+                yield $rel => $cur;
+            }
+        }
+    }
+
+    /**
      * Set path for a resource like stylesheets, images according to the
      * specified extension.
      *
