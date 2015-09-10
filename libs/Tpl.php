@@ -254,7 +254,6 @@ class Tpl
      *
      * @param   string      $filename       Name of template file to compile.
      * @param   string      $escape         Optional escaping to use.
-     * @return  string                      Compiled template.
      */
     public function compile($filename, $escape = self::ESC_HTML)
     {
