@@ -316,6 +316,26 @@ class Compiler
                 case grammar::T_MACRO:
                     // resolve macro
                     $value = strtolower(substr($value, 1));
+
+                    array_walk($code, function(&$value) {
+                        // normalize values for macro argument
+                        if (preg_match('/^("|\')(.*)\1$/', $value, $match)) {
+                            $value = $match[2];
+                        } elseif ($value == 'true') {
+                            $value = true;
+                        } elseif ($value == 'false') {
+                            $value = false;
+                        } elseif ($value == 'null') {
+                            $value = null;
+                        } elseif (is_numeric($value)) {
+                            if (strpos($value, '.') !== false) {
+                                $value = (double)$value;
+                            } else {
+                                $value = (int)$value;
+                            }
+                        }
+                    });
+
                     $code  = array(
                         Compiler\Macro::execMacro(
                             $value,
