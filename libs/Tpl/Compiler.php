@@ -316,11 +316,10 @@ class Compiler
                 case grammar::T_MACRO:
                     // resolve macro
                     $value = strtolower(substr($value, 1));
-                    $file  = substr($code[0], 1, -1);
                     $code  = array(
                         Compiler\Macro::execMacro(
                             $value,
-                            array($file),
+                            array_reverse($code),
                             array('compiler' => $this, 'escape' => $escape)
                         )
                     );
