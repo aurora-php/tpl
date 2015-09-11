@@ -107,6 +107,16 @@ class Compiler
     }
 
     /**
+     * Return list of search pathes.
+     *
+     * @return  array                       Search pathes.
+     */
+    public function getSearchPath()
+    {
+        return $this->searchpath;
+    }
+
+    /**
      * Lookup a template file in the configured searchpathes.
      *
      * @param   string      $filename       Name of file to lookup.
