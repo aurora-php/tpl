@@ -150,7 +150,7 @@ class Grammar extends \Octris\Core\Parser\Grammar
         $this->addRule(self::T_MACRO_PARAMETER, ['$alternation' => [
             self::T_CONSTANT, self::T_VALUE
         ]]);
-        $this->addRule(self::T_MACRO_PARAMETER_LIST, ['$alternation' => [
+        $this->addRule(self::T_MACRO_PARAMETER_LIST, ['$option' => [
             ['$concatenation' => [
                 self::T_MACRO_PARAMETER,
                 ['$repeat' => [
