@@ -140,7 +140,7 @@ macro::registerMacro(
 macro::registerMacro(
     'uniqid',
     function ($args, array $options = array()) {
-        return array(uniqid(mt_rand(), '');
+        return array(uniqid(mt_rand()), '');
     },
     array('min' => 0, 'max' => 0)
 );
