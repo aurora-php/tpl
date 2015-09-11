@@ -129,7 +129,7 @@ macro::registerMacro(
             $err = sprintf(
                 'unable to locate file "%s" in "%s"',
                 $args[0],
-                implode(':', \Octris\Core\Tpl\Compiler\Searchpath::getPath())
+                implode(':', $c->getSearchPath())
             );
         }
 
