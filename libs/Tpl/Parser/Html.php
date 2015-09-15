@@ -64,8 +64,10 @@ class Html extends \Octris\Core\Tpl\Parser
 
         self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
         self::T_CDATA_CLOSE     => '/\]\]>/',
+        self::T_CDATA_COMMAND   => '/(_c_[a-f0-9]+_)/',
 
         self::T_COMMAND         => '/(_c_[a-f0-9]+_)/',
+        self::T_COMMENT_COMMAND => '/(_c_[a-f0-9]+_)/'
     );
 
     /**
