@@ -77,10 +77,10 @@ class Html extends \Octris\Core\Tpl\Parser
      */
     protected static $rules = array(
         self::T_DATA            => array(
-            self::T_TAG_START,
-            self::T_COMMAND,
             self::T_COMMENT_OPEN,
-            self::T_CDATA_OPEN
+            self::T_CDATA_OPEN,
+            self::T_TAG_START,
+            self::T_COMMAND
         ),
 
         self::T_TAG_START       => array(
