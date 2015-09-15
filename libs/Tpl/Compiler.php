@@ -430,12 +430,12 @@ class Compiler
         $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks) {
             // closing block only allowed is a block is open
             if (!(array_pop($blocks['analyzer']))) {
-                $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
+                $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'there is no open block');
             }
         });
         $grammar->addEvent(grammar::T_IF_ELSE, function ($current) use (&$blocks) {
             if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
-                $this->error(__FILE__, __LINE__, $line, $token, 'only allowed inside an "if" block');
+                $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'only allowed inside an "if" block');
             } else {
                 $blocks['analyzer'][$cnt - 1]['token'] = grammar::T_IF_ELSE;
             }
