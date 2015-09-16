@@ -503,7 +503,7 @@ class Compiler
         foreach ($parser as $command) {
             $snippet = $this->toolchain($command['snippet'], $command['line'], $blocks, $command['escape']);
 
-            $parser->replaceSnippet($snippet);
+            $parser->replaceSnippet($snippet, true);
         }
 
         if (count($blocks['analyzer']) > 0) {
