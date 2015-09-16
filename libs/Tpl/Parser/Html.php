@@ -216,7 +216,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_COMMAND:
                     if (!isset($this->commands[$state['payload']])) {
                         $this->error(
-                            __FUNCTION__,
+                            __FILE__,
                             __LINE__,
                             $state['line'],
                             $state['state'],
@@ -243,7 +243,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_TAG_NAME:
                     if (substr($state['payload'], 0, 3) == '_c_') {
                         $this->error(
-                            __FUNCTION__,
+                            __FILE__,
                             __LINE__,
                             $state['line'],
                             $state['state'],
@@ -285,7 +285,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_ATTR_START:
                     if (substr($state['payload'], 0, 3) == '_c_') {
                         $this->error(
-                            __FUNCTION__,
+                            __FILE__,
                             __LINE__,
                             $state['line'],
                             $state['state'],
@@ -321,7 +321,7 @@ class Html extends \Octris\Core\Tpl\Parser
     {
         if (!isset(self::$rules[$this->state])) {
             $this->error(
-                __FUNCTION__,
+                __FILE__,
                 __LINE__,
                 $this->getLineNumber($this->offset),
                 $this->state,
