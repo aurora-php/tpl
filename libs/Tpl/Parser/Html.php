@@ -381,7 +381,7 @@ class Html extends \Octris\Core\Tpl\Parser
     protected function prepare($tpl)
     {
         $tpl = parent::prepare($tpl);
-        $tpl = preg_replace_callback('/\{\{(.*?)\}\}/', function ($m) {
+        $tpl = preg_replace_callback('/' . self::$snippet_pattern . '/', function ($m) {
             $id = '_c_' . uniqid() . '_';
             $this->commands[$id] = $m[1];
 
