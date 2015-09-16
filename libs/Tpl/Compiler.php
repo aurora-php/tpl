@@ -428,7 +428,7 @@ class Compiler
             $blocks['analyzer'][] = $current;
         });
         $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks) {
-            // closing block only allowed is a block is open
+            // closing block only allowed if a block is open
             if (!(array_pop($blocks['analyzer']))) {
                 $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'there is no open block');
             }
