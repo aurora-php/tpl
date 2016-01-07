@@ -107,6 +107,16 @@ class Compiler
     }
 
     /**
+     * Return list of search pathes.
+     *
+     * @return  array                       Search pathes.
+     */
+    public function getSearchPath()
+    {
+        return $this->searchpath;
+    }
+
+    /**
      * Lookup a template file in the configured searchpathes.
      *
      * @param   string      $filename       Name of file to lookup.
@@ -306,11 +316,30 @@ class Compiler
                 case grammar::T_MACRO:
                     // resolve macro
                     $value = strtolower(substr($value, 1));
-                    $file  = substr($code[0], 1, -1);
+
+                    array_walk($code, function(&$value) {
+                        // normalize values for macro argument
+                        if (preg_match('/^("|\')(.*)\1$/', $value, $match)) {
+                            $value = $match[2];
+                        } elseif ($value == 'true') {
+                            $value = true;
+                        } elseif ($value == 'false') {
+                            $value = false;
+                        } elseif ($value == 'null') {
+                            $value = null;
+                        } elseif (is_numeric($value)) {
+                            if (strpos($value, '.') !== false) {
+                                $value = (double)$value;
+                            } else {
+                                $value = (int)$value;
+                            }
+                        }
+                    });
+
                     $code  = array(
                         Compiler\Macro::execMacro(
                             $value,
-                            array($file),
+                            array_reverse($code),
                             array('compiler' => $this, 'escape' => $escape)
                         )
                     );
@@ -399,14 +428,14 @@ class Compiler
             $blocks['analyzer'][] = $current;
         });
         $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks) {
-            // closing block only allowed is a block is open
+            // closing block only allowed if a block is open
             if (!(array_pop($blocks['analyzer']))) {
-                $this->error(__FILE__, __LINE__, $line, $token, 'there is no open block');
+                $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'there is no open block');
             }
         });
         $grammar->addEvent(grammar::T_IF_ELSE, function ($current) use (&$blocks) {
             if ((($cnt = count($blocks['analyzer'])) > 0 && $blocks['analyzer'][$cnt - 1]['token'] != grammar::T_IF_OPEN)) {
-                $this->error(__FILE__, __LINE__, $line, $token, 'only allowed inside an "if" block');
+                $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'only allowed inside an "if" block');
             } else {
                 $blocks['analyzer'][$cnt - 1]['token'] = grammar::T_IF_ELSE;
             }
@@ -474,7 +503,7 @@ class Compiler
         foreach ($parser as $command) {
             $snippet = $this->toolchain($command['snippet'], $command['line'], $blocks, $command['escape']);
 
-            $parser->replaceSnippet($snippet);
+            $parser->replaceSnippet($snippet, true);
         }
 
         if (count($blocks['analyzer']) > 0) {

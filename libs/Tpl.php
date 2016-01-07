@@ -16,7 +16,7 @@ use \Octris\Core\Tpl\Compiler as compiler;
 /**
  * Main class of template engine.
  *
- * @copyright   copyright (c) 2010-2014 by Harald Lapp
+ * @copyright   copyright (c) 2010-2015 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Tpl
@@ -155,6 +155,28 @@ class Tpl
     }
 
     /**
+     * Returns iterator for iterating over all templates in all search pathes.
+     *
+     * @return  \ArrayIterator                                  Instance of ArrayIterator.
+     */
+    public function getTemplatesIterator()
+    {
+        foreach ($this->searchpath as $path) {
+            $len = strlen($path);
+
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $filename => $cur) {
+                $rel = substr($filename, $len);
+
+                yield $rel => $cur;
+            }
+        }
+    }
+
+    /**
      * Set path for a resource like stylesheets, images according to the
      * specified extension.
      *
@@ -201,8 +223,6 @@ class Tpl
     protected function process($inp, $out, $escape)
     {
         // Tpl\Compiler\Constant::setConstants($this->constants);
-        $sandbox = $this->sandbox;
-
         $c = new Tpl\Compiler();
 
         if (!is_null($this->l10n)) {
@@ -230,21 +250,22 @@ class Tpl
     }
 
     /**
-     * Compile template and return compiled template as string.
+     * Lint template.
      *
      * @param   string      $filename       Name of template file to compile.
      * @param   string      $escape         Optional escaping to use.
-     * @return  string                      Compiled template.
      */
-    public function compile($filename, $escape = self::ESC_HTML)
+    public function lint($filename, $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
-        $tpl = '';
 
-        $sandbox = $this->sandbox;
+        // Tpl\Compiler\Constant::setConstants($this->constants);
+        $c = new Tpl\Lint();
 
-        $c = new Tpl\Compiler();
-        $c->setL10n($this->l10n);
+        if (!is_null($this->l10n)) {
+            $c->setL10n($this->l10n);
+        }
+
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($inp)) !== false) {
@@ -256,13 +277,25 @@ class Tpl
                 implode(':', $this->searchpath)
             ));
         }
+    }
 
-        return $tpl;
+    /**
+     * Compile template.
+     *
+     * @param   string      $filename       Name of template file to compile.
+     * @param   string      $escape         Optional escaping to use.
+     */
+    public function compile($filename, $escape = self::ESC_HTML)
+    {
+        $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
+        $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
+
+        $out = $this->process($inp, $out, $escape);
     }
 
     /**
      * Check if a template exists.
-     * 
+     *
      * @param   string      $filename       Filename of template to check.
      * @return  bool                        Returns true if template exists.
      */

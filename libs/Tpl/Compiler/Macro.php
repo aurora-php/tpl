@@ -129,7 +129,7 @@ macro::registerMacro(
             $err = sprintf(
                 'unable to locate file "%s" in "%s"',
                 $args[0],
-                implode(':', \Octris\Core\Tpl\Compiler\Searchpath::getPath())
+                implode(':', $c->getSearchPath())
             );
         }
 
@@ -140,14 +140,14 @@ macro::registerMacro(
 macro::registerMacro(
     'uniqid',
     function ($args, array $options = array()) {
-        return uniqid(mt_rand());
+        return array(uniqid(mt_rand()), '');
     },
     array('min' => 0, 'max' => 0)
 );
 macro::registerMacro(
     'date',
     function ($args, array $options = array()) {
-        return strftime('%Y-%m-%d %H:%M:%S');
+        return array(strftime('%Y-%m-%d %H:%M:%S'), '');
     },
     array('min' => 0, 'max' => 0)
 );

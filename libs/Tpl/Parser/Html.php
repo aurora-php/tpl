@@ -64,8 +64,10 @@ class Html extends \Octris\Core\Tpl\Parser
 
         self::T_CDATA_OPEN      => '/<!\[CDATA\[/i',
         self::T_CDATA_CLOSE     => '/\]\]>/',
+        self::T_CDATA_COMMAND   => '/(_c_[a-f0-9]+_)/',
 
         self::T_COMMAND         => '/(_c_[a-f0-9]+_)/',
+        self::T_COMMENT_COMMAND => '/(_c_[a-f0-9]+_)/'
     );
 
     /**
@@ -75,10 +77,10 @@ class Html extends \Octris\Core\Tpl\Parser
      */
     protected static $rules = array(
         self::T_DATA            => array(
-            self::T_TAG_START,
-            self::T_COMMAND,
             self::T_COMMENT_OPEN,
-            self::T_CDATA_OPEN
+            self::T_CDATA_OPEN,
+            self::T_TAG_START,
+            self::T_COMMAND
         ),
 
         self::T_TAG_START       => array(
@@ -214,7 +216,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_COMMAND:
                     if (!isset($this->commands[$state['payload']])) {
                         $this->error(
-                            __FUNCTION__,
+                            __FILE__,
                             __LINE__,
                             $state['line'],
                             $state['state'],
@@ -241,7 +243,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_TAG_NAME:
                     if (substr($state['payload'], 0, 3) == '_c_') {
                         $this->error(
-                            __FUNCTION__,
+                            __FILE__,
                             __LINE__,
                             $state['line'],
                             $state['state'],
@@ -283,7 +285,7 @@ class Html extends \Octris\Core\Tpl\Parser
                 case self::T_ATTR_START:
                     if (substr($state['payload'], 0, 3) == '_c_') {
                         $this->error(
-                            __FUNCTION__,
+                            __FILE__,
                             __LINE__,
                             $state['line'],
                             $state['state'],
@@ -319,7 +321,7 @@ class Html extends \Octris\Core\Tpl\Parser
     {
         if (!isset(self::$rules[$this->state])) {
             $this->error(
-                __FUNCTION__,
+                __FILE__,
                 __LINE__,
                 $this->getLineNumber($this->offset),
                 $this->state,
@@ -379,7 +381,7 @@ class Html extends \Octris\Core\Tpl\Parser
     protected function prepare($tpl)
     {
         $tpl = parent::prepare($tpl);
-        $tpl = preg_replace_callback('/\{\{(.*?)\}\}/', function ($m) {
+        $tpl = preg_replace_callback('/' . self::$snippet_pattern . '/', function ($m) {
             $id = '_c_' . uniqid() . '_';
             $this->commands[$id] = $m[1];
 
