@@ -177,6 +177,13 @@ class Compiler
         } elseif (isset($payload)) {
             fputs($this->errout, sprintf("   message:  %s\n", $prepare($payload)));
         }
+        
+        ob_start(); 
+        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $trace = '   ' . str_replace("\n", "\n   ", trim(ob_get_contents()));
+        ob_end_clean();
+        
+        fputs($this->errout, "\n" . $trace . "\n");
 
         if ($pre) {
             fputs($this->errout, "</pre>");
