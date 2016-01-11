@@ -630,10 +630,52 @@ class Sandbox
      */
     public function fetch($filename)
     {
+        $this->filename = $filename;
+
         try {
             ob_start();
 
             require($filename);
+
+            $content = ob_get_contents();
+            ob_end_clean();
+        } catch (\Exception $e) {
+            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
+        }
+
+        return $content;
+    }
+
+    /**
+     * Render a template string and output rendered template to stdout.
+     *
+     * @param   string      $tpl            Template string to render.
+     */
+    public function renderString($tpl)
+    {
+        $this->filename = null;
+
+        try {
+            eval('?>' . $tpl);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
+        }
+    }
+
+    /**
+     * Render a template string and return the output.
+     *
+     * @param   string      $tpl            Template string to render.
+     * @return  string                      Rendered template.
+     */
+    public function fetchString($tpl)
+    {
+        $this->filename = null;
+
+        try {
+            ob_start();
+
+            eval('?>' . $tpl);
 
             $content = ob_get_contents();
             ob_end_clean();
