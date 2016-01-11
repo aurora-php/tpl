@@ -124,10 +124,7 @@ class Parser implements \Iterator
             return $command;
         };
 
-        $tpl = file_get_contents($filename);
-
         $this->tpl      = $this->prepare($tpl);
-        $this->filename = $filename;
 
         // option flags
         $this->debug           = (($flags & self::DEBUG) === self::DEBUG);
@@ -157,7 +154,7 @@ class Parser implements \Iterator
      */
     public static function fromFile($pathname, $flags = 0)
     {
-        $tpl = file_get_contents($filename);
+        $tpl = file_get_contents($pathname);
         
         $instance = new static($tpl, $flags);
         $instance->filename = $pathname;
