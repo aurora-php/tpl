@@ -62,6 +62,13 @@ class Sandbox
     protected $filename = '';
 
     /**
+     * File handle for error messages output.
+     *
+     * @type    resource
+     */
+    protected $errout = null;
+
+    /**
      * Instance of locale class.
      *
      * @type    \Octris\Core\L10n
@@ -81,6 +88,21 @@ class Sandbox
     public function __construct()
     {
         $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
+        $this->errout = fopen('php://output', 'w');
+    }
+
+    /**
+     * Set location for error output.
+     *
+     * @param   string|resource             $errout     Location for error output.
+     */
+    public function setErrorOutput($errout)
+    {
+        if (!is_resource($errout)) {
+            throw new \Exception('Provided argument is not a resource "' . $errout . '"');
+        }
+
+        $this->errout = $errout;
     }
 
     /**
@@ -136,12 +158,26 @@ class Sandbox
      */
     public function error($msg, $line = 0, $cline = __LINE__, $filename = null)
     {
-        printf("\n** ERROR: sandbox(%d)**\n", $cline);
-        printf("   line :    %d\n", $line);
-        printf("   file:     %s\n", (is_null($filename) ? $this->filename : $filename));
-        printf("   message:  %s\n", $msg);
+        if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
+            fputs($this->errout, "<pre>");
 
-        die();
+            $prepare = function ($str) {
+                return htmlentities($str, ENT_QUOTES);
+            };
+        } else {
+            $prepare = function ($str) {
+                return $str;
+            };
+        }
+
+        fputs($this->errout, sprintf("\n** ERROR: sandbox(%d)**\n", $cline));
+        fputs($this->errout, sprintf("   line :    %d\n", $line));
+        fputs($this->errout, sprintf("   file:     %s\n", (is_null($filename) ? $this->filename : $filename)));
+        fputs($this->errout, sprintf("   message:  %s\n", $msg));
+
+        if ($pre) {
+            fputs($this->errout, "</pre>");
+        }
     }
 
     /**
