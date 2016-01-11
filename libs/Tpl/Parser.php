@@ -124,7 +124,7 @@ class Parser implements \Iterator
             return $command;
         };
 
-        $this->tpl      = $this->prepare($tpl);
+        $this->tpl = $this->prepare($tpl);
 
         // option flags
         $this->debug           = (($flags & self::DEBUG) === self::DEBUG);
