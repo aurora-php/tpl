@@ -477,11 +477,6 @@ class Compiler
      */
     protected function toolchain($snippet, $line, array &$blocks, $escape)
     {
-        if (is_null(self::$parser)) {
-            // initialize parser
-            $this->setup($blocks);
-        }
-
         $code = '';
 
         if (($tokens = self::$parser->tokenize($snippet, $line, $this->filename)) === false) {
@@ -505,23 +500,17 @@ class Compiler
     /**
      * Parse template and extract all template functionality to compile.
      *
-     * @param   string      $escape         Escaping to use.
-     * @return  string                      Processed / compiled template.
+     * @param   \Octris\Core\Tpl\Parser     $parser         Parser instance.
+     * @param   string                      $tpl            Optional template string.
+     * @return  string                                      Processed / compiled template.
      */
-    protected function parse($escape)
+    protected function parse(\Octris\Core\Tpl\Parser $parser)
     {
         $blocks = array('analyzer' => array(), 'compiler' => array());
 
-        if ($escape == \Octris\Core\Tpl::ESC_HTML) {
-            // parser for auto-escaping turned on
-            $parser = \Octris\Core\Tpl\Parser\Html::fromFile($this->filename);
-        } else {
-            $parser = \Octris\Core\Tpl\Parser::fromFile($this->filename);
-            $parser->setFilter(function ($command) use ($escape) {
-                $command['escape'] = $escape;
-
-                return $command;
-            });
+        if (is_null(self::$parser)) {
+            // initialize parser
+            $this->setup($blocks);
         }
 
         foreach ($parser as $command) {
@@ -559,7 +548,37 @@ class Compiler
     }
 
     /**
-     * Process a template.
+     * Process a template string.
+     * 
+     * @param   string      $tpl            Template string to process.
+     * @param   string      $escape         Escaping to use.
+     * @return  string                      Compiled template.
+     */
+    public function processString($tpl, $escape)
+    {
+        $this->filename = null;
+        
+        if ($escape == \Octris\Core\Tpl::ESC_HTML) {
+            // parser for auto-escaping turned on
+            $parser = \Octris\Core\Tpl\Parser\Html::fromString($tpl);
+        } else {
+            if ($escape == \Octris\Core\Tpl::ESC_AUTO) {
+                $escape = \Octris\Core\Tpl::ESC_NONE;
+            }
+            
+            $parser = \Octris\Core\Tpl\Parser::fromString($tpl);
+            $parser->setFilter(function ($command) use ($escape) {
+                $command['escape'] = $escape;
+
+                return $command;
+            });
+        }    
+
+        return $this->parse($parser);
+    }
+
+    /**
+     * Process a template file.
      *
      * @param   string      $filename       Name of template file to process.
      * @param   string      $escape         Escaping to use.
@@ -584,6 +603,18 @@ class Compiler
             }
         }
 
-        return $this->parse($escape);
+        if ($escape == \Octris\Core\Tpl::ESC_HTML) {
+            // parser for auto-escaping turned on
+            $parser = \Octris\Core\Tpl\Parser\Html::fromFile($filename);
+        } else {
+            $parser = \Octris\Core\Tpl\Parser::fromFile($filename);
+            $parser->setFilter(function ($command) use ($escape) {
+                $command['escape'] = $escape;
+
+                return $command;
+            });
+        }    
+
+        return $this->parse($parser);
     }
 }
