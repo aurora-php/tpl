@@ -156,6 +156,10 @@ class Sandbox
      */
     public function setValues($array)
     {
+        if (!is_array($array) && !($array instanceof \Traversable)) {
+            throw new \InvalidArgumentException('Array or Traversable object expected');
+        }
+
         foreach ($array as $k => $v) {
             $this->setValue($k, $v);
         }
@@ -175,7 +179,7 @@ class Sandbox
         if (is_scalar($value) || (is_object($value) && $value instanceof \Traversable)) {
             $this->data[$name] = $value;
         } elseif (is_resource($value)) {
-            $this->error(sprintf('"%s" -- type resource is not allowed', $name), 0, __LINE__);
+            throw new \InvalidArgumentException('Resource is not allowed');
         } else {
             $this->data[$name] = new \Octris\Core\Type\Collection($value);
         }
