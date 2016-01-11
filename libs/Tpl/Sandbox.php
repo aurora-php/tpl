@@ -94,6 +94,18 @@ class Sandbox
     }
 
     /**
+     * Determine line number an error occured.
+     * 
+     * @return  int                     Determined line number.
+     */
+    public function getErrorLineNumber()
+    {
+        $trace = debug_backtrace();
+        
+        return $trace[2]['line'];
+    }
+
+    /**
      * Magic caller for registered template functions.
      *
      * @param   string      $name       Name of function to call.
@@ -103,13 +115,13 @@ class Sandbox
     public function __call($name, $args)
     {
         if (!isset($this->registry[$name])) {
-            $this->error(sprintf('"%s" -- unknown function', $name), 0, __LINE__);
+            $this->error(sprintf('"%s" -- unknown function', $name), $this->getErrorLineNumber(), __LINE__);
         } elseif (!is_callable($this->registry[$name]['callback'])) {
-            $this->error(sprintf('"%s" -- unable to call function', $name), 0, __LINE__);
+            $this->error(sprintf('"%s" -- unable to call function', $name), $this->getErrorLineNumber(), __LINE__);
         } elseif (count($args) < $this->registry[$name]['args']['min']) {
-            $this->error(sprintf('"%s" -- not enough arguments', $name), 0, __LINE__);
+            $this->error(sprintf('"%s" -- not enough arguments', $name), $this->getErrorLineNumber(), __LINE__);
         } elseif (count($args) > $this->registry[$name]['args']['max']) {
-            $this->error(sprintf('"%s" -- too many arguments', $name), 0, __LINE__);
+            $this->error(sprintf('"%s" -- too many arguments', $name), $this->getErrorLineNumber(), __LINE__);
         } else {
             return call_user_func_array($this->registry[$name]['callback'], $args);
         }
