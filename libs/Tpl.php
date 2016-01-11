@@ -16,7 +16,7 @@ use \Octris\Core\Tpl\Compiler as compiler;
 /**
  * Main class of template engine.
  *
- * @copyright   copyright (c) 2010-2015 by Harald Lapp
+ * @copyright   copyright (c) 2010-2016 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Tpl
