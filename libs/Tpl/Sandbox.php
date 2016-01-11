@@ -262,7 +262,13 @@ class Sandbox
         $chain = array_pop($this->chains);
 
         if (count($chain['chunks']) > 0) {
-            print $chain['prefix'] . implode($chain['join'], $chain['chunks']) . $chain['postfix'];
+            $out = $chain['prefix'] . implode($chain['join'], $chain['chunks']) . $chain['postfix'];
+
+            if (count($this->chains) > 0) {
+                $this->chains[count($this->chains) - 1]['chunks'][] = $out;
+            } else {
+                print $out;
+            }
         }
     }
 
