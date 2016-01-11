@@ -42,9 +42,9 @@ class Parser implements \Iterator
     /**
      * Filename of template to parse.
      *
-     * @type    string
+     * @type    string|null
      */
-    protected $filename;
+    protected $filename = null;
 
     /**
      * Template content to parse.
@@ -110,10 +110,10 @@ class Parser implements \Iterator
     /**
      * Constructor.
      *
-     * @param   string                  $filename                   Filename of template to load.
+     * @param   string                  $tpl                        Template string.
      * @param   int                     $flags                      Optional option flags to set.
      */
-    public function __construct($filename, $flags = 0)
+    protected function __construct($tpl, $flags = 0)
     {
         if (is_null(self::$tokennames)) {
             $class = new \ReflectionClass($this);
@@ -132,6 +132,37 @@ class Parser implements \Iterator
         // option flags
         $this->debug           = (($flags & self::DEBUG) === self::DEBUG);
         $this->ignore_comments = (($flags & self::IGNORE_COMMENTS) === self::IGNORE_COMMENTS);
+    }
+
+    /**
+     * Create parser from a template string.
+     * 
+     * @param   string                  $tpl                        Template string to create parser from.
+     * @param   int                     $flags                      Optional option flags to set.
+     * @return  \Octris\Core\Tpl\Parser                             Instance of template parser.
+     */
+    public static function fromString($tpl, $flags = 0)
+    {
+        $instance = new static($tpl, $flags);
+
+        return $instance;
+    }
+
+    /**
+     * Create parser from a template file.
+     * 
+     * @param   string                  $pathname                   Template file to create parser from.
+     * @param   int                     $flags                      Optional option flags to set.
+     * @return  \Octris\Core\Tpl\Parser                             Instance of template parser.
+     */
+    public static function fromFile($pathname, $flags = 0)
+    {
+        $tpl = file_get_contents($filename);
+        
+        $instance = new static($tpl, $flags);
+        $instance->filename = $pathname;
+        
+        return $instance;
     }
 
     /** Implementation of methods required for Iterator interface **/

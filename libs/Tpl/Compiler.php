@@ -507,9 +507,9 @@ class Compiler
 
         if ($escape == \Octris\Core\Tpl::ESC_HTML) {
             // parser for auto-escaping turned on
-            $parser = new \Octris\Core\Tpl\Parser\Html($this->filename);
+            $parser = \Octris\Core\Tpl\Parser\Html::fromFile($this->filename);
         } else {
-            $parser = new \Octris\Core\Tpl\Parser($this->filename);
+            $parser = \Octris\Core\Tpl\Parser::fromFile($this->filename);
             $parser->setFilter(function ($command) use ($escape) {
                 $command['escape'] = $escape;
 

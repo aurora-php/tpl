@@ -175,10 +175,10 @@ class Html extends \Octris\Core\Tpl\Parser
     /**
      * Constructor.
      *
-     * @param   string                  $filename                   Filename of HTML document to parse. This will only be used for better error reporting and can also be left empty.
+     * @param   string                  $tpl                        Template string.
      * @param   int                     $flags                      Optional option flags to set.
      */
-    public function __construct($filename, $flags = 0)
+    protected function __construct($filename, $flags = 0)
     {
         parent::__construct($filename, $flags);
     }
