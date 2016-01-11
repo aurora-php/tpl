@@ -172,8 +172,8 @@ class Sandbox
 
         fputs($this->errout, sprintf("\n** ERROR: sandbox(%d)**\n", $cline));
         fputs($this->errout, sprintf("   line :    %d\n", $line));
-        fputs($this->errout, sprintf("   file:     %s\n", (is_null($filename) ? $this->filename : $filename)));
-        fputs($this->errout, sprintf("   message:  %s\n", $msg));
+        fputs($this->errout, sprintf("   file:     %s\n", $prepare((is_null($filename) ? $this->filename : $filename))));
+        fputs($this->errout, sprintf("   message:  %s\n", $prepare($msg)));
 
         if ($pre) {
             fputs($this->errout, "</pre>");
