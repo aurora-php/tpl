@@ -68,11 +68,6 @@ class Lint extends \Octris\Core\Tpl\Compiler
      */
     protected function toolchain($snippet, $line, array &$blocks, $escape)
     {
-        if (is_null(self::$parser)) {
-            // initialize parser
-            $this->setup($blocks);
-        }
-
         try {
             if (($tokens = self::$parser->tokenize($snippet, $line, $this->filename)) === false) {
                 $error = self::$parser->getLastError();
