@@ -438,10 +438,6 @@ class Compiler
 
                     $this->error(__FILE__, __LINE__, $current['line'], $current['value'], '"only allowed inside a "chain" block');
                     break;
-                default:
-                    if ($chain > 0) {
-                        $this->error(__FILE__, __LINE__, $current['line'], $current['value'], '"not allowed inside a "chain" block');
-                    }
             }
 
             $blocks['analyzer'][] = $current;
