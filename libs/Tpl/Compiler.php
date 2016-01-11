@@ -421,16 +421,37 @@ class Compiler
         $grammar = new \Octris\Core\Tpl\Compiler\Grammar();
         self::$parser = new \Octris\Core\Parser($grammar, [grammar::T_WHITESPACE]);
 
+        $chain = 0;
+
         $grammar->addEvent(grammar::T_IF_OPEN, function ($current) use (&$blocks) {
             $blocks['analyzer'][] = $current;
         });
-        $grammar->addEvent(grammar::T_BLOCK_OPEN, function ($current) use (&$blocks) {
+        $grammar->addEvent(grammar::T_BLOCK_OPEN, function ($current) use (&$blocks, &$chain) {
+            switch ($current['value']) {
+                case '#chain':
+                    ++$chain;
+                    break;
+                case '#chunk':
+                    if ($chain > 0) {
+                        break;
+                    }
+
+                    $this->error(__FILE__, __LINE__, $current['line'], $current['value'], '"only allowed inside a "chain" block');
+                    break;
+                default:
+                    if ($chain > 0) {
+                        $this->error(__FILE__, __LINE__, $current['line'], $current['value'], '"not allowed inside a "chain" block');
+                    }
+            }
+
             $blocks['analyzer'][] = $current;
         });
-        $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks) {
+        $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks, &$chain) {
             // closing block only allowed if a block is open
-            if (!(array_pop($blocks['analyzer']))) {
+            if (!($block = array_pop($blocks['analyzer']))) {
                 $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'there is no open block');
+            } elseif ($block['value'] == '#chain') {
+                --$chain;
             }
         });
         $grammar->addEvent(grammar::T_IF_ELSE, function ($current) use (&$blocks) {

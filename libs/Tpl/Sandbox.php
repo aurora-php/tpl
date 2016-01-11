@@ -238,6 +238,46 @@ class Sandbox
         return $return;
     }
 
+    protected $chunks = array();
+
+    /**
+     *
+     */
+    public function chainStart($join, $prefix = '', $postfix = '')
+    {
+        $this->chains[] = [
+            'join' => $join,
+            'prefix' => $prefix,
+            'postfix' => $postfix,
+            'chunks' => []
+        ];
+
+        ob_start();
+    }
+
+    public function chainEnd()
+    {
+        ob_end_clean();
+
+        $chain = array_pop($this->chains);
+
+        if (count($chain['chunks']) > 0) {
+            print $chain['prefix'] . implode($chain['join'], $chain['chunks']) . $chain['postfix'];
+        }
+    }
+
+    public function chunkStart()
+    {
+        ob_start();
+    }
+
+    public function chunkEnd()
+    {
+        $this->chains[count($this->chains) - 1]['chunks'][] = ob_get_contents();
+
+        ob_end_clean();
+    }
+
     /**
      * Implementation for '#cut' and '#copy' block functions. Starts output buffer.
      *
