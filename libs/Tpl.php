@@ -222,7 +222,6 @@ class Tpl
      */
     protected function process($inp, $out, $escape)
     {
-        // Tpl\Compiler\Constant::setConstants($this->constants);
         $c = new Tpl\Compiler();
 
         if (!is_null($this->l10n)) {
@@ -259,7 +258,6 @@ class Tpl
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
-        // Tpl\Compiler\Constant::setConstants($this->constants);
         $c = new Tpl\Lint();
 
         if (!is_null($this->l10n)) {
