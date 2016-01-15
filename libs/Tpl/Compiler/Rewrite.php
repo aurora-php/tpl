@@ -146,6 +146,7 @@ class Rewrite
 
         // array functions
         'count'      => array('min' => 1, 'max' => 1),
+        'in'         => array('min' => 2, 'max' => 2, 'map' => 'in_array'),
 
         // misc functions
         'isset'      => array('min' => 1, 'max' => 1),
