@@ -91,6 +91,7 @@ class Rewrite
         // array functions
         'array'     => array('min' => 1),
         'cycle'     => array('min' => 1, 'max' => 3),
+        'in'        => array('min' => 2, 'max' => 2),
 
         // misc functions
         'escape'    => array('min' => 2, 'max' => 2),
@@ -144,7 +145,6 @@ class Rewrite
 
         // array functions
         'count'      => array('min' => 1, 'max' => 1),
-        'in'         => array('min' => 2, 'max' => 2, 'map' => 'in_array'),
 
         // misc functions
         'isset'      => array('min' => 1, 'max' => 1),
@@ -709,6 +709,11 @@ class Rewrite
     protected static function funcCycle($args)
     {
         return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
+    }
+
+    protected static function funcIn($args)
+    {
+        return 'in_array(' . $args[0] . ', \\Octris\\Core\\Type::setType(' . $args[1] . ', "array"))';
     }
 
     // misc functions
