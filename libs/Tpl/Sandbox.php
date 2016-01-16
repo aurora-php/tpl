@@ -22,9 +22,9 @@ class Sandbox
     /**
      * Template data.
      *
-     * @type    array
+     * @type    \Octris\Core\Type\Collection;
      */
-    public $data = array();
+    public $data;
 
     /**
      * Storage for sandbox internal data objects.
@@ -98,6 +98,7 @@ class Sandbox
     {
         $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
         $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
+        $this->data = new \Octris\Core\Type\Collection();
     }
 
     /**
@@ -211,12 +212,10 @@ class Sandbox
      */
     public function setValue($name, $value)
     {
-        if (is_scalar($value) || (is_object($value) && $value instanceof \Traversable)) {
-            $this->data[$name] = $value;
-        } elseif (is_resource($value)) {
-            throw new \InvalidArgumentException('Resource is not allowed');
+        if (is_resource($value)) {
+            throw new \InvalidArgumentException('Value of type "resource" is not allowed');
         } else {
-            $this->data[$name] = new \Octris\Core\Type\Collection($value);
+            $this->data[$name] = $value;
         }
     }
 
