@@ -158,7 +158,7 @@ class Rewrite
      * @type    array
      */
     protected static $forbidden = array(
-        'setvalue', 'setvalues', 'each', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
+        'setvalue', 'setvalues', 'foreach', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
         '__construct', '__call', 'registermethod', 'render', 'write'
     );
 
