@@ -150,8 +150,10 @@ class Sandbox
      * @param   string      $msg        Additional error message.
      * @param   int         $line       Line in template the error occured (0, if it's in the class library).
      * @param   int         $cline      Line in the class that triggered the error.
+     * @param   string      $filename   Optional filename.
+     * @param   string      $trace      Optional trace.
      */
-    public function error($msg, $line = 0, $cline = __LINE__, $filename = null)
+    public function error($msg, $line = 0, $cline = __LINE__, $filename = null, $trace = null)
     {
         \Octris\Core\Tpl\Error::write(
             'sandbox',
@@ -160,7 +162,8 @@ class Sandbox
                 'line' => $line,
                 'file' => (is_null($filename) ? $this->filename : $filename),
                 'message' => $msg
-            ]
+            ],
+            $trace
         );
     }
 
@@ -602,7 +605,7 @@ class Sandbox
         try {
             require($filename);
         } catch (\Exception $e) {
-            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
+            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile(), $e->getTraceAsString());
         }
     }
 
@@ -624,47 +627,7 @@ class Sandbox
             $content = ob_get_contents();
             ob_end_clean();
         } catch (\Exception $e) {
-            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
-        }
-
-        return $content;
-    }
-
-    /**
-     * Render a template string and output rendered template to stdout.
-     *
-     * @param   string      $tpl            Template string to render.
-     */
-    public function renderString($tpl)
-    {
-        $this->filename = null;
-
-        try {
-            eval('?>' . $tpl);
-        } catch (\Exception $e) {
-            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
-        }
-    }
-
-    /**
-     * Render a template string and return the output.
-     *
-     * @param   string      $tpl            Template string to render.
-     * @return  string                      Rendered template.
-     */
-    public function fetchString($tpl)
-    {
-        $this->filename = null;
-
-        try {
-            ob_start();
-
-            eval('?>' . $tpl);
-
-            $content = ob_get_contents();
-            ob_end_clean();
-        } catch (\Exception $e) {
-            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile());
+            $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile(), $e->getTraceAsString());
         }
 
         return $content;
