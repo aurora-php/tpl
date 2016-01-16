@@ -156,7 +156,7 @@ class Sandbox
      */
     public function error($msg, $line = 0, $cline = __LINE__, $filename = null, $trace = null)
     {
-        \Octris\Core\Tpl\Error::write(
+        \Octris\Debug::getInstance()->error(
             'sandbox',
             $cline,
             [

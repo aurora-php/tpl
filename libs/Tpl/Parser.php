@@ -335,7 +335,7 @@ class Parser implements \Iterator
             $info['message'] = $payload;
         }
 
-        \Octris\Core\Tpl\Error::write($type, $cline, $info);
+        \Octris\Debug::getInstance()->error($type, $cline, $info);
 
         die();
     }

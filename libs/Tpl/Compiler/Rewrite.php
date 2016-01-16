@@ -647,12 +647,12 @@ class Rewrite
 
     protected static function funcDdump($args)
     {
-        return '\\Octris\\Core\\Debug::ddump(' . implode(', ', $args) . ')';
+        return '\\Octris\\Debug::getInstance()->ddump(' . implode(', ', $args) . ')';
     }
 
     protected static function funcDprint($args)
     {
-        return '\\Octris\\Core\\Debug::dprint(' . implode(', ', $args) . ')';
+        return '\\Octris\\Debug::getInstance()->dprint(' . implode(', ', $args) . ')';
     }
 
     protected static function funcError($args)

@@ -145,7 +145,7 @@ class Compiler
             $info['message'] = $payload;
         }
 
-        \Octris\Core\Tpl\Error::write($ifile, $iline, $info, '\Octris\Core\Tpl\CompilerException');
+        \Octris\Debug::getInstance()->error($ifile, $iline, $info, '\Octris\Core\Tpl\CompilerException');
     }
 
     /**
