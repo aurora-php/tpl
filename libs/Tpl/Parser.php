@@ -133,7 +133,7 @@ class Parser implements \Iterator
 
     /**
      * Create parser from a template string.
-     * 
+     *
      * @param   string                  $tpl                        Template string to create parser from.
      * @param   int                     $flags                      Optional option flags to set.
      * @return  \Octris\Core\Tpl\Parser                             Instance of template parser.
@@ -147,7 +147,7 @@ class Parser implements \Iterator
 
     /**
      * Create parser from a template file.
-     * 
+     *
      * @param   string                  $pathname                   Template file to create parser from.
      * @param   int                     $flags                      Optional option flags to set.
      * @return  \Octris\Core\Tpl\Parser                             Instance of template parser.
@@ -155,10 +155,10 @@ class Parser implements \Iterator
     public static function fromFile($pathname, $flags = 0)
     {
         $tpl = file_get_contents($pathname);
-        
+
         $instance = new static($tpl, $flags);
         $instance->filename = $pathname;
-        
+
         return $instance;
     }
 
@@ -323,16 +323,19 @@ class Parser implements \Iterator
      */
     protected function error($type, $cline, $line, $token, $payload = null)
     {
-        printf("\n** ERROR: %s(%d) **\n", $type, $cline);
-        printf("   line :    %d\n", $line);
-        printf("   file :    %s\n", $this->filename);
-        printf("   token:    %s\n", $this->getTokenName($token));
+        $info = [
+            'line' => $line,
+            'file' => $this->filename,
+            'token' => $this->getTokenName($token)
+        ];
 
         if (is_array($payload)) {
-            printf("   expected: %s\n", implode(', ', $this->getTokenNames(array_keys($payload))));
+            $info['expected'] = implode(', ', $this->getTokenNames(array_keys($payload)));
         } elseif (isset($payload)) {
-            printf("   message:  %s\n", $payload);
+            $info['message'] = $payload;
         }
+
+        \Octris\Core\Tpl\Error::write($type, $cline, $info);
 
         die();
     }

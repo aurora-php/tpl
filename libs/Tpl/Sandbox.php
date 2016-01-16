@@ -62,13 +62,6 @@ class Sandbox
     protected $filename = '';
 
     /**
-     * File handle for error messages output.
-     *
-     * @type    resource
-     */
-    protected $errout = null;
-
-    /**
      * Instance of locale class.
      *
      * @type    \Octris\Core\L10n
@@ -104,22 +97,7 @@ class Sandbox
     public function __construct($charset = 'utf-8')
     {
         $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
-        $this->errout = fopen('php://output', 'w');
         $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
-    }
-
-    /**
-     * Set location for error output.
-     *
-     * @param   string|resource             $errout     Location for error output.
-     */
-    public function setErrorOutput($errout)
-    {
-        if (!is_resource($errout)) {
-            throw new \Exception('Provided argument is not a resource "' . $errout . '"');
-        }
-
-        $this->errout = $errout;
     }
 
     /**
@@ -175,26 +153,15 @@ class Sandbox
      */
     public function error($msg, $line = 0, $cline = __LINE__, $filename = null)
     {
-        if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
-            fputs($this->errout, "<pre>");
-
-            $prepare = function ($str) {
-                return htmlentities($str, ENT_QUOTES);
-            };
-        } else {
-            $prepare = function ($str) {
-                return $str;
-            };
-        }
-
-        fputs($this->errout, sprintf("\n** ERROR: sandbox(%d)**\n", $cline));
-        fputs($this->errout, sprintf("   line :    %d\n", $line));
-        fputs($this->errout, sprintf("   file:     %s\n", $prepare((is_null($filename) ? $this->filename : $filename))));
-        fputs($this->errout, sprintf("   message:  %s\n", $prepare($msg)));
-
-        if ($pre) {
-            fputs($this->errout, "</pre>");
-        }
+        \Octris\Core\Tpl\Error::write(
+            'sandbox',
+            $cline,
+            [
+                'line' => $line,
+                'file' => (is_null($filename) ? $this->filename : $filename),
+                'message' => $msg
+            ]
+        );
     }
 
     /**

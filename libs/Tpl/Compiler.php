@@ -29,13 +29,6 @@ class Compiler
     protected static $parser = null;
 
     /**
-     * File handle for error messages output.
-     *
-     * @type    resource
-     */
-    protected $errout = null;
-
-    /**
      * Name of file currently compiled.
      *
      * @type    string
@@ -61,21 +54,6 @@ class Compiler
      */
     public function __construct()
     {
-        $this->errout = fopen('php://output', 'w');
-    }
-
-    /**
-     * Set location for error output.
-     *
-     * @param   string|resource             $errout     Location for error output.
-     */
-    public function setErrorOutput($errout)
-    {
-        if (!is_resource($errout)) {
-            throw new \Exception('Provided argument is not a resource "' . $errout . '"');
-        }
-
-        $this->errout = $errout;
     }
 
     /**
@@ -153,43 +131,21 @@ class Compiler
      */
     protected function error($ifile, $iline, $line, $token, $payload = null)
     {
-        if (($pre = (php_sapi_name() != 'cli' && stream_get_meta_data($this->errout)['uri'] == 'php://output'))) {
-            fputs($this->errout, "<pre>");
-
-            $prepare = function ($str) {
-                return htmlentities($str, ENT_QUOTES);
-            };
-        } else {
-            $prepare = function ($str) {
-                return $str;
-            };
-        }
-
-        fputs($this->errout, sprintf("\n** ERROR: %s(%d) **\n", $ifile, $iline));
-        fputs($this->errout, sprintf("   line :    %d\n", $line));
-        fputs($this->errout, sprintf("   file :    %s\n", $prepare($this->filename)));
-        fputs($this->errout, sprintf("   token:    %s\n", $prepare(self::$parser->getTokenName($token))));
+        $info = [
+            'line' => $line,
+            'file' => $this->filename,
+            'token' => self::$parser->getTokenName($token)
+        ];
 
         if (is_array($payload)) {
-            fputs($this->errout, sprintf("   expected: %s\n", implode(', ', array_map(function ($token) use ($prepare) {
-                return $prepare(self::$parser->getTokenName($token));
-            }, $payload))));
+            $info['expected'] = implode(', ', array_map(function ($token) {
+                return self::$parser->getTokenName($token);
+            }, $payload));
         } elseif (isset($payload)) {
-            fputs($this->errout, sprintf("   message:  %s\n", $prepare($payload)));
-        }
-        
-        ob_start(); 
-        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $trace = '   ' . str_replace("\n", "\n   ", trim(ob_get_contents()));
-        ob_end_clean();
-        
-        fputs($this->errout, "\n" . $trace . "\n");
-
-        if ($pre) {
-            fputs($this->errout, "</pre>");
+            $info['message'] = $payload;
         }
 
-        throw new \Exception('Compiler error');
+        \Octris\Core\Tpl\Error::write($ifile, $iline, $info, '\Octris\Core\Tpl\CompilerException');
     }
 
     /**
@@ -549,7 +505,7 @@ class Compiler
 
     /**
      * Process a template string.
-     * 
+     *
      * @param   string      $tpl            Template string to process.
      * @param   string      $escape         Escaping to use.
      * @return  string                      Compiled template.
@@ -557,7 +513,7 @@ class Compiler
     public function processString($tpl, $escape)
     {
         $this->filename = null;
-        
+
         if ($escape == \Octris\Core\Tpl::ESC_HTML) {
             // parser for auto-escaping turned on
             $parser = \Octris\Core\Tpl\Parser\Html::fromString($tpl);
@@ -565,14 +521,14 @@ class Compiler
             if ($escape == \Octris\Core\Tpl::ESC_AUTO) {
                 $escape = \Octris\Core\Tpl::ESC_NONE;
             }
-            
+
             $parser = \Octris\Core\Tpl\Parser::fromString($tpl);
             $parser->setFilter(function ($command) use ($escape) {
                 $command['escape'] = $escape;
 
                 return $command;
             });
-        }    
+        }
 
         return $this->parse($parser);
     }
@@ -613,7 +569,7 @@ class Compiler
 
                 return $command;
             });
-        }    
+        }
 
         return $this->parse($parser);
     }
