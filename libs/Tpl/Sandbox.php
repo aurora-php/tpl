@@ -371,7 +371,7 @@ class Sandbox
     }
 
     /**
-     * Implementation for '#trigger' block function. The trigger can be used inside a block of type '#loop' or '#each'. An
+     * Implementation for '#trigger' block function. The trigger can be used inside a block of type '#loop' or '#foreach'. An
      * internal counter will be increased for each loop cycle. The trigger will return 'true' for very $steps steps.
      *
      * @param   string      $id         Uniq identifier of trigger.
@@ -434,7 +434,7 @@ class Sandbox
     }
 
     /**
-     * Implementation for 'cycle' function. Cycle can be used inside a block of type '#loop' or '#each'. An
+     * Implementation for 'cycle' function. Cycle can be used inside a block of type '#loop' or '#foreach'. An
      * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list
      * according to the internal pointer position.
      *
