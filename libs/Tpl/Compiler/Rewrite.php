@@ -30,8 +30,6 @@ class Rewrite
         // blocks
         '#bench'    => array('min' => 1, 'max' => 1),
         '#cache'    => array('min' => 2, 'max' => 3),
-        '#chain'    => array('min' => 1, 'max' => 3),
-        '#chunk'    => array('min' => 0, 'max' => 1),
         '#copy'     => array('min' => 1, 'max' => 1),
         '#cron'     => array('min' => 1, 'max' => 2),
         '#cut'      => array('min' => 1, 'max' => 1),
@@ -410,29 +408,6 @@ class Rewrite
                 $ttl
             )
         );
-    }
-
-    protected static function blockChain($args)
-    {
-        return array(
-            '$this->chainStart(' . implode(', ', $args) .  ');',
-            '$this->chainEnd();'
-        );
-    }
-
-    protected static function blockChunk($args)
-    {
-        if (count($args) > 0) {
-            return array(
-                'if (isset(' . $args[0] . ')) { $this->chunkStart();',
-                '$this->chunkEnd(); }'
-            );
-        } else {
-            return array(
-                '$this->chunkStart();',
-                '$this->chunkEnd();'
-            );
-        }
     }
 
     protected static function blockCopy($args)
