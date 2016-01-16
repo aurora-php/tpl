@@ -83,12 +83,20 @@ class Sandbox
     protected $cache = null;
 
     /**
+     * Escaper instance.
+     *
+     * @type    \Zend\Escaper\Escaper
+     */
+    protected $escaper;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
         $this->errout = fopen('php://output', 'w');
+        $this->escaper = new \Zend\Escaper\Escaper();
     }
 
     /**
@@ -117,13 +125,13 @@ class Sandbox
 
     /**
      * Determine line number an error occured.
-     * 
+     *
      * @return  int                     Determined line number.
      */
     public function getErrorLineNumber()
     {
         $trace = debug_backtrace();
-        
+
         return $trace[2]['line'];
     }
 
@@ -556,22 +564,22 @@ class Sandbox
     {
         switch ($escape) {
             case \Octris\Core\Tpl::ESC_ATTR:
-                $val = \Octris\Core\Tpl\Escape::escapeAttributeValue($val);
+                $val = $this->escaper->escapeHtmlAttr($val);
                 break;
             case \Octris\Core\Tpl::ESC_CSS:
-                $val = \Octris\Core\Tpl\Escape::escapeCss($val);
+                $val = $this->escaper->escapeCss($val);
                 break;
             case \Octris\Core\Tpl::ESC_HTML:
-                $val = \Octris\Core\Tpl\Escape::escapeHtml($val);
+                $val = $this->escaper->escapeHtml($val);
                 break;
             case \Octris\Core\Tpl::ESC_JS:
-                $val = \Octris\Core\Tpl\Escape::escapeJavascript($val);
+                $val = $this->escaper->escapeJs($val);
                 break;
             case \Octris\Core\Tpl::ESC_TAG:
-                $val = \Octris\Core\Tpl\Escape::escapeAttribute($val);
+                throw new \Exception('Escaping "ESC_TAG" is not implemented!');
                 break;
             case \Octris\Core\Tpl::ESC_URI:
-                $val = \Octris\Core\Tpl\Escape::escapeUri($val);
+                throw new \Exception('Escaping "ESC_URI" is not implemented!');
                 break;
         }
 
