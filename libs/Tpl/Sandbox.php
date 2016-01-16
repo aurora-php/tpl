@@ -242,35 +242,32 @@ class Sandbox
     }
 
     /**
-     * Implementation for '#foreach' block function. Iterates over an array and repeats an enclosed
-     * template block.
+     * Implements iterator block function eg.: #foreach and #loop. Iterates over array and repeats an
+     * enclosed template block.
      *
-     * @param   \Octris\Core\Tpl\Sandbox\EachIterator   $iterator       Iterator to use.
-     * @param   mixed                                       $ctrl           Control variable is overwritten and used by this method.
-     * @param   array                                       $meta           Optional variable for meta information storage.
-     * @return  bool                                                        Returns 'true' as long as iterator did not reach end of array.
+     * @param   \Traversable|array              $data               Iteratable data.
+     * @return  \Generator                                          Generator to use for iterating.
      */
-    public function each(\Octris\Core\Tpl\Sandbox\EachIterator $iterator, &$ctrl, &$meta = null)
+    public function loop($data)
     {
-        if (($return = $iterator->valid())) {
-            $ctrl = $iterator->current();
-            $meta = $iterator->getMeta();
+        $loop = function($data) {
+            $pos = 0;
+            $count = count($data);
 
-            $iterator->next();
-        } else {
-            $iterator->rewind();
+            foreach ($data as $key => $item) {
+                $meta = [
+                    'is_first' => ($pos == 0),
+                    'is_last' => ($pos + 1 == $count),
+                    'count' => $count,
+                    'pos' => $pos++,
+                    'key' => $key
+                ];
 
-            $ctrl = null;
-            $meta = array(
-                'key'       => null,
-                'pos'       => null,
-                'count'     => null,
-                'is_first'  => false,
-                'is_last'   => false
-            );
-        }
+                yield [$item, $meta];
+            }
+        };
 
-        return $return;
+        return $loop($data);
     }
 
     protected $chunks = array();

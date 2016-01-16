@@ -461,23 +461,19 @@ class Rewrite
 
     protected static function blockForeach($args)
     {
-        $var = self::getUniqId();
-        $arg = $args[1];
-        unset($args[1]);
+        if (count($args) == 2) {
+            $return = [
+                sprintf('foreach (%s as %s) {', $args[1], $args[0]),
+                '}'
+            ];
+        } else {
+            $return = [
+                sprintf('foreach (%s as list(%s, %s)) {', $args[1], $args[0], $args[2]),
+                '}'
+            ];
+        }
 
-        return array(
-            sprintf(
-                '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \Octris\Core\Tpl\Sandbox\EachIterator(%s);' .
-                '}); ' .
-                'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
-                $var,
-                $var,
-                $arg,
-                $var
-            ),
-            '}'
-        );
+        return $return;
     }
 
     protected static function blockIf($args)
@@ -490,32 +486,9 @@ class Rewrite
 
     protected static function blockLoop($args)
     {
-        $var = self::getUniqId();
+        $data = range($args[1], $args[2], $args[3]);
 
-        $start = $args[1];
-        $end   = $args[2];
-        $step  = $args[3];
-
-        unset($args[1]);
-        unset($args[2]);
-        unset($args[3]);
-
-        return array(
-            sprintf(
-                '$_%s = $this->storage->get("_%s", function () { ' .
-                'return new \Octris\Core\Tpl\Sandbox\EachIterator(' .
-                'new \ArrayIterator(array_slice(range(%s, %s, %s), 0, -1))' .
-                '); }); ' .
-                'while ($this->each($_%s, ' . implode(', ', $args) . ')) {',
-                $var,
-                $var,
-                $start,
-                $end,
-                $step,
-                $var
-            ),
-            '}'
-        );
+        return $this->blockForeach([$args[0], $data, $args[2]]);
     }
 
     protected static function blockOnchange($args)
