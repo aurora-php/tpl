@@ -90,13 +90,22 @@ class Sandbox
     protected $escaper;
 
     /**
-     * Constructor
+     * Charset of template.
+     *
+     * @type    string
      */
-    public function __construct()
+    protected $charset;
+
+    /**
+     * Constructor
+     *
+     * @param   string                      $charset    Charset of template.
+     */
+    public function __construct($charset = 'utf-8')
     {
         $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
         $this->errout = fopen('php://output', 'w');
-        $this->escaper = new \Zend\Escaper\Escaper();
+        $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
     }
 
     /**

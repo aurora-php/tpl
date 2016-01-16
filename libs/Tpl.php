@@ -86,10 +86,12 @@ class Tpl
 
     /**
      * Constructor.
+     *
+     * @param   string                      $charset    Charset of template.
      */
-    public function __construct()
+    public function __construct($charset = 'utf-8')
     {
-        $this->sandbox = new Tpl\Sandbox();
+        $this->sandbox = new Tpl\Sandbox($charset);
     }
 
     /**
