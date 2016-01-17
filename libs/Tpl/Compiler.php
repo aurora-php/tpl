@@ -280,7 +280,7 @@ class Compiler
                     // resolve macro
                     $value = strtolower(substr($value, 1));
 
-                    array_walk($code, function(&$value) {
+                    array_walk($code, function (&$value) {
                         // normalize values for macro argument
                         if (preg_match('/^("|\')(.*)\1$/', $value, $match)) {
                             $value = $match[2];

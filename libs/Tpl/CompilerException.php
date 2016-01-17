@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl
+namespace Octris\Core\Tpl;
 
 /**
  * Compiler exception.

@@ -249,7 +249,7 @@ class Sandbox
      */
     public function loop($data)
     {
-        $loop = function($data) {
+        $loop = function ($data) {
             $pos = 0;
             $count = count($data);
 
