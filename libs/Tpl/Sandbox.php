@@ -491,6 +491,10 @@ class Sandbox
      */
     public function escape($val, $escape)
     {
+        if (is_null($val)) {
+            return '';
+        }
+
         switch ($escape) {
             case \Octris\Core\Tpl::ESC_ATTR:
                 $val = $this->escaper->escapeHtmlAttr($val);
