@@ -438,12 +438,12 @@ class Rewrite
     {
         if (count($args) == 2) {
             $return = [
-                sprintf('foreach (%s as %s) {', $args[1], $args[0]),
+                sprintf('foreach ($this->loop(%s) as list(%s, )) {', $args[1], $args[0]),
                 '}'
             ];
         } else {
             $return = [
-                sprintf('foreach (%s as list(%s, %s)) {', $args[1], $args[0], $args[2]),
+                sprintf('foreach ($this->loop(%s) as list(%s, %s)) {', $args[1], $args[0], $args[2]),
                 '}'
             ];
         }
