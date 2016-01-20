@@ -461,9 +461,13 @@ class Rewrite
 
     protected static function blockLoop($args)
     {
-        $data = range($args[1], $args[2], $args[3]);
+        $params = [$args[0], range($args[1], $args[2], $args[3])];
+        
+        if (count($args) == 5) {
+            $params[$args[4]];
+        }
 
-        return $this->blockForeach([$args[0], $data, $args[2]]);
+        return $this->blockForeach($params);
     }
 
     protected static function blockOnchange($args)
