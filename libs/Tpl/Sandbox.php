@@ -175,7 +175,7 @@ class Sandbox
      * @param   mixed       $callback   Callback to map to template method.
      * @param   array       $args       For specifying min/max number of arguments required for callback method.
      */
-    public function registerMethod($name, $callback, array $args)
+    public function registerMethod($name, callable $callback, array $args)
     {
         $name = strtolower($name);
 
