@@ -63,26 +63,18 @@ class Tpl
     protected $l10n;
 
     /**
-     * Output path for various file types.
+     * Output path for compiled templates.
      *
-     * @type    array
+     * @type    string
      */
-    protected $path = array(
-        'tpl'   => '/tmp',      // output path for compiled templates
-        'js'    => '/tmp',      // output path for compressed javascript
-        'css'   => '/tmp'       // output path for compressed css
-    );
+    protected $outputpath = '/tmp';
 
     /**
-     * Resource pathes for various file types.
+     * Postprocessors.
      *
      * @type    array
      */
-    protected $resources = array(
-        'tpl'   => '',
-        'js'    => '',
-        'css'   => ''
-    );
+    protected $postprocessors = array();
 
     /**
      * Constructor.
@@ -139,6 +131,16 @@ class Tpl
     }
 
     /**
+     * Add a post-processor.
+     *
+     * @param   \Octris\Core\Tpl\PostprocessInterface       $processor          Instance of class for postprocessing.
+     */
+    public function addPostprocessor($processor)
+    {
+        $this->postprocessers[] = $processor;
+    }
+
+    /**
      * Register pathname for looking up templates in.
      *
      * @param   mixed       $pathname       Name of path to register.
@@ -179,29 +181,16 @@ class Tpl
     }
 
     /**
-     * Set path for a resource like stylesheets, images according to the
-     * specified extension.
+     * Set output path for compiled templates.
      *
-     * @param   string      $ext        Extension of file to set path for.
-     * @param   string      $pathname   Name of path to register.
+     * @param   string      $path       Name of path to set.
      */
-    public function setResourcePath($ext, $pathname)
+    public function setOutputPath($path)
     {
-        if (array_key_exists($ext, $this->resources) && is_dir($pathname)) {
-            $this->resources[$ext] = rtrim($pathname, '/');
-        }
-    }
-
-    /**
-     * Set output path for compiled templates and compressed files.
-     *
-     * @param   string      $ext        Extension of file to set path for.
-     * @param   string      $pathname   Name of path to register.
-     */
-    public function setOutputPath($ext, $pathname)
-    {
-        if (array_key_exists($ext, $this->path) && is_writable($pathname)) {
-            $this->path[$ext] = rtrim($pathname, '/');
+        if (!is_dir($path) || !is_writable($path)) {
+            trigger_error('Path is not writable "' . $path . '"');
+        } else {
+            $this->outputpath = $path;
         }
     }
 
@@ -235,8 +224,9 @@ class Tpl
         if (($filename = $c->findFile($inp)) !== false) {
             $tpl = $c->process($filename, $escape);
 
-            $tpl = Tpl\Compress::process($tpl, $this->path, $this->resources);
-            $out = $this->path['tpl'] . '/' . str_replace('/', '-', $out);
+            foreach ($this->postprocessors as $processor) {
+                $tpl = $processor->postProcess($tpl);
+            }
 
             file_put_contents($out, $tpl);
         } else {
@@ -288,7 +278,7 @@ class Tpl
     public function compile($filename, $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
-        $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
+        $out = $this->outputpath . '/' . preg_replace('/[\s\.]/', '_', $inp) . '-' . $this->l10n . '.php';
 
         $out = $this->process($inp, $out, $escape);
     }
@@ -318,7 +308,7 @@ class Tpl
     public function render($filename, $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
-        $out = preg_replace('/[\s\.]/', '_', $inp) . '.php';
+        $out = $this->outputpath . '/' . preg_replace('/[\s\.]/', '_', $inp) . '-' . $this->l10n . '.php';
 
         if (!$this->use_cache) {
             // do not use cache -- first process template using
