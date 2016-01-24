@@ -137,7 +137,7 @@ class Tpl
      */
     public function addPostprocessor($processor)
     {
-        $this->postprocessers[] = $processor;
+        $this->postprocessors[] = $processor;
     }
 
     /**
