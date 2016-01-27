@@ -31,7 +31,7 @@ class CombineJs extends \Octris\Core\Tpl\Postprocess
      *
      * @type    string
      */
-    protected $pattern = '<script[^>]+src="(?!https?://)([^"]+)"[^>]*></script>';
+    protected $pattern = '<script[^>]+src="(?!https?://|//)([^"]+)"[^>]*></script>';
 
     /**
      * Snippet to replace pattern with.

@@ -31,7 +31,7 @@ class CombineCss extends CombineJs
      *
      * @type    string
      */
-    protected $pattern = '<link[^>]*? href="(?!https?://)([^"]+\.css)"[^>]*/>';
+    protected $pattern = '<link[^>]*? href="(?!https?://|//)([^"]+\.css)"[^>]*/>';
 
     /**
      * Snippet to replace pattern with.
