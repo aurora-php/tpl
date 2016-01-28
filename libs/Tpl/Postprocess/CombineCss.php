@@ -12,34 +12,15 @@
 namespace Octris\Core\Tpl\Postprocess;
 
 /**
- * Try to combine multiple css source files into a single file.
+ * Combine multiple css source files into a single file.
  *
  * @copyright   copyright (c) 2010-2016 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class CombineCss extends CombineJs
+class CombineCss extends \Octris\Core\Tpl\Postprocess
 {
-    /**
-     * File extension of created file.
-     *
-     * @type    string
-     */
-    protected $ext = 'css';
-
-    /**
-     * Pattern to match.
-     *
-     * @type    string
-     */
-    protected $pattern = '<link[^>]*? href="(?!https?://|//)([^"]+\.css)"[^>]*/>';
-
-    /**
-     * Snippet to replace pattern with.
-     *
-     * @type    string
-     */
-    protected $snippet = '<link rel="stylesheet" href="/styles/%s" type="text/css" />';
-
+    use CombineTrait;
+    
     /**
      * Constructor.
      *
@@ -48,6 +29,11 @@ class CombineCss extends CombineJs
      */
     public function __construct(array $mappings, $dst)
     {
-        parent::__construct($mappings, $dst);
+        $this->ext = 'css';
+        $this->pattern = '<link[^>]*? href="(?!https?://|//)([^"]+\.css)"[^>]*/>';
+        $this->snippet = '<link rel="stylesheet" href="/styles/%s" type="text/css" />';
+        $this->dst = $dst;
+
+        parent::__construct($mappings);
     }
 }
