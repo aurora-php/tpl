@@ -50,7 +50,7 @@ class Transient implements \Octris\Core\Tpl\ICache
     }
 
     /**
-     * Test if cache file exists.
+     * Test if memory segment exists for URI.
      *
      * @param   string          $uri            URI to test.
      * @return  bool                            Returns 'true', if cache URI exists, otherwise 'false'.
