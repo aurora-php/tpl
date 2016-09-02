@@ -104,7 +104,11 @@ class File implements \Octris\Core\Tpl\ICache
      */
     public function getContents($uri)
     {
-        $result = @file_get_contents($this->path . '/' . $uri);
+        try {
+            $result = @file_get_contents($this->path . '/' . $uri);
+        } catch(\ErrorException $e) {
+            $result = false;
+        }
 
         return $result;
     }
