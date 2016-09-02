@@ -44,7 +44,7 @@ class Tpl
     /**
      * Configured caching backend.
      *
-     * @type    \Octris\Core\Tpl\Cache
+     * @type    \Octris\Core\Tpl\ICache
      */
     protected $tpl_cache;
 
@@ -83,9 +83,9 @@ class Tpl
     /**
      * Set caching backend.
      *
-     * @param   \Octris\Core\Tpl\Cache  $cache      Instance of caching backend.
+     * @param   \Octris\Core\Tpl\ICache     $cache      Instance of caching backend.
      */
-    public function setCache(\Octris\Core\Tpl\Cache $cache)
+    public function setCache(\Octris\Core\Tpl\ICache $cache)
     {
         $this->tpl_cache = $cache;
     }
