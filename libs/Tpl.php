@@ -42,11 +42,11 @@ class Tpl
     protected $sandbox;
 
     /**
-     * Whether to fetch compiled template from cache.
+     * Configured caching backend.
      *
-     * @type    bool
+     * @type    \Octris\Core\Tpl\Cache
      */
-    protected $use_cache = false;
+    protected $tpl_cache;
 
     /**
      * Stores pathes to look into when searching for template to load.
@@ -63,13 +63,6 @@ class Tpl
     protected $l10n;
 
     /**
-     * Output path for compiled templates.
-     *
-     * @type    string
-     */
-    protected $outputpath = '/tmp';
-
-    /**
      * Postprocessors.
      *
      * @type    array
@@ -84,6 +77,17 @@ class Tpl
     public function __construct($charset = 'utf-8')
     {
         $this->sandbox = new Tpl\Sandbox($charset);
+        $this->tpl_cache = new Tpl\Cache\Transient();
+    }
+
+    /**
+     * Set caching backend.
+     *
+     * @param   \Octris\Core\Tpl\Cache  $cache      Instance of caching backend.
+     */
+    public function setCache(\Octris\Core\Tpl\Cache $cache)
+    {
+        $this->tpl_cache = $cache;
     }
 
     /**
@@ -181,20 +185,6 @@ class Tpl
     }
 
     /**
-     * Set output path for compiled templates.
-     *
-     * @param   string      $path       Name of path to set.
-     */
-    public function setOutputPath($path)
-    {
-        if (!is_dir($path) || !is_writable($path)) {
-            trigger_error('Path is not writable "' . $path . '"');
-        } else {
-            $this->outputpath = $path;
-        }
-    }
-
-    /**
      * Set cache for template snippets.
      *
      * @param   \Octris\Core\Cache      $cache          Caching instance.
@@ -207,11 +197,12 @@ class Tpl
     /**
      * Executes template toolchain -- compiler and compressors.
      *
-     * @param   string      $inp        Input filename.
-     * @param   string      $out        Output filename.
+     * @param   string      $tplname    Filename of template to process.
      * @param   string      $escape     Escaping to use.
+     * @param   bool        $force      Force compilation, do not fetch from cache.
+     * @return  string                  Processed template.
      */
-    protected function process($inp, $out, $escape)
+    protected function process($tplname, $escape, $force = false)
     {
         $c = new Tpl\Compiler();
 
@@ -221,14 +212,18 @@ class Tpl
 
         $c->addSearchPath($this->searchpath);
 
-        if (($filename = $c->findFile($inp)) !== false) {
-            $tpl = $c->process($filename, $escape);
+        if (($filename = $c->findFile($tplname)) !== false) {
+            $uri = $this->tpl_cache->getURI($tplname);
 
-            foreach ($this->postprocessors as $processor) {
-                $tpl = $processor->postProcess($tpl);
+            if ($force || ($tpl = $this->tpl_cache->getContents($uri)) === false) {
+                $tpl = $c->process($filename, $escape);
+
+                foreach ($this->postprocessors as $processor) {
+                    $tpl = $processor->postProcess($tpl);
+                }
+
+                $this->tpl_cache->putContents($uri, $tpl);
             }
-
-            file_put_contents($out, $tpl);
         } else {
             die(sprintf(
                 'unable to locate file "%s" in "%s"',
@@ -237,7 +232,7 @@ class Tpl
             ));
         }
 
-        return $out;
+        return $tpl;
     }
 
     /**
@@ -277,10 +272,7 @@ class Tpl
      */
     public function compile($filename, $escape = self::ESC_HTML)
     {
-        $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
-        $out = $this->outputpath . '/' . preg_replace('/[\s\.]/', '_', $inp) . '-' . $this->l10n . '.php';
-
-        $out = $this->process($inp, $out, $escape);
+        $this->process($filename, $escape, true);
     }
 
     /**
@@ -307,16 +299,9 @@ class Tpl
      */
     public function render($filename, $escape = self::ESC_HTML)
     {
-        $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
-        $out = $this->outputpath . '/' . preg_replace('/[\s\.]/', '_', $inp) . '-' . $this->l10n . '.php';
+        $tpl = $this->process($filename, $escape);
 
-        if (!$this->use_cache) {
-            // do not use cache -- first process template using
-            // template compiler and javascript/css compressor
-            $out = $this->process($inp, $out, $escape);
-        }
-
-        $this->sandbox->render($out);
+        $this->sandbox->render($filename, $tpl);
     }
 
     /**
@@ -328,14 +313,11 @@ class Tpl
      */
     public function fetch($filename, $escape = self::ESC_HTML)
     {
-        ob_start();
+        $tpl = $this->process($filename, $escape);
 
-        $this->render($filename, $escape);
+        $result = $this->sandbox->fetch($filename, $tpl);
 
-        $return = ob_get_contents();
-        ob_end_clean();
-
-        return $return;
+        return $result;
     }
 
     /**

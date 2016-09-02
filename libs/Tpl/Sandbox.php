@@ -550,14 +550,15 @@ class Sandbox
     /**
      * Render a template and output rendered template to stdout.
      *
-     * @param   string      $filename       Filename of template to render.
+     * @param   string      $filename       Filename of template to render for error reporting.
+     * @param   string      $content        Template contents to render.
      */
-    public function render($filename)
+    public function render($filename, $content)
     {
         $this->filename = $filename;
 
         try {
-            require($filename);
+            eval('?>' . $tpl);
         } catch (\Exception $e) {
             $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile(), $e->getTraceAsString());
         }
@@ -566,17 +567,18 @@ class Sandbox
     /**
      * Render a template and return the output.
      *
-     * @param   string      $filename       Filename of template to render.
+     * @param   string      $filename       Filename of template to render for error reporting.
+     * @param   string      $content        Template contents to render.
      * @return  string                      Rendered template.
      */
-    public function fetch($filename)
+    public function fetch($filename, $content)
     {
         $this->filename = $filename;
 
         try {
             ob_start();
 
-            require($filename);
+            eval('?>' . $content);
 
             $content = ob_get_contents();
             ob_end_clean();
