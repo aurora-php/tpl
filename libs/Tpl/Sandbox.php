@@ -558,7 +558,7 @@ class Sandbox
         $this->filename = $filename;
 
         try {
-            eval('?>' . $tpl);
+            eval('?>' . $content);
         } catch (\Exception $e) {
             $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile(), $e->getTraceAsString());
         }
