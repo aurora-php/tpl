@@ -50,11 +50,11 @@ class Constant
         'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
 
         // pre-defined constants for string functions
-        'CASE_UPPER'             => \Octris\Core\Type\String::CASE_UPPER,
-        'CASE_LOWER'             => \Octris\Core\Type\String::CASE_LOWER,
-        'CASE_TITLE'             => \Octris\Core\Type\String::CASE_TITLE,
-        'CASE_UPPER_FIRST'       => \Octris\Core\Type\String::CASE_UPPER_FIRST,
-        'CASE_LOWER_FIRST'       => \Octris\Core\Type\String::CASE_LOWER_FIRST,
+        'CASE_UPPER'             => \Octris\Core\Type\Text::CASE_UPPER,
+        'CASE_LOWER'             => \Octris\Core\Type\Text::CASE_LOWER,
+        'CASE_TITLE'             => \Octris\Core\Type\Text::CASE_TITLE,
+        'CASE_UPPER_FIRST'       => \Octris\Core\Type\Text::CASE_UPPER_FIRST,
+        'CASE_LOWER_FIRST'       => \Octris\Core\Type\Text::CASE_LOWER_FIRST,
     );
 
     /**

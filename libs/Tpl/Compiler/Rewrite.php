@@ -115,25 +115,25 @@ class Rewrite
      */
     protected static $phpfunc = array(
         // string functions
-        'chunk'          => array('min' => 3, 'max' => 3, 'map' => '\Octris\Core\Type\String::chunk_split'),
-        'chunk_id'       => array('min' => 1, 'max' => 5, 'map' => '\Octris\Core\Type\String::chunk_id'),
-        'cut'            => array('min' => 2, 'max' => 4, 'map' => '\Octris\Core\Type\String::cut'),
+        'chunk'          => array('min' => 3, 'max' => 3, 'map' => '\Octris\Core\Type\Text::chunk_split'),
+        'chunk_id'       => array('min' => 1, 'max' => 5, 'map' => '\Octris\Core\Type\Text::chunk_id'),
+        'cut'            => array('min' => 2, 'max' => 4, 'map' => '\Octris\Core\Type\Text::cut'),
         'escapeshellarg' => array('min' => 1, 'max' => 1, 'map' => 'escapeshellarg'),
-        'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::lcfirst'),
+        'lcfirst'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\Text::lcfirst'),
         'length'         => array('min' => 1, 'max' => 1, 'map' => 'strlen'),
-        'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\String::ltrim'),
-        'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\Octris\Core\Type\String::obliterate'),
+        'ltrim'          => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\Text::ltrim'),
+        'obliterate'     => array('min' => 2, 'max' => 4, 'map' => '\Octris\Core\Type\Text::obliterate'),
         'repeat'         => array('min' => 2, 'max' => 2, 'map' => 'str_repeat'),
-        'replace'        => array('min' => 3, 'max' => 3, 'map' => '\Octris\Core\Type\String::str_replace'),
-        'rtrim'          => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\String::rtrim'),
-        'shorten'        => array('min' => 1, 'max' => 3, 'map' => '\Octris\Core\Type\String::shorten'),
-        'sprintf'        => array('min' => 1,             'map' => '\Octris\Core\Type\String::sprintf'),
-        'substr'         => array('min' => 2, 'max' => 3, 'map' => '\Octris\Core\Type\String::substr'),
-        'tolower'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::strtolower'),
-        'toupper'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::strtoupper'),
-        'trim'           => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\String::trim'),
-        'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\String::ucfirst'),
-        'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\Octris\Core\Type\String::vsprintf'),
+        'replace'        => array('min' => 3, 'max' => 3, 'map' => '\Octris\Core\Type\Text::str_replace'),
+        'rtrim'          => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\Text::rtrim'),
+        'shorten'        => array('min' => 1, 'max' => 3, 'map' => '\Octris\Core\Type\Text::shorten'),
+        'sprintf'        => array('min' => 1,             'map' => '\Octris\Core\Type\Text::sprintf'),
+        'substr'         => array('min' => 2, 'max' => 3, 'map' => '\Octris\Core\Type\Text::substr'),
+        'tolower'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\Text::strtolower'),
+        'toupper'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\Text::strtoupper'),
+        'trim'           => array('min' => 1, 'max' => 2, 'map' => '\Octris\Core\Type\Text::trim'),
+        'ucfirst'        => array('min' => 1, 'max' => 1, 'map' => '\Octris\Core\Type\Text::ucfirst'),
+        'vsprintf'       => array('min' => 2, 'max' => 2, 'map' => '\Octris\Core\Type\Text::vsprintf'),
 
         // numeric functions
         'abs'        => array('min' => 1, 'max' => 1),
@@ -462,7 +462,7 @@ class Rewrite
     protected static function blockLoop($args)
     {
         $params = [$args[0], range($args[1], $args[2], $args[3])];
-        
+
         if (count($args) == 5) {
             $params[$args[4]];
         }
