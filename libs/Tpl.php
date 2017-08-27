@@ -227,7 +227,7 @@ class Tpl
         } else {
             die(sprintf(
                 'unable to locate file "%s" in "%s"',
-                $inp,
+                $tplname,
                 implode(':', $this->searchpath)
             ));
         }
