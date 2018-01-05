@@ -17,7 +17,7 @@ namespace Octris\Tpl\Cache;
  * @copyright   copyright (c) 2016-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class Transient implements \Octris\Tpl\ICache
+class Transient implements \Octris\Tpl\CacheInterface
 {
     /**
      * Storage segments.

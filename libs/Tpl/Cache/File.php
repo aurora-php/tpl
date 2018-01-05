@@ -17,7 +17,7 @@ namespace Octris\Tpl\Cache;
  * @copyright   copyright (c) 2016-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class File implements \Octris\Tpl\ICache
+class File implements \Octris\Tpl\CacheInterface
 {
     /**
      * Root path of filesystem cache.

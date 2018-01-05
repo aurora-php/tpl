@@ -17,7 +17,7 @@ namespace Octris\Tpl;
  * @copyright   copyright (c) 2016-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-interface ICache
+interface CacheInterface
 {
     /**
      * Return cache URI for a specified filename.
