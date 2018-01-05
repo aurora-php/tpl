@@ -19,7 +19,7 @@ use \Octris\Tpl\Compiler as c;
  * @copyright   copyright (c) 2014-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class Grammar extends \Octris\Core\Parser\Grammar
+class Grammar extends \Octris\Parser\Grammar
 {
     /**
      * Known tokens.

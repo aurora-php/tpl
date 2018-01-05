@@ -24,7 +24,7 @@ class Compiler
     /**
      * Instance of parser class.
      *
-     * @type    \Octris\Core\Parser|null
+     * @type    \Octris\Parser|null
      */
     protected static $parser = null;
 
@@ -382,7 +382,7 @@ class Compiler
     protected function setup(array &$blocks)
     {
         $grammar = new \Octris\Tpl\Compiler\Grammar();
-        self::$parser = new \Octris\Core\Parser($grammar, [grammar::T_WHITESPACE]);
+        self::$parser = new \Octris\Parser($grammar, [grammar::T_WHITESPACE]);
 
         $chain = 0;
 
