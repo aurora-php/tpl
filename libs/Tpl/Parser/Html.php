@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl\Parser;
+namespace Octris\Tpl\Parser;
 
 /**
  * HTML Parser for auto-escaping functionality.
  *
- * @copyright   copyright (c) 2012-2016 by Harald Lapp
+ * @copyright   copyright (c) 2012-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class Html extends \Octris\Core\Tpl\Parser
+class Html extends \Octris\Tpl\Parser
 {
     /**
      * Parser states.
@@ -163,7 +163,7 @@ class Html extends \Octris\Core\Tpl\Parser
      *
      * @type    array
      */
-    protected $escape = array(\Octris\Core\Tpl::ESC_HTML);
+    protected $escape = array(\Octris\Tpl::ESC_HTML);
 
     /**
      * Array for storing normalized template commands.
@@ -236,7 +236,7 @@ class Html extends \Octris\Core\Tpl\Parser
                     );
                     break(2);
                 case self::T_COMMENT_OPEN:
-                    array_push($this->escape, \Octris\Core\Tpl::ESC_HTMLCOMMENT);
+                    array_push($this->escape, \Octris\Tpl::ESC_HTMLCOMMENT);
                     break;
                 case self::T_TAG_START:
                     break;
@@ -252,13 +252,13 @@ class Html extends \Octris\Core\Tpl\Parser
                     } else {
                         switch (strtolower($state['payload'])) {
                             case 'script':
-                                array_push($this->escape, \Octris\Core\Tpl::ESC_JS);
+                                array_push($this->escape, \Octris\Tpl::ESC_JS);
                                 break;
                             case 'style':
-                                array_push($this->escape, \Octris\Core\Tpl::ESC_CSS);
+                                array_push($this->escape, \Octris\Tpl::ESC_CSS);
                                 break;
                             default:
-                                array_push($this->escape, \Octris\Core\Tpl::ESC_HTML);
+                                array_push($this->escape, \Octris\Tpl::ESC_HTML);
                                 break;
                         }
                     }
@@ -273,8 +273,8 @@ class Html extends \Octris\Core\Tpl\Parser
                     continue(2);
                 case self::T_TAG_CLOSE:
                     if (count($this->escape) == 1) {
-                        if ($this->escape[0] != \Octris\Core\Tpl::ESC_HTML) {
-                            $this->escape[0] = \Octris\Core\Tpl::ESC_HTML;
+                        if ($this->escape[0] != \Octris\Tpl::ESC_HTML) {
+                            $this->escape[0] = \Octris\Tpl::ESC_HTML;
                         }
                     } else {
                         array_pop($this->escape);
@@ -295,11 +295,11 @@ class Html extends \Octris\Core\Tpl\Parser
                         $name = strtolower($state['payload']);
 
                         if (in_array($name, self::$attributes['js'])) {
-                            array_push($this->escape, \Octris\Core\Tpl::ESC_JS);
+                            array_push($this->escape, \Octris\Tpl::ESC_JS);
                         } elseif (in_array($name, self::$attributes['uri'])) {
-                            array_push($this->escape, \Octris\Core\Tpl::ESC_URI);
+                            array_push($this->escape, \Octris\Tpl::ESC_URI);
                         } else {
-                            array_push($this->escape, \Octris\Core\Tpl::ESC_ATTR);
+                            array_push($this->escape, \Octris\Tpl::ESC_ATTR);
                         }
                     }
                     break;

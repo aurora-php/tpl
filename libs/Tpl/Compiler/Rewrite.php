@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl\Compiler;
+namespace Octris\Tpl\Compiler;
 
 /**
  * Rewrite template code. Rewrite inline function calls and rewrite function calls according to
  * if they are allowed php function calls or calls to functions that have to be registered to
  * sandbox on template rendering.
  *
- * @copyright   copyright (c) 2010-2014 by Harald Lapp
+ * @copyright   copyright (c) 2010-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Rewrite
@@ -392,7 +392,7 @@ class Rewrite
         $var = '$_' . self::getUniqId();
         $key = $args[0];
         $ttl = $args[1];
-        $esc = (isset($args[2]) ? $args[2] : \Octris\Core\Tpl::ESC_NONE);
+        $esc = (isset($args[2]) ? $args[2] : \Octris\Tpl::ESC_NONE);
 
         return array(
             sprintf(

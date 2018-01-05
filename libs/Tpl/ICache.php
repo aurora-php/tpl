@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl;
+namespace Octris\Tpl;
 
 /**
  * Interface for building caching backends for the template engine.
  *
- * @copyright   copyright (c) 2016 by Harald Lapp
+ * @copyright   copyright (c) 2016-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 interface ICache

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl;
+namespace Octris\Tpl;
 
-use \Octris\Core\Tpl\Compiler\Grammar;
+use \Octris\Tpl\Compiler\Grammar;
 
 /**
  * Implementation of template compiler.
  *
- * @copyright   copyright (c) 2010-2016 by Harald Lapp
+ * @copyright   copyright (c) 2010-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Compiler
@@ -145,7 +145,7 @@ class Compiler
             $info['message'] = $payload;
         }
 
-        \Octris\Debug::getInstance()->error($ifile, $iline, $info, '\Octris\Core\Tpl\CompilerException');
+        \Octris\Debug::getInstance()->error($ifile, $iline, $info, '\Octris\Tpl\CompilerException');
     }
 
     /**
@@ -381,7 +381,7 @@ class Compiler
      */
     protected function setup(array &$blocks)
     {
-        $grammar = new \Octris\Core\Tpl\Compiler\Grammar();
+        $grammar = new \Octris\Tpl\Compiler\Grammar();
         self::$parser = new \Octris\Core\Parser($grammar, [grammar::T_WHITESPACE]);
 
         $chain = 0;
@@ -456,11 +456,11 @@ class Compiler
     /**
      * Parse template and extract all template functionality to compile.
      *
-     * @param   \Octris\Core\Tpl\Parser     $parser         Parser instance.
+     * @param   \Octris\Tpl\Parser     $parser         Parser instance.
      * @param   string                      $tpl            Optional template string.
      * @return  string                                      Processed / compiled template.
      */
-    protected function parse(\Octris\Core\Tpl\Parser $parser)
+    protected function parse(\Octris\Tpl\Parser $parser)
     {
         $blocks = array('analyzer' => array(), 'compiler' => array());
 
@@ -514,15 +514,15 @@ class Compiler
     {
         $this->filename = null;
 
-        if ($escape == \Octris\Core\Tpl::ESC_HTML) {
+        if ($escape == \Octris\Tpl::ESC_HTML) {
             // parser for auto-escaping turned on
-            $parser = \Octris\Core\Tpl\Parser\Html::fromString($tpl);
+            $parser = \Octris\Tpl\Parser\Html::fromString($tpl);
         } else {
-            if ($escape == \Octris\Core\Tpl::ESC_AUTO) {
-                $escape = \Octris\Core\Tpl::ESC_NONE;
+            if ($escape == \Octris\Tpl::ESC_AUTO) {
+                $escape = \Octris\Tpl::ESC_NONE;
             }
 
-            $parser = \Octris\Core\Tpl\Parser::fromString($tpl);
+            $parser = \Octris\Tpl\Parser::fromString($tpl);
             $parser->setFilter(function ($command) use ($escape) {
                 $command['escape'] = $escape;
 
@@ -544,26 +544,26 @@ class Compiler
     {
         $this->filename = $filename;
 
-        if ($escape == \Octris\Core\Tpl::ESC_AUTO) {
+        if ($escape == \Octris\Tpl::ESC_AUTO) {
             // auto-escaping, try to determine escaping from file extension
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
             if ($ext == 'html' || $ext == 'htm') {
-                $escape = \Octris\Core\Tpl::ESC_HTML;
+                $escape = \Octris\Tpl::ESC_HTML;
             } elseif ($ext == 'css') {
-                $escape = \Octris\Core\Tpl::ESC_CSS;
+                $escape = \Octris\Tpl::ESC_CSS;
             } elseif ($ext == 'js') {
-                $escape = \Octris\Core\Tpl::ESC_JS;
+                $escape = \Octris\Tpl::ESC_JS;
             } else {
-                $escape = \Octris\Core\Tpl::ESC_NONE;
+                $escape = \Octris\Tpl::ESC_NONE;
             }
         }
 
-        if ($escape == \Octris\Core\Tpl::ESC_HTML) {
+        if ($escape == \Octris\Tpl::ESC_HTML) {
             // parser for auto-escaping turned on
-            $parser = \Octris\Core\Tpl\Parser\Html::fromFile($filename);
+            $parser = \Octris\Tpl\Parser\Html::fromFile($filename);
         } else {
-            $parser = \Octris\Core\Tpl\Parser::fromFile($filename);
+            $parser = \Octris\Tpl\Parser::fromFile($filename);
             $parser->setFilter(function ($command) use ($escape) {
                 $command['escape'] = $escape;
 

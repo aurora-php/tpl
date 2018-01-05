@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl\Cache;
+namespace Octris\Tpl\Cache;
 
 /**
  * Filesystem cache storage.
  *
- * @copyright   copyright (c) 2016 by Harald Lapp
+ * @copyright   copyright (c) 2016-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class File implements \Octris\Core\Tpl\ICache
+class File implements \Octris\Tpl\ICache
 {
     /**
      * Root path of filesystem cache.

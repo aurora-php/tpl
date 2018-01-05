@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl;
+namespace Octris\Tpl;
 
 /**
  * Sandbox to execute templates in.
  *
- * @copyright   copyright (c) 2010-2016 by Harald Lapp
+ * @copyright   copyright (c) 2010-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Sandbox
@@ -29,7 +29,7 @@ class Sandbox
     /**
      * Storage for sandbox internal data objects.
      *
-     * @type    \Octris\Core\Tpl\Sandbox\Storage
+     * @type    \Octris\Tpl\Sandbox\Storage
      */
     protected $storage;
 
@@ -96,7 +96,7 @@ class Sandbox
      */
     public function __construct($charset = 'utf-8')
     {
-        $this->storage = \Octris\Core\Tpl\Sandbox\Storage::getInstance();
+        $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
         $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
         $this->data = new \Octris\Core\Type\Collection();
     }
@@ -309,7 +309,7 @@ class Sandbox
      * @param   string      $escape         Optional escaping to use for output.
      * @return  bool                        Returns true, if key was available in cache.
      */
-    public function cacheLookup($key, $escape = \Octris\Core\Tpl::ESC_NONE)
+    public function cacheLookup($key, $escape = \Octris\Tpl::ESC_NONE)
     {
         if (!($return = is_null($this->cache))) {
             if (($return = $this->cache->exists($key))) {
@@ -496,22 +496,22 @@ class Sandbox
         }
 
         switch ($escape) {
-            case \Octris\Core\Tpl::ESC_ATTR:
+            case \Octris\Tpl::ESC_ATTR:
                 $val = $this->escaper->escapeHtmlAttr($val);
                 break;
-            case \Octris\Core\Tpl::ESC_CSS:
+            case \Octris\Tpl::ESC_CSS:
                 $val = $this->escaper->escapeCss($val);
                 break;
-            case \Octris\Core\Tpl::ESC_HTML:
+            case \Octris\Tpl::ESC_HTML:
                 $val = $this->escaper->escapeHtml($val);
                 break;
-            case \Octris\Core\Tpl::ESC_JS:
+            case \Octris\Tpl::ESC_JS:
                 $val = $this->escaper->escapeJs($val);
                 break;
-            case \Octris\Core\Tpl::ESC_TAG:
+            case \Octris\Tpl::ESC_TAG:
                 throw new \Exception('Escaping "ESC_TAG" is not implemented!');
                 break;
-            case \Octris\Core\Tpl::ESC_URI:
+            case \Octris\Tpl::ESC_URI:
                 throw new \Exception('Escaping "ESC_URI" is not implemented!');
                 break;
         }
@@ -527,7 +527,7 @@ class Sandbox
      */
     public function write($val = '', $escape = '')
     {
-        if ($escape !== \Octris\Core\Tpl::ESC_NONE) {
+        if ($escape !== \Octris\Tpl::ESC_NONE) {
             $val = $this->escape($val, $escape);
         }
 

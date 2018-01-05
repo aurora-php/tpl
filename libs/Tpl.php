@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core;
+namespace Octris;
 
-use \Octris\Core\Tpl\Compiler as compiler;
+use \Octris\Tpl\Compiler as compiler;
 
 /**
  * Main class of template engine.
  *
- * @copyright   copyright (c) 2010-2016 by Harald Lapp
+ * @copyright   copyright (c) 2010-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Tpl
@@ -37,14 +37,14 @@ class Tpl
     /**
      * Instance of sandbox for executing template in.
      *
-     * @type    \Octris\Core\Tpl\Sandbox
+     * @type    \Octris\Tpl\Sandbox
      */
     protected $sandbox;
 
     /**
      * Configured caching backend.
      *
-     * @type    \Octris\Core\Tpl\ICache
+     * @type    \Octris\Tpl\ICache
      */
     protected $tpl_cache;
 
@@ -83,9 +83,9 @@ class Tpl
     /**
      * Set caching backend.
      *
-     * @param   \Octris\Core\Tpl\ICache     $cache      Instance of caching backend.
+     * @param   \Octris\Tpl\ICache     $cache      Instance of caching backend.
      */
-    public function setCache(\Octris\Core\Tpl\ICache $cache)
+    public function setCache(\Octris\Tpl\ICache $cache)
     {
         $this->tpl_cache = $cache;
     }
@@ -137,7 +137,7 @@ class Tpl
     /**
      * Add a post-processor.
      *
-     * @param   \Octris\Core\Tpl\PostprocessInterface       $processor          Instance of class for postprocessing.
+     * @param   \Octris\Tpl\PostprocessInterface       $processor          Instance of class for postprocessing.
      */
     public function addPostprocessor($processor)
     {

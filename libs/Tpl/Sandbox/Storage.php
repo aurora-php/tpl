@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl\Sandbox;
+namespace Octris\Tpl\Sandbox;
 
 /**
  * Object storage for sandbox.
  *
- * @copyright   copyright (c) 2012-2014 by Harald Lapp
+ * @copyright   copyright (c) 2012-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Storage
@@ -29,7 +29,7 @@ class Storage
     /**
      * Instance of storage class.
      *
-     * @type    \Octris\Core\Tpl\Sandbox\Storage|null
+     * @type    \Octris\Tpl\Sandbox\Storage|null
      */
     private static $instance = null;
 
@@ -46,7 +46,7 @@ class Storage
     /**
      * Get instance of storage class.
      *
-     * @return  \Octris\Core\Tpl\Sandbox\Storage                Instance of storage class.
+     * @return  \Octris\Tpl\Sandbox\Storage                Instance of storage class.
      */
     public static function getInstance()
     {

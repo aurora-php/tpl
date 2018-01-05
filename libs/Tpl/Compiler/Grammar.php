@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl\Compiler;
+namespace Octris\Tpl\Compiler;
 
-use \Octris\Core\Tpl\Compiler as c;
+use \Octris\Tpl\Compiler as c;
 
 /**
  * Class for defining a template parser grammar.
  *
- * @copyright   copyright (c) 2014 by Harald Lapp
+ * @copyright   copyright (c) 2014-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Grammar extends \Octris\Core\Parser\Grammar

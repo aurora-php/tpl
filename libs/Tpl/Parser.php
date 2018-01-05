@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the 'octris/core' package.
+ * This file is part of the 'octris/tpl' package.
  *
  * (c) Harald Lapp <harald@octris.org>
  *
@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Core\Tpl;
+namespace Octris\Tpl;
 
 /**
  * Template parser base class.
  *
- * @copyright   copyright (c) 2012-2016 by Harald Lapp
+ * @copyright   copyright (c) 2012-2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Parser implements \Iterator
@@ -136,7 +136,7 @@ class Parser implements \Iterator
      *
      * @param   string                  $tpl                        Template string to create parser from.
      * @param   int                     $flags                      Optional option flags to set.
-     * @return  \Octris\Core\Tpl\Parser                             Instance of template parser.
+     * @return  \Octris\Tpl\Parser                             Instance of template parser.
      */
     public static function fromString($tpl, $flags = 0)
     {
@@ -150,7 +150,7 @@ class Parser implements \Iterator
      *
      * @param   string                  $pathname                   Template file to create parser from.
      * @param   int                     $flags                      Optional option flags to set.
-     * @return  \Octris\Core\Tpl\Parser                             Instance of template parser.
+     * @return  \Octris\Tpl\Parser                             Instance of template parser.
      */
     public static function fromFile($pathname, $flags = 0)
     {
