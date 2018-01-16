@@ -213,17 +213,6 @@ class Sandbox
     }
 
     /**
-     * Gettext implementation.
-     *
-     * @param   string      $msg        Message to translate.
-     * @return  string                  Translated message.
-     */
-    public function gettext($msg)
-    {
-        return $this->l10n->gettext($msg);
-    }
-
-    /**
      * Implements iterator block function eg.: #foreach and #loop. Iterates over array and repeats an
      * enclosed template block.
      *

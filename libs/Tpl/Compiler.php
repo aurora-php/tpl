@@ -226,24 +226,6 @@ class Compiler
                         $code = array_merge($tmp, $code);
                     }
                     break;
-                case grammar::T_DGETTEXT:
-                case grammar::T_GETTEXT:
-                    $code    = array_reverse($code);
-                    $_domain = ($token == grammar::T_DGETTEXT
-                                ? array_shift($code)
-                                : 'null');
-                    $_msg    = array_shift($code);
-
-                    $code = array(Compiler\Rewrite::gettext($this->l10n, $_domain, $_msg, $code));
-
-                    if (($err = Compiler\Rewrite::getError()) != '') {
-                        $this->error(__FILE__, __LINE__, $line, $token, $err);
-                    }
-
-                    if (($tmp = array_pop($stack))) {
-                        $code = array_merge($tmp, $code);
-                    }
-                    break;
                 case grammar::T_DDUMP:
                 case grammar::T_DPRINT:
                 case grammar::T_ESCAPE:
