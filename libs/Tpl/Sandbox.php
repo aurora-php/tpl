@@ -69,13 +69,6 @@ class Sandbox
     protected $l10n;
 
     /**
-     * Instance of caching backend for template snippets.
-     *
-     * @type    \Octris\Core\Cache|null
-     */
-    protected $cache = null;
-
-    /**
      * Escaper instance.
      *
      * @type    \Zend\Escaper\Escaper
@@ -220,16 +213,6 @@ class Sandbox
     }
 
     /**
-     * Set cache for template snippets.
-     *
-     * @param   \Octris\Core\Cache      $cache          Caching instance.
-     */
-    public function setSnippetCache(\Octris\Core\Cache $cache)
-    {
-        $this->cache = $cache;
-    }
-
-    /**
      * Gettext implementation.
      *
      * @param   string      $msg        Message to translate.
@@ -297,48 +280,6 @@ class Sandbox
             ob_end_clean();
         } else {
             ob_end_flush();
-        }
-    }
-
-    /**
-     * Implementation for '#cache' block function. Starts a cache buffer. Returns cache contents by
-     * by specified key or generates cached content, if cache content is not available. An optional
-     * escaping method may be specified.
-     *
-     * @param   string      $key            Cache-key to lookup.
-     * @param   string      $escape         Optional escaping to use for output.
-     * @return  bool                        Returns true, if key was available in cache.
-     */
-    public function cacheLookup($key, $escape = \Octris\Tpl::ESC_NONE)
-    {
-        if (!($return = is_null($this->cache))) {
-            if (($return = $this->cache->exists($key))) {
-                $this->write($this->cache->fetch($key), $escape);
-            }
-        }
-
-        return $return;
-    }
-
-    /**
-     * Store date in the cache. A cache timeout is required. The cache timeout can have
-     * one of the following values:
-     *
-     * - int: relative timeout in seconds.
-     * - int: an absolute unix timestamp. Note, that if $timeout contains an integer that is bigger than
-     *   the current timestamp, it's guessed to be not ment as a relative timeout but the absolute timestamp.
-     * - string: a datetime string as absolute timeout.
-     * - 0: no cache.
-     * - -1: cache never expires.
-     *
-     * @param   string      $key            Key to use for storing buffer in cache.
-     * @param   mixed       $data           Data to store in cache.
-     * @param   int         $timeout        Cache timeout.
-     */
-    public function cacheStore($key, $data, $timeout)
-    {
-        if (!is_null($this->cache)) {
-            $this->cache->save($key, $data, $timeout);
         }
     }
 

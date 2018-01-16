@@ -29,7 +29,6 @@ class Rewrite
     protected static $inline = array(
         // blocks
         '#bench'    => array('min' => 1, 'max' => 1),
-        '#cache'    => array('min' => 2, 'max' => 3),
         '#copy'     => array('min' => 1, 'max' => 1),
         '#cron'     => array('min' => 1, 'max' => 2),
         '#cut'      => array('min' => 1, 'max' => 1),
@@ -158,7 +157,7 @@ class Rewrite
      * @type    array
      */
     protected static $forbidden = array(
-        'setvalue', 'setvalues', 'foreach', 'bufferstart', 'bufferend', 'cache', 'cron', 'loop', 'onchange', 'trigger',
+        'setvalue', 'setvalues', 'foreach', 'bufferstart', 'bufferend', 'cron', 'loop', 'onchange', 'trigger',
         '__construct', '__call', 'registermethod', 'render', 'write'
     );
 
@@ -383,29 +382,6 @@ class Rewrite
                 $args[0],
                 $args[0],
                 $var1
-            )
-        );
-    }
-
-    protected static function blockCache($args)
-    {
-        $var = '$_' . self::getUniqId();
-        $key = $args[0];
-        $ttl = $args[1];
-        $esc = (isset($args[2]) ? $args[2] : \Octris\Tpl::ESC_NONE);
-
-        return array(
-            sprintf(
-                'if (!$this->cacheLookup(%s, "%s")) { $this->bufferStart(%s, false);',
-                $key,
-                $esc,
-                $var
-            ),
-            sprintf(
-                '$this->bufferEnd(); $this->cacheStore(%s, %s, %s); }',
-                $key,
-                $var,
-                $ttl
             )
         );
     }
