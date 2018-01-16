@@ -45,8 +45,6 @@ class Grammar extends \Octris\Parser\Grammar
     const T_VARIABLE             = '"$..."';
 
     const T_ARRAY_DEF            = '<array>';
-    const T_DDUMP_DEF            = '<ddump>';
-    const T_DPRINT_DEF           = '<dprint>';
     const T_ESCAPE_DEF           = '<escape>';
     const T_LET_DEF              = '<let>';
     const T_MACRO_DEF            = '<macro>';
@@ -55,8 +53,6 @@ class Grammar extends \Octris\Parser\Grammar
 
     const T_MACRO                = '"@..."';
     const T_METHOD               = '"..."';
-    const T_DDUMP                = '"ddump"';
-    const T_DPRINT               = '"dprint"';
     const T_ESCAPE               = '"escape"';
     const T_LET                  = '"let"';
 
@@ -90,8 +86,6 @@ class Grammar extends \Octris\Parser\Grammar
         $this->addToken(self::T_BRACE_CLOSE, '\)');
         $this->addToken(self::T_PUNCT, '\,');
 
-        $this->addToken(self::T_DDUMP, 'ddump(?=\()');
-        $this->addToken(self::T_DPRINT, 'dprint(?=\()');
         $this->addToken(self::T_ESCAPE, 'escape(?=\()');
         $this->addToken(self::T_LET, 'let(?=\()');
         $this->addToken(self::T_METHOD, '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
@@ -116,7 +110,6 @@ class Grammar extends \Octris\Parser\Grammar
             self::T_BLOCK,
             self::T_CONSTANT,
             self::T_VARIABLE_DEF,
-            self::T_DDUMP_DEF, self::T_DPRINT_DEF,
             self::T_ESCAPE_DEF,
             self::T_LET_DEF,
             self::T_MACRO_DEF, self::T_METHOD_DEF
@@ -152,20 +145,6 @@ class Grammar extends \Octris\Parser\Grammar
                     ]]
                 ]]
             ]]
-        ]]);
-
-        $this->addRule(self::T_DDUMP_DEF, ['$concatenation' => [
-            self::T_DDUMP,
-            self::T_BRACE_OPEN,
-            self::T_PARAMETER_LIST,
-            self::T_BRACE_CLOSE
-        ]]);
-
-        $this->addRule(self::T_DPRINT_DEF, ['$concatenation' => [
-            self::T_DPRINT,
-            self::T_BRACE_OPEN,
-            self::T_PARAMETER_LIST,
-            self::T_BRACE_CLOSE
         ]]);
 
         $this->addRule(self::T_ESCAPE_DEF, ['$concatenation' => [
