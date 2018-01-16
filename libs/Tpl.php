@@ -185,16 +185,6 @@ class Tpl
     }
 
     /**
-     * Set cache for template snippets.
-     *
-     * @param   \Octris\Core\Cache      $cache          Caching instance.
-     */
-    public function setSnippetCache(\Octris\Core\Cache $cache)
-    {
-        $this->sandbox->setSnippetCache($cache);
-    }
-
-    /**
      * Executes template toolchain -- compiler and compressors.
      *
      * @param   string      $tplname    Filename of template to process.
