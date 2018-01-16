@@ -40,10 +40,9 @@ class File implements \Octris\Tpl\CacheInterface
      * Return cache URI for a specified filename.
      *
      * @param   string          $filename       Name of file to get URI for.
-     * @param   string          $l10n           Optional locale string.
      * @return  string                          URI of specified file.
      */
-    public function getURI($filename, $l10n = '')
+    public function getURI($filename)
     {
         $uri = str_replace(
             '/',
@@ -66,7 +65,7 @@ class File implements \Octris\Tpl\CacheInterface
             )
         );
 
-        $uri .= ($l10n != '' ? '-' . $l10n : '') . '.php';
+        $uri .= '.php';
 
         return $uri;
     }

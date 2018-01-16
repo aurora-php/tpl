@@ -62,13 +62,6 @@ class Sandbox
     protected $filename = '';
 
     /**
-     * Instance of locale class.
-     *
-     * @type    \Octris\Core\L10n
-     */
-    protected $l10n;
-
-    /**
      * Escaper instance.
      *
      * @type    \Zend\Escaper\Escaper
@@ -92,16 +85,6 @@ class Sandbox
         $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
         $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
         $this->data = new \Octris\Core\Type\Collection();
-    }
-
-    /**
-     * Set l10n dependency.
-     *
-     * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
-     */
-    public function setL10n(\Octris\Core\L10n $l10n)
-    {
-        $this->l10n = $l10n;
     }
 
     /**

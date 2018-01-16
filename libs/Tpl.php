@@ -56,13 +56,6 @@ class Tpl
     protected $searchpath = array();
 
     /**
-     * Instance of locale class.
-     *
-     * @type    \Octris\Core\L10n
-     */
-    protected $l10n;
-
-    /**
      * Postprocessors.
      *
      * @type    array
@@ -88,17 +81,6 @@ class Tpl
     public function setCache(\Octris\Tpl\CacheInterface $cache)
     {
         $this->tpl_cache = $cache;
-    }
-
-    /**
-     * Set l10n dependency.
-     *
-     * @param   \Octris\Core\L10n       $l10n       Instance of l10n class.
-     */
-    public function setL10n(\Octris\Core\L10n $l10n)
-    {
-        $this->sandbox->setL10n($l10n);
-        $this->l10n = $l10n;
     }
 
     /**
@@ -196,10 +178,6 @@ class Tpl
     {
         $c = new Tpl\Compiler();
 
-        if (!is_null($this->l10n)) {
-            $c->setL10n($this->l10n);
-        }
-
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($tplname)) !== false) {
@@ -236,10 +214,6 @@ class Tpl
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
         $c = new Tpl\Lint();
-
-        if (!is_null($this->l10n)) {
-            $c->setL10n($this->l10n);
-        }
 
         $c->addSearchPath($this->searchpath);
 
