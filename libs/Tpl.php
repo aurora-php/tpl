@@ -117,30 +117,6 @@ class Tpl
     }
 
     /**
-     * Add a single extension.
-     * 
-     * @param   \Octris\Tpl\Extension\AbstractExtension $extension          A single extension to add.
-     */
-    public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension)
-    {
-        // TODO: implementation
-    }
-
-    /**
-     * Add an extension bundle.
-     * 
-     * @param   \Octris\Tpl\Extension\AbstractBundle    $bundle             Extension bundle to add.
-     */
-    public function addExtensionBundle(\Octris\Tpl\Extension\AbstractBundle $bundle)
-    {
-        foreach ($bundle->getExtensions() as $extension) {
-            $this->addExtension($extension);
-        }
-        
-        // TODO: add bundle constants
-    }
-
-    /**
      * Add a post-processor.
      *
      * @param   \Octris\Tpl\PostprocessInterface       $processor          Instance of class for postprocessing.
