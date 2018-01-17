@@ -14,12 +14,12 @@ namespace Octris\Tpl\Extension\Bundle;
 use \Octris\Tpl\Extension;
 
 /**
- * Core extension for template engine.
+ * Standard extension bundle for template engine.
  *
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class Core extends AbstractBundle
+class Std extends AbstractBundle
 {
     /**
      * Return extensions from bundle.
