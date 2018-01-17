@@ -38,4 +38,14 @@ abstract class AbstractBundle
     {
         return [];
     }
+
+    /**
+     * Create uniq identifier required by some functions.
+     *
+     * @return  string
+     */
+    protected static function getUniqId()
+    {
+        return str_replace('.', '_', uniqid('v', true));
+    }
 }
