@@ -34,15 +34,24 @@ abstract class AbstractExtension
     private $fn = null;
 
     /**
+     * Extension options.
+     *
+     * @type    array
+     */
+    private $options = [];
+
+    /**
      * Constructor.
      *
      * @param   string              $name               Name to register extension with.
      * @param   callable            $fn                 Callback implementing code generator.
+     * @param   array               $options            Optional options.
      */
-    public function __construct($name, callable $fn)
+    public function __construct($name, callable $fn, array $options = [])
     {
         $this->name = $name;
         $this->fn = $this->fn;
+        $this->options = $options + [ 'final' => false ];
     }
 
     /**
@@ -76,4 +85,15 @@ abstract class AbstractExtension
      * @return  array|string                        Generated code.
      */
     abstract public function getCode();
+
+    /**
+     * Return if extension is defined as final and cannot be overwritten by an extension
+     * of the same name.
+     *
+     * @return  bool
+     */
+    public function isFinal()
+    {
+        return ($this->options['final']);
+    }
 }
