@@ -43,7 +43,7 @@ class Block extends AbstractBundle
 
     /** Block functions to register **/
 
-    protected function blockBench($iterations)
+    public function blockBench($iterations)
     {
         $var1 = '$_' . self::getUniqId();
         $var2 = '$_' . self::getUniqId();
@@ -71,9 +71,11 @@ class Block extends AbstractBundle
                 $var1
             )
         );
+        
+        circodasu
     }
 
-    protected function blockCopy($args)
+    public function blockCopy($args)
     {
         return array(
             '$this->bufferStart(' . implode(', ', $args) . ', false);',
@@ -81,15 +83,15 @@ class Block extends AbstractBundle
         );
     }
 
-    protected function blockCron($args)
+    public function blockCron($args)
     {
         return array(
-            'if ($this->cron(' . implode(', ', $args) . ')) {',
+            'if ($library->block->cron(' . implode(', ', $args) . ')) {',
             '}'
         );
     }
 
-    protected function blockCut($args)
+    public function blockCut($args)
     {
         return array(
             '$this->bufferStart(' . implode(', ', $args) . ', true);',
@@ -97,16 +99,45 @@ class Block extends AbstractBundle
         );
     }
 
-    protected function blockForeach($args)
+    /**
+     * Implements iterator block function eg.: #foreach and #loop. Iterates over array and repeats an
+     * enclosed template block.
+     *
+     * @param   iterable                        $data               Iteratable data.
+     * @return  \Generator                                          Generator to use for iterating.
+     */
+    public function doLoop(iterable $data)
     {
-        if (count($args) == 2) {
+        $loop = function ($data) {
+            $pos = 0;
+            $count = count($data);
+
+            foreach ($data as $key => $item) {
+                $meta = [
+                    'is_first' => ($pos == 0),
+                    'is_last' => ($pos + 1 == $count),
+                    'count' => $count,
+                    'pos' => $pos++,
+                    'key' => $key
+                ];
+
+                yield [$item, $meta];
+            }
+        };
+
+        return $loop($data);
+    }
+
+    public function blockForeach($value, $data, $meta = null)
+    {
+        if (is_null($meta)) {
             $return = [
-                sprintf('foreach ($this->loop(%s) as list(%s, )) {', $args[1], $args[0]),
+                sprintf('foreach ($this->getBlock()->doLoop(%s) as list(%s, )) {', $data, $value),
                 '}'
             ];
         } else {
             $return = [
-                sprintf('foreach ($this->loop(%s) as list(%s, %s)) {', $args[1], $args[0], $args[2]),
+                sprintf('foreach ($this->library("block")->doLoop(%s) as list(%s, %s)) {', $data, $value, $meta),
                 '}'
             ];
         }
@@ -114,7 +145,7 @@ class Block extends AbstractBundle
         return $return;
     }
 
-    protected function blockIf($args)
+    public function blockIf($args)
     {
         return array(
             'if (' . implode('', $args) . ') {',
@@ -122,7 +153,7 @@ class Block extends AbstractBundle
         );
     }
 
-    protected function blockLoop($args)
+    public function blockLoop($args)
     {
         $params = [$args[0], range($args[1], $args[2], $args[3])];
 
@@ -133,7 +164,7 @@ class Block extends AbstractBundle
         return $this->blockForeach($params);
     }
 
-    protected function blockOnchange($args)
+    public function blockOnchange($args)
     {
         return array(
             'if ($this->onchange("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
@@ -141,7 +172,7 @@ class Block extends AbstractBundle
         );
     }
 
-    protected function blockTrigger($args)
+    public function blockTrigger($args)
     {
         return array(
             'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
