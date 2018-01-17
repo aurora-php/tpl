@@ -21,17 +21,17 @@ abstract class AbstractBundle
 {
     /**
      * Return extensions.
-     * 
+     *
      * @return  array
      */
     public function getExtensions()
     {
         return [];
     }
-    
+
     /**
      * Return constants to add.
-     * 
+     *
      * @return  array
      */
     public function getConstants()

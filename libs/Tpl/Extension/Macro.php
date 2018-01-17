@@ -1,23 +1,30 @@
 <?php
 
-class Macro extends \Octris\Tpl\AbstractExtension {
+/*
+ * This file is part of the 'octris/tpl' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Octris\Tpl\Extension;
+
+/**
+ * Class for building macro extensions.
+ *
+ * @copyright   copyright (c) 2018 by Harald Lapp
+ * @author      Harald Lapp <harald@octris.org>
+ */
+final class Macro extends \Octris\Tpl\Extension\AbstractExtension {
     /**
-     * Set callable for rewriting code.
+     * Call defined code generator and return result.
      *
-     * @param   callable        $fun        Callable for return code to rewrite template function with.
-     */
-    public function setFun(callable $fun)
-    {
-        $this->fun = $fun
-    }
-    
-    /**
-     * Call defined rewrite function and return result.
-     * 
      * @return  string                                  Template code.
      */
     public function getCode(array $args = [])
     {
-        return ($this->fun)(...$args);
+        return ($this->fn)(...$args);
     }
 }

@@ -1,59 +1,30 @@
 <?php
 
-class Block extends \Octris\Tpl\AbstractExtension {
-    /**
-     * Block end calleble.
-     * 
-     * @type    callable
-     */
-    protected $end_fun;
-    
-    /**
-     * Constructor.
-     * 
-     * @param   string              $name               Name to register extension with.
-     */
-    public function __construct($name)
-    {
-        parent::__construct($name);
+/*
+ * This file is part of the 'octris/tpl' package.
+ *
+ * (c) Harald Lapp <harald@octris.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-        $this->fun = function() { return 'do {'; };
-        $this->end_fun = function() { return '} while(false);'; };
-    }
-    
-    /**
-     * Set callable for rewriting start code.
-     *
-     * @param   callable        $fun.
-     */
-    public function setStartFun(callable $fun)
-    {
-        $this->fun = $fun
-    }
+namespace Octris\Tpl\Extension;
 
+/**
+ * Class for building block extensions.
+ *
+ * @copyright   copyright (c) 2018 by Harald Lapp
+ * @author      Harald Lapp <harald@octris.org>
+ */
+final class Block extends \Octris\Tpl\Extension\AbstractExtension {
     /**
-     * Set callable for rewriting start code.
+     * Call defined code generator and return result.
      *
-     * @param   callable        $fun.
+     * @return  string                                  Template code.
      */
-    public function setEndFun(callable $fun)
+    public function getCode(array $args = [])
     {
-        $this->end_fun = $fun
-    }
-    
-    /**
-     * Get code for block start.
-     */
-    public function getStartCode(array $args = array())
-    {
-        return ($this->fun)(...$args);
-    }
-    
-    /**
-     * Get code for block end.
-     */
-    public function getEndCode()
-    {
-        return ($this->end_fun)();
+        return ($this->fn)(...$args);
     }
 }
