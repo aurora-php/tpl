@@ -11,15 +11,25 @@
 
 namespace Octris\Tpl\Extension;
 
-use \Octris\Tpl\Compiler as compiler;
-
 /**
- * Abstract control class.
+ * Abstract class for implementing control structures.
  *
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-abstract class Control
+class Control extends \Octris\Tpl\Extension\AbstractExtension
 {
-    abstract __invoke();
+    /**
+     * Code generator.
+     *
+     * @param   array               $args               Function arguments definition.
+     * @param   array               $env                Engine environment.
+     * @return  string                                  Template code.
+     */
+    final public function getCode(array $args, array $env)
+    {
+        $code = $this->fn(...$args);
+        
+        return [ $head, '}' ];
+    }
 }
