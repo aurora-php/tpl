@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-abstract class Macro extends \Octris\Tpl\Extension\AbstractExtension {
+class Macro extends \Octris\Tpl\Extension\AbstractExtension {
     /**
      * Code generator.
      *
