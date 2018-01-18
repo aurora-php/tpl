@@ -20,6 +20,13 @@ namespace Octris\Tpl;
 class Library
 {
     /**
+     * Defined constants.
+     * 
+     * @type    array
+     */
+    protected $constants = [];
+    
+    /**
      * Constructor.
      */
     public function __construct()
@@ -47,8 +54,31 @@ class Library
             $this->addExtension($extension);
         }
 
-        // TODO: add bundle constants
+        foreach ($bundle->getConstants() as $name => $value) {
+            $name = strtoupper($name);
+            
+            if (isset($this->constants[$name])) {
+                throw new \Exception("Constant '$name' is already defined!");
+            } else {
+                $this->constants[$name] = $value;
+            }
+        }
     }
 
-}
+    /**
+     * Return value of a defined constant.
+     * 
+     * @param   string      $name               Name of constant.
+     * @return  mixed
+     */
+    public function getConstant($name)
+    {
+        $name = strtoupper($name);
 
+        if (!isset($this->constants[$name])) {
+            throw new \Exception($name, 'unknown constant');
+        } else {
+            return $this->constants[$name];
+        }
+    }
+}
