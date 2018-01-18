@@ -71,12 +71,18 @@ abstract class AbstractExtension
      */
     public function getNumberOfParameters()
     {
-        $ref = new ReflectionFunction($this->fn);
+        static $ret = null;
+        
+        if (is_null($ret)) {
+            $ref = new ReflectionFunction($this->fn);
 
-        $min = $ref->getNumberOfRequiredParameters();
-        $max = ($ref->isVariadic() ? -1 : $ref->getNumberOfParameters());
+            $min = $ref->getNumberOfRequiredParameters();
+            $max = ($ref->isVariadic() ? -1 : $ref->getNumberOfParameters());
+            
+            $ret = [$min, $max];
+        }
 
-        return [$min, $max];
+        return $ret;
     }
 
     /**
