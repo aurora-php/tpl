@@ -18,4 +18,15 @@ namespace Octris\Tpl\Extension;
  * @author      Harald Lapp <harald@octris.org>
  */
 abstract class Macro extends \Octris\Tpl\Extension\AbstractExtension {
+    /**
+     * Code generator.
+     *
+     * @param   array               $args               Function arguments definition.
+     * @param   array               $env                Engine environment.
+     * @return  string                                  Template code.
+     */
+    public function getCode(array $args, array $env)
+    {
+        return $this->fn(...$args);
+    }
 }
