@@ -19,12 +19,12 @@ namespace Octris\Tpl\Extension;
  */
 class Fun extends \Octris\Tpl\Extension\AbstractExtension {
     /**
-     * Call defined code generator and return result.
+     * Code generator.
      *
      * @return  string                                  Template code.
      */
-    final public function getCode(array $args = [])
+    final public function getCode()
     {
-        return '$this->library[static::class](\'' . \Octris\Tpl\Extension::getUniqId() . '\', ' . implode(', ', $args) . ')';
+        return '$this->library[static::class](\'' . \Octris\Tpl\Extension::getUniqId() . '\', ' . $this->fn() . ')';
     }
 }
