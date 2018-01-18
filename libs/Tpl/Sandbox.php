@@ -48,11 +48,11 @@ class Sandbox
     protected $pastebin = array();
 
     /**
-     * Function registry.
-     *
-     * @type    array
+     * Extension library.
+     * 
+     * @type    \Octris\Tpl\Library
      */
-    protected $registry = array();
+    protected $library;
 
     /**
      * Name of file that is rendered by the sandbox instance.
@@ -85,6 +85,7 @@ class Sandbox
         $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
         $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
         $this->data = new \Octris\Core\Type\Collection();
+        $this->library = new \Octris\Tpl\Library();
     }
 
     /**
@@ -145,22 +146,14 @@ class Sandbox
     }
 
     /**
-     * Register a custom template method.
-     *
-     * @param   string      $name       Name of template method to register.
-     * @param   mixed       $callback   Callback to map to template method.
-     * @param   array       $args       For specifying min/max number of arguments required for callback method.
+     * Set extension library.
+     * 
+     * @param   \Octris\Tpl\Library                     $library            Instance of extension library.
      */
-    public function registerMethod($name, callable $callback, array $args)
-    {
-        $name = strtolower($name);
-
-        $this->registry[$name] = array(
-            'callback' => $callback,
-            'args'     => array_merge(array('min' => 0, 'max' => 0), $args)
-        );
+    public function setLibrary(\Octris\Tpl\Library $library) {
+        $this->library = $library;
     }
-
+    
     /**
      * Set values for multiple template variables.
      *
