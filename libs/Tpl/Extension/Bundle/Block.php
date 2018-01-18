@@ -160,20 +160,4 @@ class Block extends AbstractBundle
 
         return $this->blockForeach($params);
     }
-
-    public function blockOnchange($args)
-    {
-        return array(
-            'if ($this->onchange("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
-            '}'
-        );
-    }
-
-    public function blockTrigger($args)
-    {
-        return array(
-            'if ($this->trigger("' . self::getUniqId() . '", ' . implode(', ', $args) . ')) {',
-            '}'
-        );
-    }
 }
