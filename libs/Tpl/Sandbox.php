@@ -225,37 +225,6 @@ class Sandbox
     }
 
     /**
-     * Implementation for '#cut' and '#copy' block functions. Starts output buffer.
-     *
-     * @param   mixed       $ctrl       Control variable to store buffer data in.
-     * @param   bool        $cut        Optional flag that indicates if buffer should be cut or copied.
-     */
-    public function bufferStart(&$ctrl, $cut = true)
-    {
-        array_push($this->pastebin, array(
-            'buffer' => &$ctrl,
-            'cut'    => $cut
-        ));
-
-        ob_start();
-    }
-
-    /**
-     * Stop output buffer.
-     */
-    public function bufferEnd()
-    {
-        $buffer = array_pop($this->pastebin);
-        $buffer['buffer'] = ob_get_contents();
-
-        if ($buffer['cut']) {
-            ob_end_clean();
-        } else {
-            ob_end_flush();
-        }
-    }
-
-    /**
      * Escape a value according to the specified escaping context.
      *
      * @param   string          $val            Value to escape.
