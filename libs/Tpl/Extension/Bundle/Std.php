@@ -32,6 +32,9 @@ class Std extends AbstractBundle
             new Fun('neg', [$this, 'funNeg']),
             new Fun('mul', [$this, 'funMul']),
             new Fun('div', [$this, 'funDiv']),
+            new Fun\Cycle('cycle'),
+            new Fun\Trigger('trigger'),
+            new Fun\OnChange('onchange'),
         ];
     }
 
