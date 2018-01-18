@@ -27,6 +27,18 @@ class Library
     protected $constants = [];
     
     /**
+     * Defined extensions.
+     * 
+     * @type    array
+     */
+    protected $extensions = [
+        'block' => [],
+        'control' => [],
+        'fun' => [],
+        'macro' => [],
+    ];
+    
+    /**
      * Constructor.
      */
     public function __construct()
@@ -40,7 +52,17 @@ class Library
      */
     public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension)
     {
-
+        if ($extension instanceof Octris\Tpl\Extension\Block) {
+            $this->extensions['block'][] = $extension;
+        } elseif ($extension instanceof Octris\Tpl\Extension\Control) {
+            $this->extensions['control'][] = $extension;            
+        } elseif ($extension instanceof Octris\Tpl\Extension\Fun) {
+            $this->extensions['fun'][] = $extension;            
+        } elseif ($extension instanceof Octris\Tpl\Extension\Macro) {
+            $this->extensions['nacro'][] = $extension;            
+        } else {
+            throw new \InvalidArgumentException('Unknown extension type');
+        }
     }
 
     /**
