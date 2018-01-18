@@ -33,9 +33,9 @@ class Library
      */
     protected $extensions = [
         'block' => [],
-        'control' => [],
-        'fun' => [],
+        'function' => [],
         'macro' => [],
+        'structure' => [],
     ];
     
     /**
@@ -53,15 +53,23 @@ class Library
     public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension)
     {
         if ($extension instanceof Octris\Tpl\Extension\Block) {
-            $this->extensions['block'][] = $extension;
+            $type = 'block';
         } elseif ($extension instanceof Octris\Tpl\Extension\Control) {
-            $this->extensions['control'][] = $extension;            
+            $type = 'structure';
         } elseif ($extension instanceof Octris\Tpl\Extension\Fun) {
-            $this->extensions['fun'][] = $extension;            
+            $type = 'function';
         } elseif ($extension instanceof Octris\Tpl\Extension\Macro) {
-            $this->extensions['nacro'][] = $extension;            
+            $type = 'macro';
         } else {
             throw new \InvalidArgumentException('Unknown extension type');
+        }
+
+        $name = $extension->getName();
+        
+        if (!isset($this->extensions[$type][$name]) || !$this->extensions[$type][$name]->isFinal()) {
+            $this->extensions[$type][$name] = $extension;
+        } else {
+            throw new \InvalidArgumentException('A ' . $type . ' with the name "' . $name . '" is already defined and marked as final');
         }
     }
 
