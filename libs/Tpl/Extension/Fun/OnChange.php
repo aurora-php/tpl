@@ -42,13 +42,13 @@ final class OnChange extends \Octris\Tpl\Extension\Fun {
     }
 
     /**
-     * Execute onchange.
+     * Implementation for the called function.
      * 
      * @param   string      $id         Uniq identifier of event.
      * @param   mixed       $value      Value of observed variable.
      * @return  bool                    Returns true if variable value change was detected.
      */
-    public function __invoke($id, $value)
+    public function call($id, $value)
     {
         if (!isset($this->states[$id])) {
             $this->states[$id] = null;

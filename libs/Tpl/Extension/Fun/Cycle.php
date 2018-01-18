@@ -43,7 +43,7 @@ final class Cycle extends \Octris\Tpl\Extension\Fun {
     }
 
     /**
-     * Execute cycle.
+     * Implementation for the called function.
      * 
      * @param   string      $id         Uniq identifier for cycle.
      * @param   array       $array      List of elements to use for cycling.
@@ -53,7 +53,7 @@ final class Cycle extends \Octris\Tpl\Extension\Fun {
      *                                  reset value
      * @return  mixed                   Current list item.
      */
-    public function __invoke($id, array $array, $pingpong = false, $reset = 1)
+    public function call($id, array $array, $pingpong = false, $reset = 1)
     {
         if (!isset($this->states[$id])) {
             if ($pingpong) {

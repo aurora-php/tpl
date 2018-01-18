@@ -25,6 +25,12 @@ class Fun extends \Octris\Tpl\Extension\AbstractExtension {
      */
     final public function getCode()
     {
-        return '$this->library[static::class](' . $this->fn() . ')';
+        if (__CLASS__ == static::class) {
+            $code = $this->fn();
+        } else {
+            $code = '$this->library[static::class]->call(' . $this->fn() . ')';
+        }
+        
+        return $code;
     }
 }

@@ -43,7 +43,7 @@ final class Trigger extends \Octris\Tpl\Extension\Fun {
     }
 
     /**
-     * Execute trigger.
+     * Implementation for the called function.
      * 
      * @param   string      $id         Uniq identifier of trigger.
      * @param   int         $steps      Optional number of steps trigger should go until signal is raised.
@@ -51,7 +51,7 @@ final class Trigger extends \Octris\Tpl\Extension\Fun {
      * @param   mixed       $reset      Optional trigger reset flag. The trigger is reset if value provided differs from stored reset value.
      * @return  bool                    Returns true if trigger is raised.
      */
-    public function __invoke($id, $steps = 2, $start = 0, $reset = 1)
+    public function call($id, $steps = 2, $start = 0, $reset = 1)
     {
         $id = $id . ':' . $steps . ':' . $start;
 
