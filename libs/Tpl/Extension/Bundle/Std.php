@@ -36,6 +36,14 @@ class Std extends AbstractBundle
             new Block\Copy('copy'),
             new Block\Cut('cut')
 
+            new Macro\Import('import'),
+            new Macro('uniqid', [$this, 'macroUniqId']),
+            new Macro('date', [$this, 'macroDate']),
+            
+            new Control\ControlIf('if', ['final' => true]),
+            new Control\ControlForeach('foreach', ['final' => true]),
+            new Control\ControlLoop('loop', ['final' => true]),
+
             new Fun('if', [$this, 'funcIf']),
             new Fun('ifset', [$this, 'funcIfset']),
             new Fun('ifnull', [$this, 'funcIfnull']),
@@ -76,7 +84,6 @@ class Std extends AbstractBundle
             new Fun('totitle', [$this, 'funcTotitle']),
             new Fun('concat', [$this, 'funcConcat']),
             new Fun('array', [$this, 'funcArray']),
-            new Fun('cycle', [$this, 'funcCycle']),
             new Fun('in', [$this, 'funcIn']),
             new Fun('escape', [$this, 'funcEscape']),
             new Fun('comify', [$this, 'funcComify']),
@@ -127,6 +134,16 @@ class Std extends AbstractBundle
             // 'CASE_UPPER_FIRST'       => \Octris\Core\Type\Text::CASE_UPPER_FIRST,
             // 'CASE_LOWER_FIRST'       => \Octris\Core\Type\Text::CASE_LOWER_FIRST
         ];
+    }
+
+    /** macros to register **/
+    public function macroUniqId()
+    {
+        return \Octris\Tpl\Extension::getUniqId();
+    }
+    public function macroDate()
+    {
+        return strftime('%Y-%m-%d %H:%M:%S');
     }
 
     /** standard functions to register **/
@@ -281,7 +298,7 @@ class Std extends AbstractBundle
 
     public function funcUniqid()
     {
-        return '(uniqid(mt_rand()))';
+        return '\Octris\Tpl\Extension::getUniqId()';
     }
 
     public function funcLet($args)
@@ -348,11 +365,6 @@ class Std extends AbstractBundle
     public function funcArray($args)
     {
         return 'new \\Octris\\Core\\Type\\Collection(array(' . implode(', ', $args) . '))';
-    }
-
-    public function funcCycle($args)
-    {
-        return '($this->cycle("' . self::getUniqId() . '", ' . implode(', ', $args) . '))';
     }
 
     public function funcIn($args)
