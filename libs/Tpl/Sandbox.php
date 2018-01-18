@@ -84,7 +84,7 @@ class Sandbox
     {
         $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
         $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
-        $this->data = new \Octris\Core\Type\Collection();
+        $this->data = []; //new \Octris\Core\Type\Collection();
         $this->library = new \Octris\Tpl\Library();
     }
 
