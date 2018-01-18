@@ -29,11 +29,19 @@ final class Cycle extends \Octris\Tpl\Extension\Fun {
     
     /**
      * Constructor.
+     *
+     * @param   string              $name               Name to register extension with.
+     * @param   array               $options            Optional options.
      */
-    public function __construct()
+    public function __construct($name, array $options = [])
     {
+        $code_gen = function(array $array, $pingpong = false, $reset = 1) {
+            return implode(', ', [ $array, $pingpong, $reset ]);
+        };
+
+        parent::__construct($name, $code_gen, $options);
     }
-    
+
     /**
      * Execute cycle.
      * 

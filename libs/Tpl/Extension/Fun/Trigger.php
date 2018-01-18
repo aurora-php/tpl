@@ -29,11 +29,19 @@ final class Trigger extends \Octris\Tpl\Extension\Fun {
     
     /**
      * Constructor.
+     *
+     * @param   string              $name               Name to register extension with.
+     * @param   array               $options            Optional options.
      */
-    public function __construct()
+    public function __construct($name, array $options = [])
     {
+        $code_gen = function($steps = 2, $start = 0, $reset = 1) {
+            return implode(', ', [ $steps, $start, $reset ]);
+        };
+
+        parent::__construct($name, $code_gen, $options);
     }
-    
+
     /**
      * Execute trigger.
      * 
