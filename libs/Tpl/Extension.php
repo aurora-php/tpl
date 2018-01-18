@@ -9,33 +9,22 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Tpl\Extension;
+namespace Octris\Tpl;
 
 /**
- * Extension bundle base class.
+ * Extemsion related functionality.
  *
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-abstract class AbstractBundle
-{
+class Extension {
     /**
-     * Return extensions.
+     * Create uniq identifier required by some functions.
      *
-     * @return  array
+     * @return  string
      */
-    public function getExtensions()
+    protected static function getUniqId()
     {
-        return [];
-    }
-
-    /**
-     * Return constants to add.
-     *
-     * @return  array
-     */
-    public function getConstants()
-    {
-        return [];
+        return str_replace('.', '_', uniqid('v', true));
     }
 }
