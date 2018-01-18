@@ -31,13 +31,10 @@ class Block extends AbstractBundle
         return [
             new Block('bench', [$this, 'blockBench']),
             new Block('copy', [$this, 'blockCopy']),
-            new Block('cron', [$this, 'blockCron']),
             new Block('cut', [$this, 'blockCut']),
             new Block('foreach', [$this, 'blockForeach']),
             new Block('if', [$this, 'blockIf'], ['final' => true]),
             new Block('loop', [$this, 'blockLoop']),
-            new Block('onchange', [$this, 'blockOnchange']),
-            new Block('trigger', [$this, 'blockTrigger']),
         ];
     }
 
@@ -132,7 +129,7 @@ class Block extends AbstractBundle
     {
         if (is_null($meta)) {
             $return = [
-                sprintf('foreach ($this->getBlock()->doLoop(%s) as list(%s, )) {', $data, $value),
+                sprintf('foreach ($this->block->doLoop(%s) as list(%s, )) {', $data, $value),
                 '}'
             ];
         } else {
