@@ -114,6 +114,15 @@ class Tpl
     }
     
     /**
+     * Return instance of extension library.
+     * 
+     * @return   \Octris\Tpl\Library                                        Instance of extension library.
+     */
+    public function getLibrary(\Octris\Tpl\Library $library) {
+        return $this->library;
+    }
+    
+    /**
      * Add a post-processor.
      *
      * @param   \Octris\Tpl\PostprocessInterface       $processor          Instance of class for postprocessing.
