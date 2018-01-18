@@ -30,7 +30,7 @@ class Fun extends \Octris\Tpl\Extension\AbstractExtension {
         if (__CLASS__ == static::class) {
             $code = $this->fn(...$args);
         } else {
-            $code = '$this->library[static::class]->call(' . $this->fn(...$args) . ')';
+            $code = '$this->library[\'' . static::class . '\'']->call(' . $this->fn(...$args) . ')';
         }
         
         return $code;
