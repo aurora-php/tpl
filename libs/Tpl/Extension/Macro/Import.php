@@ -19,17 +19,27 @@ namespace Octris\Tpl\Extension\Macro;
  */
 final class Import extends \Octris\Tpl\Extension\Macro {    
     /**
-     * Import sub-template.
-     * 
-     * @param   string      $id         Uniq identifier for cycle.
-     * @param   array       $array      List of elements to use for cycling.
-     * @param   bool        $pingpong   Optional flag indicates whether to start with first element or moving pointer
-     *                                  back and forth in case the pointer reached first (or last) element in the list.
-     * @param   mixed       $reset      Optional reset flag. The cycle pointer is reset if value provided differs from stored
-     *                                  reset value
-     * @return  mixed                   Current list item.
+     * Constructor.
+     *
+     * @param   string              $name               Name to register extension with.
+     * @param   array               $options            Optional options.
      */
-    public function getCode()
+    public function __construct($name, array $options = [])
+    {
+        $code_gen = function($filename) {
+        };
+
+        parent::__construct($name, $code_gen, $options);
+    }
+
+    /**
+     * Code generator.
+     *
+     * @param   array               $args               Function arguments definition.
+     * @param   array               $env                Engine environment.
+     * @return  string                                  Template code.
+     */
+    public function getCode(array $args, array $env)
     {
         $ret = '';
         $err = '';
@@ -46,6 +56,7 @@ final class Import extends \Octris\Tpl\Extension\Macro {
             );
         }
 
-        return array($ret, $err);
+        return $ret;
+        //return array($ret, $err);
     }
 }
