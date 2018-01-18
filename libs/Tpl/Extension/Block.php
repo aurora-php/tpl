@@ -17,14 +17,21 @@ namespace Octris\Tpl\Extension;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Block extends \Octris\Tpl\Extension\AbstractExtension {
+class Block extends \Octris\Tpl\Extension\AbstractExtension {
     /**
-     * Call defined code generator and return result.
+     * Code generator.
      *
-     * @return  string                                  Template code.
+     * @return  array                                   Template code for head and foot.
      */
-    public function getCode(array $args = [])
+    final public function getCode()
     {
-        return ($this->fn)(...$args);
+        list($head, $foot) = $this->fn();
+        
+        if (__CLASS__ != static::class) {
+            $head = '$this->library[static::class]->head(' . $head . ')';
+            $foot = '$this->library[static::class]->foot(' . $foot . ')';
+        }
+
+        return [ $head, $foot ];
     }
 }
