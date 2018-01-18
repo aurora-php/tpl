@@ -95,6 +95,22 @@ class Std extends AbstractBundle
             new Fun('gender', [$this, 'funcGender']),
             new Fun('quant', [$this, 'funcQuant']),
             new Fun('yesno', [$this, 'funcYesno']),
+            
+            new Fun('yesno', [$this, 'funcYesno']),
+            
+            new Fun('abs', 'abs'),
+            new Fun('ceil', 'ceil'),
+            new Fun('floor', 'floor'),
+            new Fun('max', 'max'),
+            new Fun('min', 'min'),
+            new Fun('round', 'round'),
+            new Fun('count', 'count'),
+            new Fun('isset', 'isset'),
+            new Fun('jsonencode', 'json_encode'),
+            new Fun('jsondecode', 'json_decode'),
+            new Fun('escapeshellarg', 'escapeshellarg'),
+            new Fun('length', 'strlen'),    
+            new Fun('repeat', 'str_repeat'),
         ];
     }
 
