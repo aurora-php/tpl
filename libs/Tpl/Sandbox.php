@@ -196,35 +196,6 @@ class Sandbox
     }
 
     /**
-     * Implements iterator block function eg.: #foreach and #loop. Iterates over array and repeats an
-     * enclosed template block.
-     *
-     * @param   \Traversable|array              $data               Iteratable data.
-     * @return  \Generator                                          Generator to use for iterating.
-     */
-    public function loop($data)
-    {
-        $loop = function ($data) {
-            $pos = 0;
-            $count = count($data);
-
-            foreach ($data as $key => $item) {
-                $meta = [
-                    'is_first' => ($pos == 0),
-                    'is_last' => ($pos + 1 == $count),
-                    'count' => $count,
-                    'pos' => $pos++,
-                    'key' => $key
-                ];
-
-                yield [$item, $meta];
-            }
-        };
-
-        return $loop($data);
-    }
-
-    /**
      * Escape a value according to the specified escaping context.
      *
      * @param   string          $val            Value to escape.
