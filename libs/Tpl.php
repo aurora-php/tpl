@@ -63,6 +63,13 @@ class Tpl
     protected $postprocessors = array();
 
     /**
+     * Extension library.
+     * 
+     * @type    \Octris\Tpl\Library
+     */
+    protected $library;
+
+    /**
      * Constructor.
      *
      * @param   string                      $charset    Charset of template.
@@ -71,6 +78,7 @@ class Tpl
     {
         $this->sandbox = new Tpl\Sandbox($charset);
         $this->tpl_cache = new Tpl\Cache\Transient();
+        $this->library = new Tpl\Library();
     }
 
     /**
@@ -183,7 +191,7 @@ class Tpl
     protected function process($tplname, $escape, $force = false)
     {
         $c = new Tpl\Compiler();
-
+        $c->setLibrary($this->library);
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($tplname)) !== false) {
@@ -220,7 +228,7 @@ class Tpl
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
         $c = new Tpl\Lint();
-
+        $c->setLibrary($this->library);
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($inp)) !== false) {
