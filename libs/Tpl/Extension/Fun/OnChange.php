@@ -35,7 +35,7 @@ final class OnChange extends \Octris\Tpl\Extension\Fun {
     public function __construct($name, array $options = [])
     {
         $code_gen = function($value) {
-            return $value;
+            return '\'' . \Octris\Tpl\Extension::getUniqId() . '\', ' . $value;
         };
 
         parent::__construct($name, $code_gen, $options);

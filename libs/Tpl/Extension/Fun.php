@@ -25,6 +25,6 @@ class Fun extends \Octris\Tpl\Extension\AbstractExtension {
      */
     final public function getCode()
     {
-        return '$this->library[static::class](\'' . \Octris\Tpl\Extension::getUniqId() . '\', ' . $this->fn() . ')';
+        return '$this->library[static::class](' . $this->fn() . ')';
     }
 }

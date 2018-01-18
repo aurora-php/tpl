@@ -36,7 +36,7 @@ final class Trigger extends \Octris\Tpl\Extension\Fun {
     public function __construct($name, array $options = [])
     {
         $code_gen = function($steps = 2, $start = 0, $reset = 1) {
-            return implode(', ', [ $steps, $start, $reset ]);
+            return implode(', ', [ '\'' . \Octris\Tpl\Extension::getUniqId() . '\'', $steps, $start, $reset ]);
         };
 
         parent::__construct($name, $code_gen, $options);

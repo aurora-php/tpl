@@ -36,7 +36,7 @@ final class Cycle extends \Octris\Tpl\Extension\Fun {
     public function __construct($name, array $options = [])
     {
         $code_gen = function(array $array, $pingpong = false, $reset = 1) {
-            return implode(', ', [ $array, $pingpong, $reset ]);
+            return implode(', ', [ '\'' . \Octris\Tpl\Extension::getUniqId() . '\'', $array, $pingpong, $reset ]);
         };
 
         parent::__construct($name, $code_gen, $options);
