@@ -21,11 +21,13 @@ class Block extends \Octris\Tpl\Extension\AbstractExtension {
     /**
      * Code generator.
      *
+     * @param   array               $args               Function arguments definition.
+     * @param   array               $env                Engine environment.
      * @return  array                                   Template code for head and foot.
      */
-    final public function getCode()
+    final public function getCode(array $args, array $env)
     {
-        list($head, $foot) = $this->fn();
+        list($head, $foot) = $this->fn(...$args);
         
         if (__CLASS__ != static::class) {
             $head = '$this->library[static::class]->head(' . $head . ')';

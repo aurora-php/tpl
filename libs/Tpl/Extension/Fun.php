@@ -21,14 +21,16 @@ class Fun extends \Octris\Tpl\Extension\AbstractExtension {
     /**
      * Code generator.
      *
+     * @param   array               $args               Function arguments definition.
+     * @param   array               $env                Engine environment.
      * @return  string                                  Template code.
      */
-    final public function getCode()
+    final public function getCode(array $args, array $env)
     {
         if (__CLASS__ == static::class) {
-            $code = $this->fn();
+            $code = $this->fn(...$args);
         } else {
-            $code = '$this->library[static::class]->call(' . $this->fn() . ')';
+            $code = '$this->library[static::class]->call(' . $this->fn(...$args) . ')';
         }
         
         return $code;
