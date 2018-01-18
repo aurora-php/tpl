@@ -17,14 +17,5 @@ namespace Octris\Tpl\Extension;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Macro extends \Octris\Tpl\Extension\AbstractExtension {
-    /**
-     * Call defined code generator and return result.
-     *
-     * @return  string                                  Template code.
-     */
-    public function getCode(array $args = [])
-    {
-        return ($this->fn)(...$args);
-    }
+abstract class Macro extends \Octris\Tpl\Extension\AbstractExtension {
 }
