@@ -167,6 +167,13 @@ class Compiler
         while (($current = $getNextToken($tokens))) {
             extract($current);
 
+            $env = [
+                'file' => $file,
+                'line' => $line,
+                'compiler' => $this,
+                'escape' => $escape
+            ];
+
             switch ($token) {
                 case grammar::T_IF_OPEN:
                 case grammar::T_FOREACH_OPEN:
@@ -174,15 +181,14 @@ class Compiler
                 case grammar::T_BLOCK_OPEN:
                     // replace/rewrite block call
                     $value = strtolower($value);
-                    var_dump($value);
 
-                    list($_start, $_end) = Compiler\Rewrite::$value(array_reverse($code));
+                    list($_start, $_end, $_error) = $this->library->rewriteBlock($value, $env, array_reverse($code));
 
                     $code = array($_start);
                     $blocks['compiler'][] = $_end;
 
-                    if (($err = Compiler\Rewrite::getError()) != '') {
-                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    if ($_error {
+                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
                     }
                     break;
                 case grammar::T_IF_ELSE:
@@ -219,23 +225,10 @@ class Compiler
                     // replace/rewrite method call
                     $value = strtolower($value);
                     
-                    $this->rewrite()
+                    list($code, $_error) = $this->library->rewriteFun($value, $env, array_reverse($code));
 
-                    if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
-                        // ddump and dprint need to be treated a little different from other method calls,
-                        // because we include template-filename and template-linenumber in arguments
-                        $code = array(Compiler\Rewrite::$value(
-                            array_merge(
-                                array('"' . $file . '"', (int)$line),
-                                array_reverse($code)
-                            )
-                        ));
-                    } else {
-                        $code = array(Compiler\Rewrite::$value(array_reverse($code)));
-                    }
-
-                    if (($err = Compiler\Rewrite::getError()) != '') {
-                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    if ($_error) {
+                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
                     }
 
                     if (($tmp = array_pop($stack))) {
@@ -268,26 +261,20 @@ class Compiler
                         }
                     });
 
-                    $code  = array(
-                        Compiler\Macro::execMacro(
-                            $value,
-                            array_reverse($code),
-                            array('compiler' => $this, 'escape' => $escape)
-                        )
-                    );
+                    list($code, $_error) = $this->library->execMacro($value, $env, array_reverse($code));
 
-                    if (($err = Compiler\Macro::getError()) != '') {
-                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    if ($_error) {
+                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
                     }
 
                     $code[] = implode(', ', array_pop($stack));
                     break;
                 case grammar::T_CONSTANT:
                     $value = strtoupper($value);
-                    $tmp   = Compiler\Constant::getConstant($value);
+                    list($tmp, $_error) = $this->library->getConstant($value, $env);
 
-                    if (($err = Compiler\Constant::getError()) != '') {
-                        $this->error(__FILE__, __LINE__, $line, $token, $err);
+                    if ($_error) {
+                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
                     }
 
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
@@ -298,7 +285,6 @@ class Compiler
                         implode('"]["', explode(':', strtolower(substr($value, 1))))
                     );
 
-                    // $code[] = sprintf('(is_callable(%1$s) ? %1$s() : %1$s)', $tmp);
                     $code[] = $tmp;
                     break;
                 case grammar::T_BOOL:
@@ -357,27 +343,12 @@ class Compiler
             $blocks['analyzer'][] = $current;
         });
         $grammar->addEvent(grammar::T_BLOCK_OPEN, function ($current) use (&$blocks, &$chain) {
-            switch ($current['value']) {
-                case '#chain':
-                    ++$chain;
-                    break;
-                case '#chunk':
-                    if ($chain > 0) {
-                        break;
-                    }
-
-                    $this->error(__FILE__, __LINE__, $current['line'], $current['value'], '"only allowed inside a "chain" block');
-                    break;
-            }
-
             $blocks['analyzer'][] = $current;
         });
         $grammar->addEvent(grammar::T_BLOCK_CLOSE, function ($current) use (&$blocks, &$chain) {
             // closing block only allowed if a block is open
             if (!($block = array_pop($blocks['analyzer']))) {
                 $this->error(__FILE__, __LINE__, $current['line'], $current['value'], 'there is no open block');
-            } elseif ($block['value'] == '#chain') {
-                --$chain;
             }
         });
         $grammar->addEvent(grammar::T_IF_ELSE, function ($current) use (&$blocks) {

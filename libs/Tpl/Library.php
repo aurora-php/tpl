@@ -106,19 +106,66 @@ final class Library
     }
 
     /**
+     * Format error message.
+     * 
+     * @param   string      $name       Name.
+     * @param   string      $msg        Message.
+     * @return  string
+     */
+    protected function formatError($name, $msg)
+    {   
+        return sprintf('"%s" -- %s', $name, $msg);
+    }
+
+    /**
+     * Execute specified macro with specified arguments.
+     *
+     * @param   string      $name       Name of macro to execute.
+     * @param   array       $args       Arguments for macro.
+     * @param   array       $options    Optional additional options for macro.
+     */
+    public function execMacro($name, $args, array $options = array())
+    {
+        $name = strtolower($name);
+        $error = null;
+        $return = '';
+
+        if (!isset($this->extensions['macro'][$name])) {
+            $error = $this->formatError($name, 'unknown macro');
+        } elseif (count($args) < self::$registry[$name]['args']['min']) {
+            self::setError($name, 'not enough arguments');
+        } elseif (count($args) > self::$registry[$name]['args']['max']) {
+            self::setError($name, 'too many arguments');
+        } else {
+            list($ret, $err) = call_user_func_array(self::$registry[$name]['callback'], array($args, $options));
+
+            if ($err) {
+                self::setError($name, $err);
+            }
+
+            return $ret;
+        }
+    }
+
+    /**
      * Return value of a defined constant.
      *
      * @param   string      $name               Name of constant.
-     * @return  mixed
+     * @param   array       $env                Compiler environment.
+     * @return  array                           [value, error]
      */
-    public function getConstant($name)
+    public function getConstant($name, array $env)
     {
         $name = strtoupper($name);
+        $value = null;
+        $error = false;
 
         if (!isset($this->constants[$name])) {
-            throw new \Exception($name, 'unknown constant');
+            $error = $name . ' -- unknown constant'
         } else {
-            return $this->constants[$name];
+            $value = $this->constants[$name];
         }
+        
+        return [$value, $error];
     }
 }
