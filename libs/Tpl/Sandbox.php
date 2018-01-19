@@ -62,22 +62,23 @@ class Sandbox
     protected $filename = '';
 
     /**
-     * Charset of template.
+     * Character encoding of template.
      *
      * @type    string
      */
-    protected $charset;
+    protected $encoding;
 
     /**
      * Constructor
      *
-     * @param   string                      $charset    Charset of template.
+     * @param   string                      $encoding       Character encoding of template.
      */
-    public function __construct($charset = 'utf-8')
+    public function __construct(\Octris\Tpl\Library $library, $encoding = 'utf-8')
     {
         $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
         $this->data = []; //new \Octris\Core\Type\Collection();
-        $this->library = new \Octris\Tpl\Library();
+        $this->encoding = $encoding;
+        $this->library = $library;
     }
 
     /**
