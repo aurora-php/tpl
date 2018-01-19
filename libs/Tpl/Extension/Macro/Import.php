@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension\Macro;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Import extends \Octris\Tpl\Extension\Macro {    
+final class Import extends \Octris\Tpl\Extension\Macro {
     /**
      * Constructor.
      *
@@ -27,37 +27,19 @@ final class Import extends \Octris\Tpl\Extension\Macro {
     public function __construct($name, array $options = [])
     {
         $code_gen = function($filename) {
-            
+            $ret = '';
+
+            $c = clone($this->compiler);
+
+            if (($file = $c->findFile($filename)) !== false) {
+                $ret = $c->process($file, $this->escape);
+            } else {
+                throw new \Exception(sprintf('Unable to locate file "%s" in "%s"', $filename, implode(':', $c->getSearchPath()));
+            }
+
+            return $ret;
         };
 
         parent::__construct($name, $code_gen, [ 'env' => true ] + $options);
-    }
-
-    /**
-     * Code generator.
-     *
-     * @param   array               $args               Function arguments definition.
-     * @param   array               $env                Engine environment.
-     * @return  string                                  Template code.
-     */
-    public function getCode(array $args, array $env)
-    {
-        $ret = '';
-        $err = '';
-
-        $c = clone($env['compiler']);
-
-        if (($file = $c->findFile($args[0])) !== false) {
-            $ret = $c->process($file, $env['escape']);
-        } else {
-            $err = sprintf(
-                'unable to locate file "%s" in "%s"',
-                $args[0],
-                implode(':', $c->getSearchPath())
-            );
-        }
-
-        return $ret;
-        //return array($ret, $err);
     }
 }
