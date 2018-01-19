@@ -29,20 +29,22 @@ class Std extends AbstractBundle
     public function getExtensions()
     {
         return [
-            new Fun\Cycle('cycle'),
-            new Fun\Trigger('trigger'),
-            new Fun\OnChange('onchange'),
-            
+            new Block\Benchmark('benchmark'),
             new Block\Copy('copy'),
-            new Block\Cut('cut')
+            new Block\Cut('cut'),
 
             new Macro\Import('import'),
             new Macro('uniqid', [$this, 'macroUniqId']),
             new Macro('date', [$this, 'macroDate']),
-            
-            new Control\ControlIf('if', ['final' => true]),
-            new Control\ControlForeach('foreach', ['final' => true]),
-            new Control\ControlLoop('loop', ['final' => true]),
+
+            // new Control\ControlIf('if', ['final' => true]),
+            // new Control\ControlForeach('foreach', ['final' => true]),
+            // new Control\ControlLoop('loop', ['final' => true]),
+
+            new Fun\Cycle('cycle'),
+            new Fun\Trigger('trigger'),
+            new Fun\OnChange('onchange'),
+            new Fun\Escape('escape'),
 
             new Fun('if', [$this, 'funcIf']),
             new Fun('ifset', [$this, 'funcIfset']),
@@ -95,9 +97,9 @@ class Std extends AbstractBundle
             new Fun('gender', [$this, 'funcGender']),
             new Fun('quant', [$this, 'funcQuant']),
             new Fun('yesno', [$this, 'funcYesno']),
-            
+
             new Fun('yesno', [$this, 'funcYesno']),
-            
+
             new Fun('abs', 'abs'),
             new Fun('ceil', 'ceil'),
             new Fun('floor', 'floor'),
@@ -109,7 +111,7 @@ class Std extends AbstractBundle
             new Fun('jsonencode', 'json_encode'),
             new Fun('jsondecode', 'json_decode'),
             new Fun('escapeshellarg', 'escapeshellarg'),
-            new Fun('length', 'strlen'),    
+            new Fun('length', 'strlen'),
             new Fun('repeat', 'str_repeat'),
         ];
     }
