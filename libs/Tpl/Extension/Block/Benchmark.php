@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension\Block;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Bench extends \Octris\Tpl\Extension\Fun {
+final class Benchmark extends \Octris\Tpl\Extension\Fun {
     /**
      * Constructor.
      *
@@ -60,7 +60,7 @@ final class Bench extends \Octris\Tpl\Extension\Fun {
 
     /**
      * Gets called when head of block is reached.
-     * 
+     *
      * @param   mixed       $ctrl       Control variable to store buffer data in.
      */
     public function head(&$ctrl)
@@ -69,10 +69,10 @@ final class Bench extends \Octris\Tpl\Extension\Fun {
 
         ob_start();
     }
-    
+
     /**
      * Gets called when foot of block is reached.
-     * 
+     *
      * @return  bool                    Returns true if variable value change was detected.
      */
     public function foot()
@@ -81,5 +81,5 @@ final class Bench extends \Octris\Tpl\Extension\Fun {
         $buffer = ob_get_contents();
 
         ob_end_flush();
-    }    
+    }
 }
