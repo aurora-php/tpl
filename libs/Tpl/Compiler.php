@@ -45,8 +45,9 @@ class Compiler
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct(\Octris\Tpl\Library $library)
     {
+        $this->library = $library;
     }
 
     /**
@@ -212,13 +213,13 @@ class Compiler
                         $code = array_merge($tmp, $code);
                     }
                     break;
-                case grammar::T_DDUMP:
-                case grammar::T_DPRINT:
-                case grammar::T_ESCAPE:
                 case grammar::T_LET:
+                case grammar::T_ESCAPE:
                 case grammar::T_METHOD:
                     // replace/rewrite method call
                     $value = strtolower($value);
+                    
+                    $this->rewrite()
 
                     if ($token == grammar::T_DDUMP || $token == grammar::T_DPRINT) {
                         // ddump and dprint need to be treated a little different from other method calls,
@@ -324,9 +325,7 @@ class Compiler
          */
         $last_token = $getLastToken($last_tokens, -1);
 
-        if (in_array($last_token, array(grammar::T_LET, grammar::T_DDUMP, grammar::T_DPRINT))) {
-            $code = array('<?php ' . implode('', $code) . '; ?>'."\n");
-        } elseif (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
+        if (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
             $code = array(implode('', $code));
         } elseif (!in_array($last_token, array(grammar::T_BLOCK_OPEN, grammar::T_BLOCK_CLOSE, grammar::T_IF_OPEN, grammar::T_IF_ELSE))) {
             if ($last_token == grammar::T_ESCAPE) {

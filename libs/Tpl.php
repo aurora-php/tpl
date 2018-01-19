@@ -76,9 +76,9 @@ class Tpl
      */
     public function __construct($charset = 'utf-8')
     {
-        $this->sandbox = new Tpl\Sandbox($charset);
-        $this->tpl_cache = new Tpl\Cache\Transient();
         $this->library = new Tpl\Library();
+        $this->sandbox = new Tpl\Sandbox($this->library, $charset);
+        $this->tpl_cache = new Tpl\Cache\Transient();
     }
 
     /**
@@ -113,23 +113,25 @@ class Tpl
     }
 
     /**
-     * Set extension library.
-     * 
-     * @param   \Octris\Tpl\Library                     $library            Instance of extension library.
+     * Add a single extension.
+     *
+     * @param   \Octris\Tpl\Extension\AbstractExtension $extension          A single extension to add.
      */
-    public function setLibrary(\Octris\Tpl\Library $library) {
-        $this->sandbox->setLibrary($library);
+    public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension)
+    {
+        $this->library->addExtension($extension);
     }
-    
+
     /**
-     * Return instance of extension library.
-     * 
-     * @return   \Octris\Tpl\Library                                        Instance of extension library.
+     * Add an extension bundle.
+     *
+     * @param   \Octris\Tpl\Extension\AbstractBundle    $bundle             Extension bundle to add.
      */
-    public function getLibrary(\Octris\Tpl\Library $library) {
-        return $this->library;
+    public function addExtensionBundle(\Octris\Tpl\Extension\AbstractBundle $bundle)
+    {
+        $this->library->addExtensionBundle($bundle);
     }
-    
+
     /**
      * Add a post-processor.
      *
@@ -190,8 +192,7 @@ class Tpl
      */
     protected function process($tplname, $escape, $force = false)
     {
-        $c = new Tpl\Compiler();
-        $c->setLibrary($this->library);
+        $c = new Tpl\Compiler($this->library);
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($tplname)) !== false) {
@@ -227,8 +228,7 @@ class Tpl
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
-        $c = new Tpl\Lint();
-        $c->setLibrary($this->library);
+        $c = new Tpl\Lint($this->library);
         $c->addSearchPath($this->searchpath);
 
         if (($filename = $c->findFile($inp)) !== false) {
@@ -263,7 +263,7 @@ class Tpl
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
-        $c = new Tpl\Compiler();
+        $c = new Tpl\Compiler($this->library);
         $c->addSearchPath($this->searchpath);
 
         return (($filename = $c->findFile($inp)) !== false);

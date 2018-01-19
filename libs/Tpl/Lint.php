@@ -29,9 +29,9 @@ class Lint extends \Octris\Tpl\Compiler
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct(\Octris\Tpl\Library $library)
     {
-        parent::__construct();
+        parent::__construct($library);
 
         if (defined('STDERR')) {
             $this->errout = fopen('php://stderr', 'w');
