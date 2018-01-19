@@ -46,6 +46,7 @@ class Grammar extends \Octris\Parser\Grammar
 
     const T_ARRAY_DEF            = '<array>';
     const T_MACRO_DEF            = '<macro>';
+    const T_ESCAPE_DEF           = '<escape>';
     const T_LET_DEF              = '<let>';
     const T_METHOD_DEF           = '<method>';
     const T_VARIABLE_DEF         = '<variable>';
@@ -54,6 +55,7 @@ class Grammar extends \Octris\Parser\Grammar
     const T_METHOD               = '"..."';
 
     const T_BRACE_OPEN           = '"("';
+    const T_ESCAPE               = '"escape"';
     const T_LET                  = '"let"';
     const T_BRACE_CLOSE          = '")"';
     const T_PUNCT                = '","';
@@ -88,6 +90,7 @@ class Grammar extends \Octris\Parser\Grammar
         $this->addToken(self::T_BRACE_CLOSE, '\)');
         $this->addToken(self::T_PUNCT, '\,');
 
+        $this->addToken(self::T_ESCAPE, 'escape(?=\()');
         $this->addToken(self::T_LET, 'let(?=\()');
         $this->addToken(self::T_METHOD, '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
         $this->addToken(self::T_MACRO, '@[a-zA-Z][a-zA-Z0-9_]*(?=\()');
@@ -112,6 +115,7 @@ class Grammar extends \Octris\Parser\Grammar
             self::T_CONSTANT,
             self::T_VARIABLE_DEF,
             self::T_MACRO_DEF,
+            self::T_ESCAPE_DEF,
             self::T_LET_DEF,
             self::T_METHOD_DEF
         ]], true);
@@ -146,6 +150,20 @@ class Grammar extends \Octris\Parser\Grammar
                     ]]
                 ]]
             ]]
+        ]]);
+
+        $this->addRule(self::T_ESCAPE_DEF, ['$concatenation' => [
+            self::T_ESCAPE,
+            self::T_BRACE_OPEN,
+            ['$alternation' => [
+                self::T_METHOD_DEF,
+                self::T_VARIABLE_DEF,
+                self::T_CONSTANT,
+                self::T_STRING
+            ]],
+            self::T_PUNCT,
+            self::T_CONSTANT,
+            self::T_BRACE_CLOSE
         ]]);
 
         $this->addRule(self::T_LET_DEF, ['$concatenation' => [
