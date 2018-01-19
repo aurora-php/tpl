@@ -50,7 +50,7 @@ abstract class AbstractExtension
     public function __construct($name, callable $fn, array $options = [])
     {
         $this->name = $name;
-        $this->fn = $this->fn;
+        $this->fn = $fn;
         $this->options = $options + [ 'final' => false, 'env' => false ];
     }
 
