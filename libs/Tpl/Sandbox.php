@@ -49,7 +49,7 @@ class Sandbox
 
     /**
      * Extension library.
-     * 
+     *
      * @type    \Octris\Tpl\Library
      */
     protected $library;
@@ -60,13 +60,6 @@ class Sandbox
      * @type    string
      */
     protected $filename = '';
-
-    /**
-     * Escaper instance.
-     *
-     * @type    \Zend\Escaper\Escaper
-     */
-    protected $escaper;
 
     /**
      * Charset of template.
@@ -83,7 +76,6 @@ class Sandbox
     public function __construct($charset = 'utf-8')
     {
         $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
-        $this->escaper = new \Zend\Escaper\Escaper($this->charset = $charset);
         $this->data = []; //new \Octris\Core\Type\Collection();
         $this->library = new \Octris\Tpl\Library();
     }
@@ -147,13 +139,13 @@ class Sandbox
 
     /**
      * Set extension library.
-     * 
+     *
      * @param   \Octris\Tpl\Library                     $library            Instance of extension library.
      */
     public function setLibrary(\Octris\Tpl\Library $library) {
         $this->library = $library;
     }
-    
+
     /**
      * Set values for multiple template variables.
      *
@@ -186,42 +178,6 @@ class Sandbox
         } else {
             $this->data[$name] = $value;
         }
-    }
-
-    /**
-     * Escape a value according to the specified escaping context.
-     *
-     * @param   string          $val            Value to escape.
-     * @param   string          $escape         Escaping to use.
-     */
-    public function escape($val, $escape)
-    {
-        if (is_null($val)) {
-            return '';
-        }
-
-        switch ($escape) {
-            case \Octris\Tpl::ESC_ATTR:
-                $val = $this->escaper->escapeHtmlAttr($val);
-                break;
-            case \Octris\Tpl::ESC_CSS:
-                $val = $this->escaper->escapeCss($val);
-                break;
-            case \Octris\Tpl::ESC_HTML:
-                $val = $this->escaper->escapeHtml($val);
-                break;
-            case \Octris\Tpl::ESC_JS:
-                $val = $this->escaper->escapeJs($val);
-                break;
-            case \Octris\Tpl::ESC_TAG:
-                throw new \Exception('Escaping "ESC_TAG" is not implemented!');
-                break;
-            case \Octris\Tpl::ESC_URI:
-                throw new \Exception('Escaping "ESC_URI" is not implemented!');
-                break;
-        }
-
-        return $val;
     }
 
     /**
