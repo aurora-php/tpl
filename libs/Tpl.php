@@ -35,11 +35,11 @@ class Tpl
     const ESC_URI         = 'uri';
 
     /**
-     * Instance of sandbox for executing template in.
+     * Global template data.
      *
-     * @type    \Octris\Tpl\Sandbox
+     * @type    \Octris\Core\Type\Collection;
      */
-    protected $sandbox;
+    protected $data = [];
 
     /**
      * Configured caching backend.
@@ -70,14 +70,20 @@ class Tpl
     protected $library;
 
     /**
+     * Character encoding of template.
+     *
+     * @type    string
+     */
+    protected $encoding;
+
+    /**
      * Constructor.
      *
-     * @param   string                      $charset    Charset of template.
+     * @param   string                  $encoding   Character encoding.
      */
-    public function __construct($charset = 'utf-8')
+    public function __construct($encoding = 'utf-8')
     {
         $this->library = new Tpl\Library();
-        $this->sandbox = new Tpl\Sandbox($this->library, $charset);
         $this->tpl_cache = new Tpl\Cache\Transient();
     }
 
@@ -94,22 +100,31 @@ class Tpl
     /**
      * Set values for multiple template variables.
      *
-     * @param   array       $array      Key/value array with values.
+     * @param   iterable        $array      Key/value array with values.
      */
-    public function setValues($array)
+    public function setValues(iterable $array)
     {
-        $this->sandbox->setValues($array);
+        foreach ($array as $k => $v) {
+            $this->setValue($k, $v);
+        }
     }
 
     /**
-     * Set value for one template variable.
+     * Set value for one template variable. Note, that resources are not allowed as values.
+     * Values of type 'array' and 'object' will be casted to '\Octris\Core\Type\Collection\collection'
+     * unless an 'object' implements the interface '\Traversable'. Traversable objects will
+     * be used without casting.
      *
      * @param   string      $name       Name of template variable to set value of.
      * @param   mixed       $value      Value to set for template variable.
      */
     public function setValue($name, $value)
     {
-        $this->sandbox->setValue($name, $value);
+        if (is_resource($value)) {
+            throw new \InvalidArgumentException('Value of type "resource" is not allowed');
+        } else {
+            $this->data[$name] = $value;
+        }
     }
 
     /**
@@ -270,43 +285,16 @@ class Tpl
     }
 
     /**
-     * Render a template and send output to stdout.
+     * Return an instance of a template sandbox to render.
      *
      * @param   string      $filename       Filename of template to render.
      * @param   string      $escape         Optional escaping to use.
+     * @return  \Octris\Tpl\Sandbox
      */
-    public function render($filename, $escape = self::ESC_HTML)
+    public function getSandbox($filename, $escape = self::ESC_HTML)
     {
         $tpl = $this->process($filename, $escape);
 
-        $this->sandbox->render($filename, $tpl);
-    }
-
-    /**
-     * Render a template and return output as string.
-     *
-     * @param   string      $filename       Filename of template to render.
-     * @param   string      $escape         Optional escaping to use.
-     * @return  string                      Rendered template.
-     */
-    public function fetch($filename, $escape = self::ESC_HTML)
-    {
-        $tpl = $this->process($filename, $escape);
-
-        $result = $this->sandbox->fetch($filename, $tpl);
-
-        return $result;
-    }
-
-    /**
-     * Render a template and save output to a file.
-     *
-     * @param   string      $savename       Filename to save output to.
-     * @param   string      $filename       Filename of template to render.
-     * @param   string      $escape         Optional escaping to use.
-     */
-    public function save($savename, $filename, $escape = self::ESC_HTML)
-    {
-        file_put_contents($savename, $this->fetch($filename, $escape));
+        return new Tpl\Sandbox($this->library, $this->encoding, $filename, $tpl, $this->data);
     }
 }

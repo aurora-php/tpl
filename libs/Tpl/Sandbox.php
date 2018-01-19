@@ -24,28 +24,7 @@ class Sandbox
      *
      * @type    \Octris\Core\Type\Collection;
      */
-    public $data;
-
-    /**
-     * Storage for sandbox internal data objects.
-     *
-     * @type    \Octris\Tpl\Sandbox\Storage
-     */
-    protected $storage;
-
-    /**
-     * Internal storage for meta data required for block functions.
-     *
-     * @type    array
-     */
-    protected $meta = array();
-
-    /**
-     * Internal storage for cut/copied buffers.
-     *
-     * @type    array
-     */
-    protected $pastebin = array();
+    protected $data;
 
     /**
      * Extension library.
@@ -55,13 +34,6 @@ class Sandbox
     protected $library;
 
     /**
-     * Name of file that is rendered by the sandbox instance.
-     *
-     * @type    string
-     */
-    protected $filename = '';
-
-    /**
      * Character encoding of template.
      *
      * @type    string
@@ -69,16 +41,35 @@ class Sandbox
     protected $encoding;
 
     /**
+     * Name of file that is rendered by the sandbox instance.
+     *
+     * @type    string
+     */
+    protected $filename;
+
+    /**
+     * Template content.
+     *
+     * @type    string
+     */
+    protected $content;
+
+    /**
      * Constructor
      *
-     * @param   string                      $encoding       Character encoding of template.
+     * @param   \Octris\Tpl\Library $library        Language statement library.
+     * @param   string              $encoding       Character encoding of template.
+     * @param   string              $filename       Filename of template to render for error reporting.
+     * @param   string              $content        Template contents to render.
+     * @param   array               $data           Initial template data.
      */
-    public function __construct(\Octris\Tpl\Library $library, $encoding = 'utf-8')
+    public function __construct(\Octris\Tpl\Library $library, $encoding, $filename, $content, array $data)
     {
-        $this->storage = \Octris\Tpl\Sandbox\Storage::getInstance();
-        $this->data = []; //new \Octris\Core\Type\Collection();
         $this->encoding = $encoding;
         $this->library = $library;
+        $this->filename = $filename;
+        $this->content = $content;
+        $this->data = $data;
     }
 
     /**
@@ -136,15 +127,6 @@ class Sandbox
             ],
             $trace
         );
-    }
-
-    /**
-     * Set extension library.
-     *
-     * @param   \Octris\Tpl\Library                     $library            Instance of extension library.
-     */
-    public function setLibrary(\Octris\Tpl\Library $library) {
-        $this->library = $library;
     }
 
     /**
@@ -211,16 +193,11 @@ class Sandbox
 
     /**
      * Render a template and output rendered template to stdout.
-     *
-     * @param   string      $filename       Filename of template to render for error reporting.
-     * @param   string      $content        Template contents to render.
      */
-    public function render($filename, $content)
+    public function render()
     {
-        $this->filename = $filename;
-
         try {
-            eval('?>' . $content);
+            eval('?>' . $this->content);
         } catch (\Exception $e) {
             $this->error($e->getMessage(), $e->getLine(), __LINE__, $e->getFile(), $e->getTraceAsString());
         }
@@ -229,18 +206,14 @@ class Sandbox
     /**
      * Render a template and return the output.
      *
-     * @param   string      $filename       Filename of template to render for error reporting.
-     * @param   string      $content        Template contents to render.
      * @return  string                      Rendered template.
      */
-    public function fetch($filename, $content)
+    public function fetch()
     {
-        $this->filename = $filename;
-
         try {
             ob_start();
 
-            eval('?>' . $content);
+            eval('?>' . $this->content);
 
             $content = ob_get_contents();
             ob_end_clean();
@@ -249,5 +222,18 @@ class Sandbox
         }
 
         return $content;
+    }
+
+    /**
+     * Render a template and save output to a file.
+     *
+     * @param   string      $filename       Filename of template to render.
+     * @param   string      $savename       Filename to save output to.
+     * @param   string      $escape         Optional escaping to use.
+     * @param   bool|int                    Returns number of bytes written or false in case of an error.
+     */
+    public function save($savename)
+    {
+        return file_put_contents($savename, $this->fetch());
     }
 }
