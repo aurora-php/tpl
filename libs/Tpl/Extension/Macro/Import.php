@@ -27,9 +27,10 @@ final class Import extends \Octris\Tpl\Extension\Macro {
     public function __construct($name, array $options = [])
     {
         $code_gen = function($filename) {
+            
         };
 
-        parent::__construct($name, $code_gen, $options);
+        parent::__construct($name, $code_gen, [ 'env' => true ] + $options);
     }
 
     /**
