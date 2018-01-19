@@ -125,10 +125,10 @@ final class Library
             $extension = $this->extensions[$type][$name]
             list($min, $max) = $extension->getNumberOfParameters();
 
-            if ($max > 0 && count($args) < $max) {
-                throw new \Exception('Not enough arguments "' . $name . '"');
-            } elseif (count($args) > $min) {
+            if ($max > 0 && count($args) > $max) {
                 throw new \Exception('Too many arguments "' . $name . '"');
+            } elseif (count($args) < $min) {
+                throw new \Exception('Not enough arguments "' . $name . '"');
             } else {
                 $ret = $extension($args, $env);
             }
