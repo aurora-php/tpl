@@ -23,10 +23,10 @@ class Macro extends \Octris\Tpl\Extension\AbstractExtension {
      *
      * @param   array               $args               Function arguments definition.
      * @param   array               $env                Engine environment.
-     * @return  string                                  Template code.
+     * @return  array                                   Template code.
      */
-    public function getCode(array $args, array $env)
+    final public function getCode(array $args, array $env)
     {
-        return $this->fn(...$args);
+        return [ $this->getFn($env)(...$args), null ];
     }
 }
