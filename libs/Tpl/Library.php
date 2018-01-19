@@ -117,7 +117,7 @@ final class Library
     {
         $type = strtolower($type);
         $name = strtolower($name);
-        $return = [ null, null ];
+        $ret = [ null, null ];
 
         if (!isset($this->extensions[$type][$name])) {
             throw new \Exception('Unknown ' . $type . ' "' . $name . '"');
