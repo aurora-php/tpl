@@ -65,6 +65,8 @@ class Grammar extends \Octris\Parser\Grammar
     const T_WHITESPACE           = '" "';
 
     const T_IF_OPEN              = '"#if"';
+    const T_FOREACH_OPEN         = '"#foreach"'
+    const T_FOR_OPEN             = '"#for"'
     const T_IF_ELSE              = '"#else"';
     const T_BLOCK_CLOSE          = '"#end"';
     const T_BLOCK_OPEN           = '"#[a-z][a-z-0-9_]*"';
@@ -79,6 +81,8 @@ class Grammar extends \Octris\Parser\Grammar
         // define tokens
         $this->addToken(self::T_IF_OPEN, '#if');
         $this->addToken(self::T_IF_ELSE, '#else');
+        $this->addToken(self::T_FOREACH_OPEN, '#foreach');
+        $this->addToken(self::T_FOR_OPEN, '#for');
         $this->addToken(self::T_BLOCK_CLOSE, '#end');
         $this->addToken(self::T_BLOCK_OPEN, '#[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
@@ -225,7 +229,11 @@ class Grammar extends \Octris\Parser\Grammar
                 self::T_IF_ELSE,
                 self::T_BLOCK_CLOSE,
                 ['$concatenation' => [
-                    self::T_BLOCK_OPEN,
+                    ['$alternation' => [
+                        self::T_FOREACH_OPEN,
+                        self::T_FOR_OPEN,
+                        self::T_BLOCK_OPEN,
+                    ]],
                     self::T_BRACE_OPEN,
                     self::T_PARAMETER_LIST,
                     self::T_BRACE_CLOSE

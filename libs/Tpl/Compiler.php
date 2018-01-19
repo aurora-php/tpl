@@ -168,9 +168,12 @@ class Compiler
 
             switch ($token) {
                 case grammar::T_IF_OPEN:
+                case grammar::T_FOREACH_OPEN:
+                case grammar::T_FOR_OPEN:
                 case grammar::T_BLOCK_OPEN:
                     // replace/rewrite block call
                     $value = strtolower($value);
+                    var_dump($value);
 
                     list($_start, $_end) = Compiler\Rewrite::$value(array_reverse($code));
 
