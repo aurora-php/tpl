@@ -64,7 +64,7 @@ class Tpl
 
     /**
      * Extension library.
-     * 
+     *
      * @type    \Octris\Tpl\Library
      */
     protected $library;
@@ -192,13 +192,13 @@ class Tpl
      */
     protected function process($tplname, $escape, $force = false)
     {
-        $c = new Tpl\Compiler($this->library);
-        $c->addSearchPath($this->searchpath);
+        $uri = $this->tpl_cache->getURI($tplname);
 
-        if (($filename = $c->findFile($tplname)) !== false) {
-            $uri = $this->tpl_cache->getURI($tplname);
+        if ($force || ($tpl = $this->tpl_cache->getContents($uri)) === false) {
+            $c = new Tpl\Compiler($this->library);
+            $c->addSearchPath($this->searchpath);
 
-            if ($force || ($tpl = $this->tpl_cache->getContents($uri)) === false) {
+            if (($filename = $c->findFile($tplname)) !== false) {
                 $tpl = $c->process($filename, $escape);
 
                 foreach ($this->postprocessors as $processor) {
@@ -206,13 +206,13 @@ class Tpl
                 }
 
                 $this->tpl_cache->putContents($uri, $tpl);
+            } else {
+                die(sprintf(
+                    'unable to locate file "%s" in "%s"',
+                    $tplname,
+                    implode(':', $this->searchpath)
+                ));
             }
-        } else {
-            die(sprintf(
-                'unable to locate file "%s" in "%s"',
-                $tplname,
-                implode(':', $this->searchpath)
-            ));
         }
 
         return $tpl;
