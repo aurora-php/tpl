@@ -104,7 +104,7 @@ abstract class AbstractExtension
      *
      * @param   array               $args               Extension arguments definition.
      * @param   array               $env                Engine environment.
-     * @return  array|string                            Generated code.
+     * @return  array                                   Generated code.
      */
     abstract public function getCode(array $args, array $env);
 
