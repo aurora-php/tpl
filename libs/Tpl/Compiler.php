@@ -182,7 +182,7 @@ class Compiler
                     // replace/rewrite block call
                     $value = strtolower($value);
 
-                    list($_start, $_end, $_error) = $this->library->rewriteBlock($value, $env, array_reverse($code));
+                    list($_start, $_end) = $this->library->getCode('block', $value, array_reverse($code), $env);
 
                     $code = array($_start);
                     $blocks['compiler'][] = $_end;
@@ -224,8 +224,8 @@ class Compiler
                 case grammar::T_METHOD:
                     // replace/rewrite method call
                     $value = strtolower($value);
-                    
-                    list($code, $_error) = $this->library->rewriteFun($value, $env, array_reverse($code));
+
+                    list($code, ) = $this->library->getCode('function', $value, array_reverse($code), $env);
 
                     if ($_error) {
                         $this->error(__FILE__, __LINE__, $line, $token, $_error);
@@ -261,7 +261,7 @@ class Compiler
                         }
                     });
 
-                    list($code, $_error) = $this->library->execMacro($value, $env, array_reverse($code));
+                    list($code, ) = $this->library->getCode('macro', $value, array_reverse($code), $env);
 
                     if ($_error) {
                         $this->error(__FILE__, __LINE__, $line, $token, $_error);
@@ -271,7 +271,7 @@ class Compiler
                     break;
                 case grammar::T_CONSTANT:
                     $value = strtoupper($value);
-                    list($tmp, $_error) = $this->library->getConstant($value, $env);
+                    $tmp = $this->library->getConstant($value);
 
                     if ($_error) {
                         $this->error(__FILE__, __LINE__, $line, $token, $_error);

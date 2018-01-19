@@ -106,66 +106,55 @@ final class Library
     }
 
     /**
-     * Format error message.
-     * 
-     * @param   string      $name       Name.
-     * @param   string      $msg        Message.
-     * @return  string
-     */
-    protected function formatError($name, $msg)
-    {   
-        return sprintf('"%s" -- %s', $name, $msg);
-    }
-
-    /**
-     * Execute specified macro with specified arguments.
+     * Return code for specified arguments.
      *
-     * @param   string      $name       Name of macro to execute.
-     * @param   array       $args       Arguments for macro.
-     * @param   array       $options    Optional additional options for macro.
+     * @param   string          $type               Type of extension to access.
+     * @param   string          $name               Name of extension to access.
+     * @param   array           $args               Arguments for extension.
+     * @param   array           $env                Compiler environment for extension.
      */
-    public function execMacro($name, $args, array $options = array())
+    public function getCode($type, $name, array $args, array $env)
     {
+        $type = strtolower($type);
         $name = strtolower($name);
-        $error = null;
-        $return = '';
+        $return = [ null, null ];
 
-        if (!isset($this->extensions['macro'][$name])) {
-            $error = $this->formatError($name, 'unknown macro');
-        } elseif (count($args) < self::$registry[$name]['args']['min']) {
-            self::setError($name, 'not enough arguments');
-        } elseif (count($args) > self::$registry[$name]['args']['max']) {
-            self::setError($name, 'too many arguments');
+        if (!isset($this->extensions[$type][$name])) {
+            throw new \Exception('Unknown ' . $type . ' "' . $name . '"');
         } else {
-            list($ret, $err) = call_user_func_array(self::$registry[$name]['callback'], array($args, $options));
+            $extension = $this->extensions[$type][$name]
+            list($min, $max) = $extension->getNumberOfParameters();
 
-            if ($err) {
-                self::setError($name, $err);
+            if ($max > 0 && count($args) < $max) {
+                throw new \Exception('Not enough arguments "' . $name . '"');
+            } elseif (count($args) > $min) {
+                throw new \Exception('Too many arguments "' . $name . '"');
+            } else {
+                $ret = $extension($args, $env);
             }
-
-            return $ret;
         }
+
+        return $ret;
     }
 
     /**
      * Return value of a defined constant.
      *
      * @param   string      $name               Name of constant.
-     * @param   array       $env                Compiler environment.
-     * @return  array                           [value, error]
+     * @return  string                          value.
      */
-    public function getConstant($name, array $env)
+    public function getConstant($name)
     {
         $name = strtoupper($name);
         $value = null;
         $error = false;
 
         if (!isset($this->constants[$name])) {
-            $error = $name . ' -- unknown constant'
+            throw new \Exception('Unknown constant "' . $name . '"');
         } else {
             $value = $this->constants[$name];
         }
-        
-        return [$value, $error];
+
+        return $value;
     }
 }
