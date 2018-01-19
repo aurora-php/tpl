@@ -83,7 +83,7 @@ abstract class AbstractExtension
      *
      * @return  array
      */
-    public function getNumberOfParameters()
+    final public function getNumberOfParameters()
     {
         static $ret = null;
         
