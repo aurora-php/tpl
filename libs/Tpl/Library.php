@@ -17,27 +17,37 @@ namespace Octris\Tpl;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class Library
+final class Library
 {
     /**
      * Defined constants.
-     * 
+     *
      * @type    array
      */
     protected $constants = [];
-    
+
     /**
      * Defined extensions.
-     * 
+     *
      * @type    array
      */
     protected $extensions = [
         'block' => [],
         'function' => [],
         'macro' => [],
-        'structure' => [],
     ];
-    
+
+    /**
+     * Reserved names.
+     *
+     * @type    array
+     */
+    protected $reserved = [
+        'block' => [ 'if', 'else', 'end', 'foreach', 'for' ],
+        'function' => [],
+        'macro' => []
+    ];
+
     /**
      * Constructor.
      */
@@ -54,8 +64,6 @@ class Library
     {
         if ($extension instanceof Octris\Tpl\Extension\Block) {
             $type = 'block';
-        } elseif ($extension instanceof Octris\Tpl\Extension\Control) {
-            $type = 'structure';
         } elseif ($extension instanceof Octris\Tpl\Extension\Fun) {
             $type = 'function';
         } elseif ($extension instanceof Octris\Tpl\Extension\Macro) {
@@ -65,8 +73,10 @@ class Library
         }
 
         $name = $extension->getName();
-        
-        if (!isset($this->extensions[$type][$name]) || !$this->extensions[$type][$name]->isFinal()) {
+
+        if (in_array($this->reserved[$type])) {
+            throw new \InvalidArgumentException('The name "' . $name . '" is a reserved word for type ' . $type);
+        } elseif (!isset($this->extensions[$type][$name]) || !$this->extensions[$type][$name]->isFinal()) {
             $this->extensions[$type][$name] = $extension;
         } else {
             throw new \InvalidArgumentException('A ' . $type . ' with the name "' . $name . '" is already defined and marked as final');
@@ -86,7 +96,7 @@ class Library
 
         foreach ($bundle->getConstants() as $name => $value) {
             $name = strtoupper($name);
-            
+
             if (isset($this->constants[$name])) {
                 throw new \Exception("Constant '$name' is already defined!");
             } else {
@@ -97,7 +107,7 @@ class Library
 
     /**
      * Return value of a defined constant.
-     * 
+     *
      * @param   string      $name               Name of constant.
      * @return  mixed
      */
