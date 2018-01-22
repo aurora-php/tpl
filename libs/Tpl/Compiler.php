@@ -235,9 +235,6 @@ class Compiler
                         $code = array_merge($tmp, $code);
                     }
                     break;
-                case grammar::T_ARRAY_OPEN:
-                    $code[] = '[';
-                    break;
                 case grammar::T_MACRO:
                     // resolve macro
                     $value = strtolower(substr($value, 1));
