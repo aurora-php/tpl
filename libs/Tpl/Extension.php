@@ -19,6 +19,25 @@ namespace Octris\Tpl;
  */
 class Extension {
     /**
+     * Return min,max number of parameters.
+     *
+     * @return  array
+     */
+    public static function getNumberOfParameters(callable $fn)
+    {
+        $ref = (is_array($fn)
+            ? new ReflectionMethod($fn[0], $fn[1])
+            : (is_object($fn) && is_callable($fn, '__invoke')
+                ? new ReflectionMethod($fn, '__invoke')
+                : new ReflectionFunction($fn)));
+
+        $min = $ref->getNumberOfRequiredParameters();
+        $max = ($ref->isVariadic() ? -1 : $ref->getNumberOfParameters());
+
+        return [$min, $max];
+    }
+
+    /**
      * Create uniq identifier required by some functions.
      *
      * @return  string

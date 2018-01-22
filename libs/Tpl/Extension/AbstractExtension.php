@@ -65,20 +65,6 @@ abstract class AbstractExtension
     }
 
     /**
-     * Return instance for reflection of callable.
-     *
-     * @return  \ReflectionFunctionAbstract
-     */
-    final protected function getReflectionCallable()
-    {
-        return (is_array($this->fn)
-                    ? new ReflectionMethod($this->fn[0], $this->fn[1])
-                    : (is_object($this->fn) && is_callable($this->fn, '__invoke')
-                        ? new ReflectionMethod($this->fn, '__invoke')
-                        : new ReflectionFunction($this->fn)));
-    }
-
-    /**
      * Return min,max number of parameters.
      *
      * @return  array
@@ -88,12 +74,7 @@ abstract class AbstractExtension
         static $ret = null;
 
         if (is_null($ret)) {
-            $ref = $this->getReflectionCallable();
-
-            $min = $ref->getNumberOfRequiredParameters();
-            $max = ($ref->isVariadic() ? -1 : $ref->getNumberOfParameters());
-
-            $ret = [$min, $max];
+            $ret = \Octris\Tpl\Extension::getNumberOfParameters($this->fn);
         }
 
         return $ret;
