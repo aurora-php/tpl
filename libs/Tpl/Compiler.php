@@ -221,7 +221,7 @@ class Compiler
                     break;
                 case grammar::T_LET:
                 case grammar::T_ESCAPE:
-                case grammar::T_METHOD:
+                case grammar::T_FUNCTION:
                     // replace/rewrite method call
                     $value = strtolower($value);
 

@@ -48,11 +48,11 @@ class Grammar extends \Octris\Parser\Grammar
     const T_MACRO_DEF            = '<macro>';
     const T_ESCAPE_DEF           = '<escape>';
     const T_LET_DEF              = '<let>';
-    const T_METHOD_DEF           = '<method>';
+    const T_FUNCTION_DEF         = '<function>';
     const T_VARIABLE_DEF         = '<variable>';
 
     const T_MACRO                = '"@..."';
-    const T_METHOD               = '"..."';
+    const T_FUNCTION               = '"..."';
 
     const T_BRACE_OPEN           = '"("';
     const T_ESCAPE               = '"escape"';
@@ -92,7 +92,7 @@ class Grammar extends \Octris\Parser\Grammar
 
         $this->addToken(self::T_ESCAPE, 'escape(?=\()');
         $this->addToken(self::T_LET, 'let(?=\()');
-        $this->addToken(self::T_METHOD, '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
+        $this->addToken(self::T_FUNCTION, '[a-zA-Z][a-zA-Z0-9_]*(?=\()');
         $this->addToken(self::T_MACRO, '@[a-zA-Z][a-zA-Z0-9_]*(?=\()');
 
         $this->addToken(self::T_BOOL, '(true|false)');
@@ -117,14 +117,14 @@ class Grammar extends \Octris\Parser\Grammar
             self::T_MACRO_DEF,
             self::T_ESCAPE_DEF,
             self::T_LET_DEF,
-            self::T_METHOD_DEF
+            self::T_FUNCTION_DEF
         ]], true);
 
         $this->addRule(self::T_VALUE, ['$alternation' => [
             self::T_BOOL, self::T_NULL, self::T_NUMBER, self::T_STRING
         ]]);
         $this->addRule(self::T_PARAMETER, ['$alternation' => [
-            self::T_LET_DEF, self::T_METHOD_DEF, self::T_VARIABLE_DEF, self::T_CONSTANT, self::T_VALUE, self::T_ARRAY_DEF
+            self::T_LET_DEF, self::T_FUNCTION_DEF, self::T_VARIABLE_DEF, self::T_CONSTANT, self::T_VALUE, self::T_ARRAY_DEF
         ]]);
         $this->addRule(self::T_PARAMETER_LIST, ['$option' => [
             ['$concatenation' => [
@@ -156,7 +156,7 @@ class Grammar extends \Octris\Parser\Grammar
             self::T_ESCAPE,
             self::T_BRACE_OPEN,
             ['$alternation' => [
-                self::T_METHOD_DEF,
+                self::T_FUNCTION_DEF,
                 self::T_VARIABLE_DEF,
                 self::T_CONSTANT,
                 self::T_STRING
@@ -175,8 +175,8 @@ class Grammar extends \Octris\Parser\Grammar
             self::T_BRACE_CLOSE
         ]]);
 
-        $this->addRule(self::T_METHOD_DEF, ['$concatenation' => [
-            self::T_METHOD,
+        $this->addRule(self::T_FUNCTION_DEF, ['$concatenation' => [
+            self::T_FUNCTION,
             self::T_BRACE_OPEN,
             self::T_PARAMETER_LIST,
             self::T_BRACE_CLOSE
