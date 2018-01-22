@@ -45,6 +45,7 @@ class Std extends AbstractBundle
             new Fun('if', [$this, 'funcIf']),
             new Fun('ifset', [$this, 'funcIfset']),
             new Fun('ifnull', [$this, 'funcIfnull']),
+
             new Fun('neg', [$this, 'funNeg']),
             new Fun('mul', [$this, 'funMul']),
             new Fun('div', [$this, 'funDiv']),
@@ -63,18 +64,15 @@ class Std extends AbstractBundle
             new Fun('le', [$this, 'funcLe']),
             new Fun('ge', [$this, 'funcGe']),
             new Fun('ne', [$this, 'funcNe']),
+
             new Fun('bool', [$this, 'funcBool']),
             new Fun('int', [$this, 'funcInt']),
             new Fun('float', [$this, 'funcFloat']),
             new Fun('string', [$this, 'funcString']),
-            new Fun('collection', [$this, 'funcCollection']),
+
             new Fun('now', [$this, 'funcNow']),
             new Fun('uniqid', [$this, 'funcUniqid']),
-            new Fun('Let', [$this, 'funcLet']),
-            new Fun('ddump', [$this, 'funcDdump']),
-            new Fun('dprint', [$this, 'funcDprint']),
-            new Fun('error', [$this, 'funcError']),
-            new Fun('include', [$this, 'funcInclude']),
+
             new Fun('explode', [$this, 'funcExplode']),
             new Fun('implode', [$this, 'funcImplode']),
             new Fun('lpad', [$this, 'funcLpad']),
@@ -91,8 +89,6 @@ class Std extends AbstractBundle
             new Fun('datef', [$this, 'funcDatef']),
             new Fun('gender', [$this, 'funcGender']),
             new Fun('quant', [$this, 'funcQuant']),
-            new Fun('yesno', [$this, 'funcYesno']),
-
             new Fun('yesno', [$this, 'funcYesno']),
 
             new Fun('abs', 'abs'),
@@ -142,7 +138,7 @@ class Std extends AbstractBundle
         ];
     }
 
-    /** macros to register **/
+    /** macros **/
     public function macroUniqId()
     {
         return \Octris\Tpl\Extension::getUniqId();
@@ -152,37 +148,38 @@ class Std extends AbstractBundle
         return strftime('%Y-%m-%d %H:%M:%S');
     }
 
-    /** standard functions to register **/
-    public function funcIf($args)
+    /** control flow functions **/
+    public function funcIf($expr1, $expr2, $expr3 = null)
     {
         return sprintf(
             '(%s ? %s : %s)',
-            $args[0],
-            $args[1],
-            (count($args) == 3 ? $args[2] : '')
+            $expr1,
+            $expr2,
+            (is_null($expr3) ? '' : $expr3)
         );
     }
 
-    public function funcIfset($args)
+    public function funcIfset($expr1, $expr2, $expr3 = null)
     {
         return sprintf(
             '(isset(%s) ? %s : %s)',
-            $args[0],
-            $args[1],
-            (count($args) == 3 ? $args[2] : '')
+            $expr1,
+            $expr2,
+            (is_null($expr3) ? '' : $expr3)
         );
     }
 
-    public function funcIfnull($args)
+    public function funcIfnull($expr1, $expr2, $expr3 = null)
     {
         return sprintf(
             '(is_null(%s) ? %s : %s)',
-            $args[0],
-            $args[1],
-            (count($args) == 3 ? $args[2] : '')
+            $expr1,
+            $expr2,
+            (is_null($expr3) ? '' : $expr3)
         );
     }
 
+    /** math functions **/
     public function funNeg($value)
     {
         return '(-' . $value . ')';
@@ -197,106 +194,103 @@ class Std extends AbstractBundle
     {
         return '(' . implode(' / ', array_merge([$dividend, $divisor1], $divisorN)) . ')';
     }
-    public function funcMod($args)
+    public function funcMod($dividend, $divisor)
     {
-        return '(' . implode(' % ', $args) . ')';
+        return '(' . $dividend . ' % ' . $divisor . ')';
     }
 
-    public function funcAdd($args)
+    public function funcAdd($summand1, $summand2, ...$summandN)
     {
-        return '(' . implode(' + ', $args) . ')';
+        return '(' . implode(' + ', array_merge([$summand1, $summand2], $summandN)) . ')';
     }
 
-    public function funcSub($args)
+    public function funcSub($minuend, $subtrahend1, ...$subtrahendN)
     {
-        return '(' . implode(' - ', $args) . ')';
+        return '(' . implode(' - ', array_merge([$minuend, $subtrahend1], $subtrahendN)) . ')';
     }
 
-    public function funcIncr($args)
+    public function funcIncr($summand1, $summand2 = null)
     {
-        return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' += ' + $args[1] : '++' . $args[0]));
+        return sprintf('(%s)', (is_null($summand2) ? '++' . $summand1 : $summand1 . ' += ' . $summand2));
     }
 
-    public function funcDecr($args)
+    public function funcDecr($minuend, $subtrahend = null)
     {
-        return sprintf('(%s)', (count($args) == 2 ? $arg[0] . ' -= ' + $args[1] : '--' . $args[0]));
+        return sprintf('(%s)', (is_null($subtrahend) ? '--' . $minuend : $minuend . ' -= ' . $subtrahend));
     }
 
-    public function funcAnd($args)
+    public function funcAnd($term1, $term2, ...$termN)
     {
-        return '(' . implode(' && ', $args) . ')';
+        return '(' . implode(' && ', array_merge([$term1, $term2], $termN)) . ')';
     }
 
-    public function funcOr($args)
+    public function funcOr($term1, $term2, ...$termN)
     {
-        return '(' . implode(' || ', $args) . ')';
+        return '(' . implode(' || ', array_merge([$term1, $term2], $termN)) . ')';
     }
 
-    public function funcXor($args)
+    public function funcXor($term1, $term2)
     {
-        return sprintf('(%d != %d)', !!$args[0], !!$args[1]);
+        return sprintf('(%d != %d)', !!$term1, !!$term2);
     }
 
-    public function funcNot($args)
+    public function funcNot($term)
     {
-        return '!' . $args[0];
+        return '!' . $term;
     }
 
-    public function funcLt($args)
+    public function funcLt($term1, $term2)
     {
-        return '(' . implode(' < ', $args) . ')';
+        return '(' . implode(' < ', [$term1, $term2]) . ')';
     }
 
-    public function funcGt($args)
+    public function funcGt($term1, $term2)
     {
-        return '(' . implode(' > ', $args) . ')';
+        return '(' . implode(' > ', [$term1, $term2]) . ')';
     }
 
-    public function funcEq($args)
+    public function funcEq($term1, $term2)
     {
-        return '(' . implode(' == ', $args) . ')';
+        return '(' . implode(' == ', [$term1, $term2]) . ')';
     }
 
-    public function funcLe($args)
+    public function funcLe($term1, $term2)
     {
-        return '(' . implode(' <= ', $args) . ')';
+        return '(' . implode(' <= ', [$term1, $term2]) . ')';
     }
 
-    public function funcGe($args)
+    public function funcGe($term1, $term2)
     {
-        return '(' . implode(' >= ', $args) . ')';
+        return '(' . implode(' >= ', [$term1, $term2]) . ')';
     }
 
-    public function funcNe($args)
+    public function funcNe($term1, $term2)
     {
-        return '(' . implode(' != ', $args) . ')';
+        return '(' . implode(' != ', [$term1, $term2]) . ')';
     }
 
-    public function funcBool($args)
+    /** type casting **/
+    public function funcBool($term)
     {
-        return '((bool)' . $args[0] . ')';
+        return '((bool)' . $term . ')';
     }
 
-    public function funcInt($args)
+    public function funcInt($term)
     {
-        return '((int)' . $args[0] . ')';
+        return '((int)' . $term . ')';
     }
 
-    public function funcFloat($args)
+    public function funcFloat($term)
     {
-        return '((float)' . $args[0] . ')';
+        return '((float)' . $term . ')';
     }
 
-    public function funcString($args)
+    public function funcString($term)
     {
-        return '((string)' . $args[0] . ')';
+        return '((string)' . $term . ')';
     }
 
-    public function funcCollection($args)
-    {
-        return '\\Octris\\Core\\Type::settype(' . $args[0] . ', "collection")';
-    }
-
+    /** misc **/
     public function funcNow()
     {
         return '(time())';
@@ -305,31 +299,6 @@ class Std extends AbstractBundle
     public function funcUniqid()
     {
         return '\Octris\Tpl\Extension::getUniqId()';
-    }
-
-    public function funcLet($args)
-    {
-        return '(' . implode(' = ', $args) . ')';
-    }
-
-    public function funcDdump($args)
-    {
-        return '\\Octris\\Debug::getInstance()->ddump(' . implode(', ', $args) . ')';
-    }
-
-    public function funcDprint($args)
-    {
-        return '\\Octris\\Debug::getInstance()->dprint(' . implode(', ', $args) . ')';
-    }
-
-    public function funcError($args)
-    {
-        return '$this->error(' . implode(', ', $args) . ', __LINE__)';
-    }
-
-    public function funcInclude($args)
-    {
-        return '$this->includetpl(' . implode('', $args) . ')';
     }
 
     // string functions
