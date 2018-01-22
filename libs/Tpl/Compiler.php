@@ -176,8 +176,17 @@ class Compiler
 
             switch ($token) {
                 case grammar::T_IF_OPEN:
+                    $code = array('if (' . implode('', array_reverse($code)) . ') {');
+                    $blocks['compiler'][] = '}';
+                    break;
                 case grammar::T_FOREACH_OPEN:
+                    $code = array('foreach (' . implode('', array_reverse($code)) . ') {');
+                    $blocks['compiler'][] = '}';
+                    break;
                 case grammar::T_FOR_OPEN:
+                    $code = array('foreach (' . implode('', array_reverse($code)) . ') {');
+                    $blocks['compiler'][] = '}';
+                    break;
                 case grammar::T_BLOCK_OPEN:
                     // replace/rewrite block call
                     $value = strtolower($value);
