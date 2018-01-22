@@ -64,6 +64,13 @@ class Std extends AbstractBundle
             new Fun('le', [$this, 'funcLe']),
             new Fun('ge', [$this, 'funcGe']),
             new Fun('ne', [$this, 'funcNe']),
+            new Fun('abs', [$this, 'funcAbs']),
+            new Fun('ceil', [$this, 'funcCeil']),
+            new Fun('floor', [$this, 'funcFloor']),
+            new Fun('max', [$this, 'funcMax']),
+            new Fun('min', [$this, 'funcMin']),
+            new Fun('round', [$this, 'funcRound']),
+            new Fun('count', [$this, 'funcCount']),
 
             new Fun('bool', [$this, 'funcBool']),
             new Fun('int', [$this, 'funcInt']),
@@ -73,37 +80,12 @@ class Std extends AbstractBundle
             new Fun('now', [$this, 'funcNow']),
             new Fun('uniqid', [$this, 'funcUniqid']),
 
-            new Fun('explode', [$this, 'funcExplode']),
-            new Fun('implode', [$this, 'funcImplode']),
             new Fun('lpad', [$this, 'funcLpad']),
             new Fun('rpad', [$this, 'funcRpad']),
-            new Fun('totitle', [$this, 'funcTotitle']),
             new Fun('concat', [$this, 'funcConcat']),
-            new Fun('array', [$this, 'funcArray']),
-            new Fun('in', [$this, 'funcIn']),
-            new Fun('comify', [$this, 'funcComify']),
-            new Fun('enum', [$this, 'funcEnum']),
-            new Fun('monf', [$this, 'funcMonf']),
-            new Fun('numf', [$this, 'funcNumf']),
-            new Fun('perf', [$this, 'funcPerf']),
-            new Fun('datef', [$this, 'funcDatef']),
-            new Fun('gender', [$this, 'funcGender']),
-            new Fun('quant', [$this, 'funcQuant']),
-            new Fun('yesno', [$this, 'funcYesno']),
-
-            new Fun('abs', 'abs'),
-            new Fun('ceil', 'ceil'),
-            new Fun('floor', 'floor'),
-            new Fun('max', 'max'),
-            new Fun('min', 'min'),
-            new Fun('round', 'round'),
-            new Fun('count', 'count'),
-            new Fun('isset', 'isset'),
-            new Fun('jsonencode', 'json_encode'),
-            new Fun('jsondecode', 'json_decode'),
-            new Fun('escapeshellarg', 'escapeshellarg'),
-            new Fun('length', 'strlen'),
-            new Fun('repeat', 'str_repeat'),
+            new Fun('repeat', [$this, 'funcRepeat']),
+            new Fun('jsonencode', [$this, 'funcJsonencode']),
+            new Fun('jsondecode', [$this, 'funcJsondecode']),
         ];
     }
 
@@ -269,6 +251,41 @@ class Std extends AbstractBundle
         return '(' . implode(' != ', [$term1, $term2]) . ')';
     }
 
+    public function funcAbs($term)
+    {
+        return '(abs(' . $term . '))';
+    }
+
+    public function funcCeil($term)
+    {
+        return '(ceil(' . $term . '))';
+    }
+
+    public function funcFloor($term)
+    {
+        return '(floor(' . $term . '))';
+    }
+
+    public function funcRound($term)
+    {
+        return '(round(' . $term . '))';
+    }
+
+    public function funcCount($term)
+    {
+        return '(count(' . $term . '))';
+    }
+
+    public function funcMin($term1, $term2, ...$termN)
+    {
+        return '(min(' . implode(', ', array_merge([$term1, $term2], $termN)) . '))';
+    }
+
+    public function funcMax($term1, $term2, ...$termN)
+    {
+        return '(max(' . implode(', ', array_merge([$term1, $term2], $termN)) . '))';
+    }
+
     /** type casting **/
     public function funcBool($term)
     {
@@ -301,95 +318,40 @@ class Std extends AbstractBundle
         return '\Octris\Tpl\Extension::getUniqId()';
     }
 
-    // string functions
-    public function funcExplode($args)
+    /** string functions **/
+    public function funcLpad($input, $pad_length, $pad_string = ' ')
     {
-        return 'new \\Octris\\Core\\Type\\Collection(explode(' . implode(', ', $args) . '))';
+        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string] . ', STR_PAD_LEFT))';
     }
 
-    public function funcImplode($args)
+    public function funcRpad($input, $pad_length, $pad_string = ' ')
     {
-        return '(implode(' . $args[0] . ', \\Octris\\Core\\Type::settype(' . $args[1] . ', "array")))';
+        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string] . ', STR_PAD_RIGHT))';
     }
 
-    public function funcLpad($args)
+    public function funcConcat($str1, $str2, ...$strN)
     {
-        $args = $args + array(null, null, ' ');
-
-        return '(str_pad(' . implode(', ', $args) . ', STR_PAD_LEFT))';
+        return '(' . implode(' . ', array_merge([$str1, $str2], $strN)) . ')';
     }
 
-    public function funcRpad($args)
+    public function funcRepeat($string, $multiplier)
     {
-        $args = $args + array(null, null, ' ');
-
-        return '(str_pad(' . implode(', ', $args) . ', STR_PAD_RIGHT))';
+        return '(str_repeat(' . $string . ', ' . $multiplier . '))';
     }
 
-    public function funcTotitle($args)
+    /** array functions **/
+    public function funcUnpack($arg)
     {
-        return '\\Octris\\Core\\Type\\String::convert_case(' . $args[0] . ', MB_CASE_TITLE)';
+        return '(...' . $arg . ')';
     }
 
-    public function funcConcat($args)
+    public function funcJsonencode($value, $options = 0, $depth = 512)
     {
-        return '(' . implode(' . ', $args) . ')';
+        return '(json_encode(' . $value . ', ' . $options . ', ' . $depth . '))';
     }
 
-    // array functions
-    public function funcArray($args)
+    public function funcJsondecode($json, $depth = 512, $options = 0)
     {
-        return 'new \\Octris\\Core\\Type\\Collection(array(' . implode(', ', $args) . '))';
-    }
-
-    public function funcIn($args)
-    {
-        return 'in_array(' . $args[0] . ', \\Octris\\Core\\Type::setType(' . $args[1] . ', "array"))';
-    }
-
-    // localization functions
-    public function funcComify($args)
-    {
-        return '($this->l10n->comify(' . implode(', ', $args) . '))';
-    }
-
-    public function funcEnum($args)
-    {
-        return '($this->l10n->enum(' . implode(', ', $args) . '))';
-    }
-
-    public function funcMonf($args)
-    {
-        return '($this->l10n->monf(' . implode(', ', $args) . '))';
-    }
-
-    public function funcNumf($args)
-    {
-        return '($this->l10n->numf(' . implode(', ', $args) . '))';
-    }
-
-    public function funcPerf($args)
-    {
-        return '($this->l10n->perf(' . implode(', ', $args) . '))';
-    }
-
-    public function funcDatef($args)
-    {
-        return '($this->l10n->datef(' . implode(', ', $args) . '))';
-    }
-
-    public function funcGender($args)
-    {
-        return '($this->l10n->gender(' . implode(', ', $args) . '))';
-    }
-
-    public function funcQuant($args)
-    {
-        return '($this->l10n->quant(' . implode(', ', $args) . '))';
-    }
-
-    public function funcYesno($args)
-    {
-        return '($this->l10n->yesno(' . implode(', ', $args) . '))';
+        return '(json_decode(' . $json . ', true, ' . $depth . ', ' . $options . '))';
     }
 }
