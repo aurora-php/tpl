@@ -37,10 +37,6 @@ class Std extends AbstractBundle
             new Macro('uniqid', [$this, 'macroUniqId']),
             new Macro('date', [$this, 'macroDate']),
 
-            // new Control\ControlIf('if', ['final' => true]),
-            // new Control\ControlForeach('foreach', ['final' => true]),
-            // new Control\ControlLoop('loop', ['final' => true]),
-
             new Fun\Cycle('cycle'),
             new Fun\Trigger('trigger'),
             new Fun\OnChange('onchange'),
