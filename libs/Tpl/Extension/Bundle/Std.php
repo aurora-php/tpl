@@ -143,13 +143,6 @@ class Std extends AbstractBundle
             'JSON_FORCE_OBJECT'      => JSON_FORCE_OBJECT,
             'JSON_UNESCAPED_UNICODE' => JSON_UNESCAPED_UNICODE,
             'JSON_BIGINT_AS_STRING'  => JSON_BIGINT_AS_STRING,
-
-            // pre-defined constants for string functions
-            // 'CASE_UPPER'             => \Octris\Core\Type\Text::CASE_UPPER,
-            // 'CASE_LOWER'             => \Octris\Core\Type\Text::CASE_LOWER,
-            // 'CASE_TITLE'             => \Octris\Core\Type\Text::CASE_TITLE,
-            // 'CASE_UPPER_FIRST'       => \Octris\Core\Type\Text::CASE_UPPER_FIRST,
-            // 'CASE_LOWER_FIRST'       => \Octris\Core\Type\Text::CASE_LOWER_FIRST
         ];
     }
 
