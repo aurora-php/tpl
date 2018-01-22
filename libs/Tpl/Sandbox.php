@@ -199,22 +199,22 @@ class Sandbox
         }
 
         switch ($escape) {
-            case \Octris\Core\Tpl::ESC_ATTR:
+            case \Octris\Tpl::ESC_ATTR:
                 $val = $this->escaper->escapeHtmlAttr($val);
                 break;
-            case \Octris\Core\Tpl::ESC_CSS:
+            case \Octris\Tpl::ESC_CSS:
                 $val = $this->escaper->escapeCss($val);
                 break;
-            case \Octris\Core\Tpl::ESC_HTML:
+            case \Octris\Tpl::ESC_HTML:
                 $val = $this->escaper->escapeHtml($val);
                 break;
-            case \Octris\Core\Tpl::ESC_JS:
+            case \Octris\Tpl::ESC_JS:
                 $val = $this->escaper->escapeJs($val);
                 break;
-            case \Octris\Core\Tpl::ESC_TAG:
+            case \Octris\Tpl::ESC_TAG:
                 throw new \Exception('Escaping "ESC_TAG" is not implemented!');
                 break;
-            case \Octris\Core\Tpl::ESC_URI:
+            case \Octris\Tpl::ESC_URI:
                 throw new \Exception('Escaping "ESC_URI" is not implemented!');
                 break;
         }
