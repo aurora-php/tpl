@@ -70,6 +70,8 @@ class Sandbox
         $this->filename = $filename;
         $this->content = $content;
         $this->data = $data;
+
+        $this->escaper = new \Zend\Escaper\Escaper($this->encoding);
     }
 
     /**
@@ -164,12 +166,48 @@ class Sandbox
     }
 
     /**
+     * Escape a value according to the specified escaping context.
+     *
+     * @param   string          $val            Value to escape.
+     * @param   string          $escape         Escaping to use.
+     */
+    protected function escape($val, $escape)
+    {
+        if (is_null($val)) {
+            return '';
+        }
+
+        switch ($escape) {
+            case \Octris\Core\Tpl::ESC_ATTR:
+                $val = $this->escaper->escapeHtmlAttr($val);
+                break;
+            case \Octris\Core\Tpl::ESC_CSS:
+                $val = $this->escaper->escapeCss($val);
+                break;
+            case \Octris\Core\Tpl::ESC_HTML:
+                $val = $this->escaper->escapeHtml($val);
+                break;
+            case \Octris\Core\Tpl::ESC_JS:
+                $val = $this->escaper->escapeJs($val);
+                break;
+            case \Octris\Core\Tpl::ESC_TAG:
+                throw new \Exception('Escaping "ESC_TAG" is not implemented!');
+                break;
+            case \Octris\Core\Tpl::ESC_URI:
+                throw new \Exception('Escaping "ESC_URI" is not implemented!');
+                break;
+        }
+
+        return $val;
+    }
+
+    /**
      * Output specified value.
      *
      * @param   string          $val            Optional value to output.
      * @param   string          $escape         Optional escaping to use.
      */
-    public function write($val = '', $escape = '')
+    protected function write($val = '', $escape = '')
     {
         if ($escape !== \Octris\Tpl::ESC_NONE) {
             $val = $this->escape($val, $escape);

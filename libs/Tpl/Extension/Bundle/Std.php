@@ -87,7 +87,6 @@ class Std extends AbstractBundle
             new Fun('concat', [$this, 'funcConcat']),
             new Fun('array', [$this, 'funcArray']),
             new Fun('in', [$this, 'funcIn']),
-            new Fun('escape', [$this, 'funcEscape']),
             new Fun('comify', [$this, 'funcComify']),
             new Fun('enum', [$this, 'funcEnum']),
             new Fun('monf', [$this, 'funcMonf']),
@@ -388,12 +387,6 @@ class Std extends AbstractBundle
     public function funcIn($args)
     {
         return 'in_array(' . $args[0] . ', \\Octris\\Core\\Type::setType(' . $args[1] . ', "array"))';
-    }
-
-    // misc functions
-    public function funcEscape($args)
-    {
-        return '($this->escape(' . implode(', ', $args) . '))';
     }
 
     // localization functions
