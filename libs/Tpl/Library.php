@@ -120,7 +120,12 @@ final class Library
         $ret = [ null, null ];
 
         if (!isset($this->extensions[$type][$name])) {
-            throw new \Exception('Unknown ' . $type . ' "' . $name . '"');
+            if ($type != 'function') {
+                throw new \Exception('Unknown ' . $type . ' "' . $name . '"')
+            } else {
+                // function may be undefined at compile time
+                $ret = '($this->registry[\'' . $name . '\'](' . implode(', ', $args) . '))';
+            }
         } else {
             $extension = $this->extensions[$type][$name]
             list($min, $max) = $extension->getNumberOfParameters();
