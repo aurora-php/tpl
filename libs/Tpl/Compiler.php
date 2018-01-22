@@ -176,29 +176,31 @@ class Compiler
 
             switch ($token) {
                 case grammar::T_IF_OPEN:
-                    $code = array('if (' . implode('', array_reverse($code)) . ') {');
-                    $blocks['compiler'][] = '}';
-                    break;
                 case grammar::T_FOREACH_OPEN:
-                    $code = array('foreach (' . implode('', array_reverse($code)) . ') {');
-                    $blocks['compiler'][] = '}';
-                    break;
                 case grammar::T_FOR_OPEN:
-                    $code = array('foreach (' . implode('', array_reverse($code)) . ') {');
-                    $blocks['compiler'][] = '}';
-                    break;
                 case grammar::T_BLOCK_OPEN:
                     // replace/rewrite block call
-                    $value = strtolower($value);
+                    $_start = '{';
+                    $_end = '}';
 
-                    list($_start, $_end) = $this->library->getCode('block', $value, array_reverse($code), $env);
+                    if ($token == grammar::T_IF_OPEN) {
+                        $_start = 'if (' . implode('', array_reverse($code)) . ') {';
+                    } elseif ($token == grammar::T_FOREACH_OPEN) {
+                        $_start = 'foreach (' . implode('', array_reverse($code)) . ') {';
+                    } elseif ($token == grammar::T_FOR_OPEN) {
+                        $_start = 'foreach (' . implode('', array_reverse($code)) . ') {';
+                    } else {
+                        $value = strtolower($value);
+
+                        try {
+                            list($_start, $_end) = $this->library->getCode('block', $value, array_reverse($code), $env);
+                        } catch(\Exception $e) {
+                            $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
+                        }
+                    }
 
                     $code = array($_start);
                     $blocks['compiler'][] = $_end;
-
-                    if ($_error {
-                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
-                    }
                     break;
                 case grammar::T_IF_ELSE:
                     $code[] = '} else {';
@@ -231,13 +233,19 @@ class Compiler
                 case grammar::T_LET:
                 case grammar::T_ESCAPE:
                 case grammar::T_FUNCTION:
-                    // replace/rewrite method call
-                    $value = strtolower($value);
+                    // replace/rewrite function call
+                    if ($token == grammar::T_LET) {
+                        $code = '(' . implode(' = ', array_reverse($code)) . ')';
+                    } elseif ($token == grammar::T_ESCAPE) {
+                        $code = '($this->escape(' . implode(', ', array_reverse($code)) . '))';
+                    } else {
+                        $value = strtolower($value);
 
-                    list($code, ) = $this->library->getCode('function', $value, array_reverse($code), $env);
-
-                    if ($_error) {
-                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
+                        try {
+                            list($code, ) = $this->library->getCode('function', $value, array_reverse($code), $env);
+                        } catch(\Exception $e) {
+                            $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
+                        }
                     }
 
                     if (($tmp = array_pop($stack))) {
@@ -267,20 +275,21 @@ class Compiler
                         }
                     });
 
-                    list($code, ) = $this->library->getCode('macro', $value, array_reverse($code), $env);
-
-                    if ($_error) {
-                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
+                    try {
+                        list($code, ) = $this->library->getCode('macro', $value, array_reverse($code), $env);
+                    } catch(\Exception $e) {
+                        $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
                     }
 
                     $code[] = implode(', ', array_pop($stack));
                     break;
                 case grammar::T_CONSTANT:
                     $value = strtoupper($value);
-                    $tmp = $this->library->getConstant($value);
 
-                    if ($_error) {
-                        $this->error(__FILE__, __LINE__, $line, $token, $_error);
+                    try {
+                        $tmp = $this->library->getConstant($value);
+                    } catch(\Exception $e) {
+                        $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
                     }
 
                     $code[] = (is_string($tmp) ? '"' . $tmp . '"' : (int)$tmp);
