@@ -42,7 +42,7 @@ class Extension {
      *
      * @return  string
      */
-    protected static function getUniqId()
+    public static function getUniqId()
     {
         return str_replace('.', '_', uniqid('v', true));
     }
