@@ -27,6 +27,13 @@ class Sandbox
     protected $data;
 
     /**
+     * Function registry.
+     *
+     * @type    array
+     */
+    protected $registry = array();
+
+    /**
      * Extension library.
      *
      * @type    \Octris\Tpl\Library
@@ -90,10 +97,10 @@ class Sandbox
      * Magic caller for registered template functions.
      *
      * @param   string      $name       Name of function to call.
-     * @param   mixed       $args       Function arguments.
+     * @param   array       $args       Function arguments.
      * @return  mixed                   Return value of called function.
      */
-    public function __call($name, $args)
+    public function __call($name, array $args)
     {
         if (!isset($this->registry[$name])) {
             $this->error(sprintf('"%s" -- unknown function', $name), $this->getErrorLineNumber(), __LINE__);
@@ -104,7 +111,7 @@ class Sandbox
         } elseif (count($args) > $this->registry[$name]['args']['max']) {
             $this->error(sprintf('"%s" -- too many arguments', $name), $this->getErrorLineNumber(), __LINE__);
         } else {
-            return call_user_func_array($this->registry[$name]['callback'], $args);
+            $this->registry[$name]['callback'](...$args);
         }
     }
 
@@ -117,7 +124,7 @@ class Sandbox
      * @param   string      $filename   Optional filename.
      * @param   string      $trace      Optional trace.
      */
-    public function error($msg, $line = 0, $cline = __LINE__, $filename = null, $trace = null)
+    protected function error($msg, $line = 0, $cline = __LINE__, $filename = null, $trace = null)
     {
         \Octris\Debug::getInstance()->error(
             'sandbox',
@@ -163,6 +170,20 @@ class Sandbox
         } else {
             $this->data[$name] = $value;
         }
+    }
+
+    /**
+     * Register a custom template function.
+     *
+     * @param   string      $name       Name of template function to register.
+     * @param   callable    $fn         Callback to map to template function.
+     */
+    public function registerFunction($name, callable $fn)
+    {
+        $this->registry[strtolower($name)] = [
+            'callback' => $fn,
+            'args' => \Octris\Tpl\Extension::getNumberOfParameters($fn)
+        ];
     }
 
     /**
@@ -214,19 +235,6 @@ class Sandbox
         }
 
         print $val;
-    }
-
-    /**
-     * Read a file and return it as string.
-     *
-     * @param   string      $file       File to include.
-     * @return  string                  File contents.
-     */
-    public function includetpl($file)
-    {
-        return (is_readable($file)
-                ? file_get_contents($file)
-                : '');
     }
 
     /**
