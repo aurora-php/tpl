@@ -22,7 +22,7 @@ class Sandbox
     /**
      * Template data.
      *
-     * @type    \Octris\Core\Type\Collection;
+     * @type    array
      */
     protected $data;
 
@@ -156,9 +156,6 @@ class Sandbox
 
     /**
      * Set value for one template variable. Note, that resources are not allowed as values.
-     * Values of type 'array' and 'object' will be casted to '\Octris\Core\Type\Collection\collection'
-     * unless an 'object' implements the interface '\Traversable'. Traversable objects will
-     * be used without casting.
      *
      * @param   string      $name       Name of template variable to set value of.
      * @param   mixed       $value      Value to set for template variable.
