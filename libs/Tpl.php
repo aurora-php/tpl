@@ -276,9 +276,8 @@ class Tpl
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
         $c = new Tpl\Lint($this->library);
-        $c->addSearchPath($this->searchpath);
 
-        if (($filename = $c->findFile($inp)) !== false) {
+        if (($filename = $this->findFile($inp)) !== false) {
             $tpl = $c->process($filename, $escape);
         } else {
             die(sprintf(
@@ -310,10 +309,7 @@ class Tpl
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
-        $c = new Tpl\Compiler($this->library);
-        $c->addSearchPath($this->searchpath);
-
-        return (($filename = $c->findFile($inp)) !== false);
+        return (($filename = $this->findFile($inp)) !== false);
     }
 
     /**
