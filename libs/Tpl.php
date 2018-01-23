@@ -117,11 +117,7 @@ class Tpl
      */
     public function setValue($name, $value)
     {
-        if (is_resource($value)) {
-            throw new \InvalidArgumentException('Value of type "resource" is not allowed');
-        } else {
-            $this->data[$name] = $value;
-        }
+        $this->data[$name] = $value;
     }
 
     /**
