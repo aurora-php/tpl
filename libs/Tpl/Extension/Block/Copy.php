@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension\Block;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Copy extends \Octris\Tpl\Extension\Fun {
+final class Copy extends \Octris\Tpl\Extension\Block {
     /**
      * Paste bin.
      *

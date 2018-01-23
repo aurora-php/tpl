@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension\Block;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Benchmark extends \Octris\Tpl\Extension\Fun {
+final class Benchmark extends \Octris\Tpl\Extension\Block {
     /**
      * Constructor.
      *
