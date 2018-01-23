@@ -43,8 +43,8 @@ final class Library
      * @type    array
      */
     protected $reserved = [
-        'block' => [ 'if', 'else', 'end', 'foreach', 'for' ],
-        'function' => [],
+        'block' => [ 'else', 'end' ],
+        'function' => [ 'createFor', 'createForeach', 'write' ],
         'macro' => []
     ];
 
