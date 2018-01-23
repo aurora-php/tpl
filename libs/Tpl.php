@@ -83,8 +83,21 @@ class Tpl
      */
     public function __construct($encoding = 'utf-8')
     {
-        $this->library = new Tpl\Library();
         $this->tpl_cache = new Tpl\Cache\Transient();
+        $this->library = new Tpl\Library(
+            new class() extends Tpl\Extension\AbstractBundle {
+                public function getExtensions() {
+                    return [
+                        new Tpl\Extension\Internal\BlockFor('for'),
+                        new Tpl\Extension\Internal\BlockForeach('foreach'),
+                        new Tpl\Extension\Internal\BlockIf('if'),
+                        
+                        new Tpl\Extension\Internal\FunEscape('escape'),
+                        new Tpl\Extension\Internal\FunLet('let'),
+                    ]
+                }
+            }
+        );        
     }
 
     /**
