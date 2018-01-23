@@ -157,17 +157,13 @@ class Tpl
     /**
      * Register pathname for looking up templates in.
      *
-     * @param   mixed       $pathname       Name of path to register.
+     * @param   string|array        $pathname       Name(s) of path to register.
      */
     public function addSearchPath($pathname)
     {
-        if (is_array($pathname)) {
-            foreach ($pathname as $path) {
-                $this->addSearchPath($path);
-            }
-        } else {
-            if (!in_array($pathname, $this->searchpath)) {
-                $this->searchpath[] = $pathname;
+        foreach ((array)$pathname as $path) {
+            if (!in_array($path, $this->searchpath)) {
+                $this->searchpath[] = $path;
             }
         }
     }
