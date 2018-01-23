@@ -50,9 +50,14 @@ final class Library
 
     /**
      * Constructor.
+     *
+     * @param   \Octris\Tpl\Extension\AbstractBundle    $bundle             Default bundle.
      */
-    public function __construct()
+    public function __construct(\Octris\Tpl\Extension\AbstractBundle $bundle = null)
     {
+        if (!is_null($bundle)) {
+            $this->addExtensionBundle($bundle);
+        }
     }
 
     /**
