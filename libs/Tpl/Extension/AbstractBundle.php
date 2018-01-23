@@ -20,6 +20,13 @@ namespace Octris\Tpl\Extension;
 abstract class AbstractBundle
 {
     /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+    }
+
+    /**
      * Return extensions.
      *
      * @return  array
