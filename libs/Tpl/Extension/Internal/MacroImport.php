@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Tpl\Extension\Macro;
+namespace Octris\Tpl\Extension\Internal;
 
 /**
  * Macro for importing sub-template.
@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension\Macro;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Import extends \Octris\Tpl\Extension\Macro {
+final class MacroImport extends \Octris\Tpl\Extension\Macro {
     /**
      * Constructor.
      *
@@ -26,20 +26,22 @@ final class Import extends \Octris\Tpl\Extension\Macro {
      */
     public function __construct($name, array $options = [])
     {
-        $code_gen = function($filename) {
+        $code_gen = function($filename) use ($options) {
             $ret = '';
 
             $c = clone($this->compiler);
 
-            if (($file = $c->findFile($filename)) !== false) {
+            if (($file = $options['tpl']->findFile($filename)) !== false) {
                 $ret = $c->process($file, $this->escape);
             } else {
-                throw new \Exception(sprintf('Unable to locate file "%s" in "%s"', $filename, implode(':', $c->getSearchPath()));
+                throw new \Exception(sprintf('Unable to locate file "%s" in "%s"', $filename, implode(':', $options['tpl']->getSearchPath())));
             }
 
             return $ret;
         };
 
-        parent::__construct($name, $code_gen, [ 'env' => true ] + $options);
+        unset($options['tpl']);
+
+        parent::__construct($name, $code_gen, [ 'env' => true, 'final' => true ] + $options);
     }
 }

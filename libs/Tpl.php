@@ -91,13 +91,15 @@ class Tpl
                         new Tpl\Extension\Internal\BlockFor('for'),
                         new Tpl\Extension\Internal\BlockForeach('foreach'),
                         new Tpl\Extension\Internal\BlockIf('if'),
-                        
+
                         new Tpl\Extension\Internal\FunEscape('escape'),
                         new Tpl\Extension\Internal\FunLet('let'),
+
+                        new Tpl\Extension\Internal\MacroImport('import', [ 'tpl' => $this ]),
                     ]
                 }
             }
-        );        
+        );
     }
 
     /**
@@ -183,6 +185,42 @@ class Tpl
                 $this->searchpath[] = $pathname;
             }
         }
+    }
+
+    /**
+     * Return list of search pathes.
+     *
+     * @return  array                       Search pathes.
+     */
+    public function getSearchPath()
+    {
+        return $this->searchpath;
+    }
+
+    /**
+     * Lookup a template file in the configured searchpathes.
+     *
+     * @param   string      $filename       Name of file to lookup.
+     */
+    public function findFile($filename)
+    {
+        $return = false;
+
+        foreach ($this->searchpath as $path) {
+            $test = $path . '/' . $filename;
+
+            if (file_exists($test) && is_readable($test)) {
+                if (($dir = dirname($filename)) !== '') {
+                    // add complete path of file for future relativ path lookups
+                    $this->addSearchPath($path . '/' . $dir);
+                }
+
+                $return = $test;
+                break;
+            }
+        }
+
+        return $return;
     }
 
     /**
