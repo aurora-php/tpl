@@ -244,9 +244,8 @@ class Tpl
 
         if ($force || ($tpl = $this->tpl_cache->getContents($uri)) === false) {
             $c = new Tpl\Compiler($this->library);
-            $c->addSearchPath($this->searchpath);
 
-            if (($filename = $c->findFile($tplname)) !== false) {
+            if (($filename = $this->findFile($tplname)) !== false) {
                 $tpl = $c->process($filename, $escape);
 
                 foreach ($this->postprocessors as $processor) {
