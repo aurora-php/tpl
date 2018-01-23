@@ -107,6 +107,17 @@ abstract class AbstractExtension
     }
 
     /**
+     * Return option.
+     *
+     * @param   string              $name               Name of option to return.
+     * @return  mixed                                   Option value.
+     */
+    protected function getOption($name)
+    {
+        return $this->options[$name];
+    }
+
+    /**
      * Return if extension is defined as final and cannot be overwritten by an extension
      * of the same name.
      *
