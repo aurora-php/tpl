@@ -53,14 +53,14 @@ class Tpl
      *
      * @type    array
      */
-    protected $searchpath = array();
+    protected $searchpath = [];
 
     /**
      * Postprocessors.
      *
      * @type    array
      */
-    protected $postprocessors = array();
+    protected $postprocessors = [];
 
     /**
      * Extension library.
