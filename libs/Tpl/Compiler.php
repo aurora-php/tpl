@@ -40,7 +40,7 @@ class Compiler
      *
      * @type    array
      */
-    protected $searchpath = array();
+    protected $searchpath = [];
 
     /**
      * Constructor.
@@ -88,10 +88,10 @@ class Compiler
      */
     protected function compile(&$tokens, &$blocks, $escape)
     {
-        $stack = array();
-        $code  = array();
+        $stack = [];
+        $code = [];
 
-        $last_tokens = array();
+        $last_tokens = [];
 
         $getNextToken = function (&$tokens) use (&$last_tokens) {
             if (($current = array_shift($tokens))) {
@@ -134,7 +134,7 @@ class Compiler
                         $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
                     }
 
-                    $code = array($_start);
+                    $code = [$_start];
                     $blocks['compiler'][] = $_end;
                     break;
                 case grammar::T_IF_ELSE:
@@ -146,10 +146,10 @@ class Compiler
                 case grammar::T_ARRAY_CLOSE:
                 case grammar::T_BRACE_CLOSE:
                     array_push($stack, $code);
-                    $code = array();
+                    $code = [];
                     break;
                 case grammar::T_ARRAY_OPEN:
-                    $code = array('[' . array_reduce(array_reverse($code), function ($code, $snippet) {
+                    $code = ['[' . array_reduce(array_reverse($code), function ($code, $snippet) {
                         static $last = '';
 
                         if ($code != '') {
@@ -159,7 +159,7 @@ class Compiler
                         $code .= $last = $snippet;
 
                         return $code;
-                    }, '') . ']');
+                    }, '') . ']'];
 
                     if (($tmp = array_pop($stack))) {
                         $code = array_merge($tmp, $code);
@@ -255,17 +255,17 @@ class Compiler
          */
         $last_token = $getLastToken($last_tokens, -1);
 
-        if (in_array($last_token, array(grammar::T_CONSTANT, grammar::T_MACRO))) {
-            $code = array(implode('', $code));
-        } elseif (!in_array($last_token, array(grammar::T_BLOCK_OPEN, grammar::T_BLOCK_CLOSE, grammar::T_IF_OPEN, grammar::T_IF_ELSE))) {
+        if (in_array($last_token, [grammar::T_CONSTANT, grammar::T_MACRO])) {
+            $code = [implode('', $code)];
+        } elseif (!in_array($last_token, [grammar::T_BLOCK_OPEN, grammar::T_BLOCK_CLOSE, grammar::T_IF_OPEN, grammar::T_IF_ELSE])) {
             if ($last_token == grammar::T_ESCAPE) {
                 // no additional escaping, when 'escape' method was used
-                $code = array('<?php $this->write(' . implode('', $code) . '); ?>'."\n");
+                $code = ['<?php $this->write(' . implode('', $code) . '); ?>'."\n"];
             } else {
-                $code = array('<?php $this->write(' . implode('', $code) . ', "' . $escape . '"); ?>'."\n");
+                $code = ['<?php $this->write(' . implode('', $code) . ', "' . $escape . '"); ?>'."\n"];
             }
         } else {
-            $code = array('<?php ' . implode('', $code) . ' ?>'."\n");
+            $code = ['<?php ' . implode('', $code) . ' ?>'."\n"];
         }
 
         return $code;
@@ -344,7 +344,7 @@ class Compiler
      */
     protected function parse(\Octris\Tpl\Parser $parser)
     {
-        $blocks = array('analyzer' => array(), 'compiler' => array());
+        $blocks = ['analyzer' => [], 'compiler' => []];
 
         if (is_null(self::$parser)) {
             // initialize parser

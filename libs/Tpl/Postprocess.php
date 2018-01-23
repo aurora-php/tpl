@@ -24,7 +24,7 @@ abstract class Postprocess
      *
      * @type    array
      */
-    protected $mappings = array();
+    protected $mappings = [];
 
     /**
      * Constructor.
@@ -32,7 +32,7 @@ abstract class Postprocess
      * @param   array       $mappings   Optional array of path-prefix to real-path mappings.
      * @param   string      $dst        Destination directory for created files.
      */
-    public function __construct(array $mappings = array())
+    public function __construct(array $mappings = [])
     {
         foreach ($mappings as $prefix => $mapping) {
             $this->addMapping($prefix, $mapping);

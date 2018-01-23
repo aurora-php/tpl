@@ -24,7 +24,7 @@ class Transient implements \Octris\Tpl\CacheInterface
      *
      * @type    array
      */
-    protected $segments = array();
+    protected $segments = [];
 
     /**
      * Constructor.

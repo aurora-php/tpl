@@ -67,7 +67,7 @@ trait CombineTrait
             $tmp
         );
 
-        $ret = array();
+        $ret = [];
         $ret_val = 0;
         exec($cmd, $ret, $ret_val);
 
@@ -88,7 +88,7 @@ trait CombineTrait
      */
     public function postProcess($tpl)
     {
-        $files  = array();
+        $files  = [];
         $offset = 0;
 
         while (preg_match("#(?:$this->pattern"."([\n\r\s]*))+#si", $tpl, $m_block, PREG_OFFSET_CAPTURE, $offset)) {

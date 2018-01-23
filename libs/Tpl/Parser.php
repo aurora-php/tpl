@@ -205,13 +205,13 @@ class Parser implements \Iterator
         $this->offset = $this->next_offset;
 
         if (($this->valid = (preg_match('/(' . self::$snippet_pattern . ')/s', $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset) > 0))) {
-            $this->current = array(
+            $this->current = [
                 'snippet' => (isset($m[2]) ? $m[2][0] : ''),
                 'escape'  => null,
                 'line'    => $this->getLineNumber($m[2][1]),
                 'length'  => strlen($m[0][0]),
                 'offset'  => $m[1][1]
-            );
+            ];
 
             $this->next_offset = $m[1][1] + strlen($m[1][0]);
         } else {
@@ -282,7 +282,7 @@ class Parser implements \Iterator
      */
     protected function getTokenNames(array $tokens)
     {
-        $return = array();
+        $return = [];
 
         foreach ($tokens as $token) {
             $return[] = $this->getTokenName($token);

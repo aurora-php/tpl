@@ -48,7 +48,7 @@ class Html extends \Octris\Tpl\Parser
      *
      * @type    array
      */
-    protected static $patterns = array(
+    protected static $patterns = [
         self::T_COMMENT_OPEN    => '/<!--/',
         self::T_COMMENT_CLOSE   => '/-->/',
 
@@ -68,88 +68,88 @@ class Html extends \Octris\Tpl\Parser
 
         self::T_COMMAND         => '/(_c_[a-f0-9]+_)/',
         self::T_COMMENT_COMMAND => '/(_c_[a-f0-9]+_)/'
-    );
+    ];
 
     /**
      * Parser rules.
      *
      * @type    array
      */
-    protected static $rules = array(
-        self::T_DATA            => array(
+    protected static $rules = [
+        self::T_DATA => [
             self::T_COMMENT_OPEN,
             self::T_CDATA_OPEN,
             self::T_TAG_START,
             self::T_COMMAND
-        ),
+        ],
 
-        self::T_TAG_START       => array(
+        self::T_TAG_START => [
             self::T_TAG_NAME,
             self::T_TAG_CLOSE
-        ),
+        ],
 
-        self::T_TAG_NAME        => array(
+        self::T_TAG_NAME => [
             self::T_TAG_END_OPEN,
             self::T_TAG_END_CLOSE,
             self::T_ATTR_START,
             self::T_COMMAND
-        ),
+        ],
 
-        self::T_ATTR_START      => array(
+        self::T_ATTR_START => [
             self::T_ATTR_COMMAND,
             self::T_ATTR_END
-        ),
+        ],
 
-        self::T_ATTR_COMMAND    => array(
+        self::T_ATTR_COMMAND => [
             self::T_ATTR_COMMAND,
             self::T_ATTR_END
-        ),
+        ],
 
-        self::T_ATTR_END        => array(
+        self::T_ATTR_END => [
             self::T_TAG_END_OPEN,
             self::T_TAG_END_CLOSE,
             self::T_ATTR_START,
             self::T_COMMAND
-        ),
+        ],
 
-        self::T_COMMENT_OPEN    => array(
+        self::T_COMMENT_OPEN => [
             self::T_COMMENT_COMMAND,
             self::T_COMMENT_CLOSE
-        ),
+        ],
 
-        self::T_COMMENT_COMMAND => array(
+        self::T_COMMENT_COMMAND => [
             self::T_COMMENT_COMMAND,
             self::T_COMMENT_CLOSE
-        ),
+        ],
 
-        self::T_CDATA_OPEN      => array(
+        self::T_CDATA_OPEN => [
             self::T_CDATA_COMMAND,
             self::T_CDATA_CLOSE
-        ),
+        ],
 
-        self::T_CDATA_COMMAND   => array(
+        self::T_CDATA_COMMAND => [
             self::T_CDATA_COMMAND,
             self::T_CDATA_CLOSE
-        )
-    );
+        ]
+    ];
 
     /**
      * Attributes and their relevant context information.
      *
      * @type    array
      */
-    protected static $attributes = array(
-        'js' => array(
+    protected static $attributes = [
+        'js' => [
             'onload', 'onunload', 'onclick', 'ondblclick',
             'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout',
             'onfocus', 'onblur', 'onkeypress', 'onkeydown', 'onkeyup',
             'onsubmit', 'onreset', 'onselect', 'onchange'
-        ),
-        'uri' => array(
+        ],
+        'uri' => [
             'action', 'background', 'cite', 'classid', 'codebase', 'data',
             'href', 'longdesc', 'profile', 'src', 'usemap'
-        )
-    );
+        ]
+    ];
 
     /**
      * Current state of parser in document.
@@ -163,14 +163,14 @@ class Html extends \Octris\Tpl\Parser
      *
      * @type    array
      */
-    protected $escape = array(\Octris\Tpl::ESC_HTML);
+    protected $escape = [\Octris\Tpl::ESC_HTML];
 
     /**
      * Array for storing normalized template commands.
      *
      * @type    array
      */
-    protected $commands = array();
+    protected $commands = [];
 
     /**
      * Constructor.
@@ -227,13 +227,13 @@ class Html extends \Octris\Tpl\Parser
                         );
                     }
 
-                    $current = array(
+                    $current = [
                         'snippet' => $this->commands[$state['payload']],
                         'escape'  => end($this->escape),
                         'line'    => $state['line'],
                         'offset'  => $state['offset'],
                         'length'  => $state['length']
-                    );
+                    ];
                     break(2);
                 case self::T_COMMENT_OPEN:
                     array_push($this->escape, \Octris\Tpl::ESC_HTMLCOMMENT);
@@ -338,7 +338,7 @@ class Html extends \Octris\Tpl\Parser
 
             if (preg_match($pattern, $this->tpl, $m, PREG_OFFSET_CAPTURE, $this->offset)) {
                 if ($match === false || $m[0][1] < $match['offset']) {
-                    $match = array(
+                    $match = [
                         'offset'    => $m[0][1],
                         'state'     => $new_state,
                         'token'     => $this->getTokenName($new_state),
@@ -346,7 +346,7 @@ class Html extends \Octris\Tpl\Parser
                         'escape'    => null,
                         'length'    => strlen($m[0][0]),
                         'line'      => $this->getLineNumber($m[0][1])
-                    );
+                    ];
 
                     if ($this->debug) {
                         $match['match'] = $m[0][0];
