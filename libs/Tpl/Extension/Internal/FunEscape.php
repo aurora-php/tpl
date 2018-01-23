@@ -28,9 +28,9 @@ final class FunEscape extends \Octris\Tpl\Extension\AbstractExtension {
     {
         $code_gen = function($val, $escape) { };
 
-        parent::__construct($name, $code_gen, $options);
+        parent::__construct($name, $code_gen, [ 'final' => true ] + $options);
     }
-    
+
     /**
      * Code generator.
      *
