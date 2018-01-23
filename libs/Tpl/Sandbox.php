@@ -141,14 +141,10 @@ class Sandbox
     /**
      * Set values for multiple template variables.
      *
-     * @param   array|\Traversable       $array      Key/value array with values.
+     * @param   iterable        $array      Key/value array with values.
      */
-    public function setValues($array)
+    public function setValues(iterable $array)
     {
-        if (!is_array($array) && !($array instanceof \Traversable)) {
-            throw new \InvalidArgumentException('Array or Traversable object expected');
-        }
-
         foreach ($array as $k => $v) {
             $this->setValue($k, $v);
         }
@@ -162,11 +158,7 @@ class Sandbox
      */
     public function setValue($name, $value)
     {
-        if (is_resource($value)) {
-            throw new \InvalidArgumentException('Value of type "resource" is not allowed');
-        } else {
-            $this->data[$name] = $value;
-        }
+        $this->data[$name] = $value;
     }
 
     /**
@@ -185,7 +177,7 @@ class Sandbox
 
     /**
      * Create generator for iterating iterable data.
-     * 
+     *
      * @param   iterable    $data       Iterable data.
      * @return  \Generator              A generator instance.
      */
@@ -204,13 +196,13 @@ class Sandbox
                         'pos' => $pos++,
                         'key' => $k
                     ];
-                
+
                     yield [$v, $meta];
                 }
             } else {
                 $cnt = null;
                 $pos = 0;
-            
+
                 $data->rewind();
                 while (($key = $data->key()) !== null) {
                     $meta = [
@@ -220,16 +212,16 @@ class Sandbox
                         'pos' => $pos++,
                         'key' => $key
                     ];
-                
+
                     $data->next();
-                
+
                     $meta['is_last'] = ($data->key() === null);
-                
+
                     yield [$data->current(), $meta];
                 }
             }
         };
-        
+
         return $generator($data);
     }
 
@@ -248,7 +240,7 @@ class Sandbox
             $ret = (function($start, $end, $step) {
                 $step = abs($step == 0 ? 1 : $step);
                 $i = $start;
-    
+
                 if ($start < $end) {
                     $a =& $i; $b = $end;
                 } else {
@@ -257,7 +249,7 @@ class Sandbox
 
                 $cnt = floor($b - $a) / abs($step));
                 $pos = 0;
-    
+
                 for (; $a < $b; $i += $step) {
                     $meta = [
                         'is_first' => ($pos == 0),
@@ -271,7 +263,7 @@ class Sandbox
                 }
             })($start, $end, $step);
         }
-    
+
         return $ret;
     }
 
