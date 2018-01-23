@@ -184,6 +184,98 @@ class Sandbox
     }
 
     /**
+     * Create generator for iterating iterable data.
+     * 
+     * @param   iterable    $data       Iterable data.
+     * @return  \Generator              A generator instance.
+     */
+    protected function createForeach(iterable $data)
+    {
+        $generator = function(iterable $data) {
+            if (is_array($data) || $data instanceof \Countable) {
+                $cnt = count($data);
+                $pos = 0;
+
+                foreach ($data as $k => $v) {
+                    $meta = [
+                        'is_first' => ($pos == 0),
+                        'is_last' => (($pos + 1) == $cnt),
+                        'count' => $cnt,
+                        'pos' => $pos++,
+                        'key' => $k
+                    ];
+                
+                    yield [$v, $meta];
+                }
+            } else {
+                $cnt = null;
+                $pos = 0;
+            
+                $data->rewind();
+                while (($key = $data->key()) !== null) {
+                    $meta = [
+                        'is_first' => ($pos == 0),
+                        'is_last' => false,
+                        'count' => $cnt,
+                        'pos' => $pos++,
+                        'key' => $key
+                    ];
+                
+                    $data->next();
+                
+                    $meta['is_last'] = ($data->key() === null);
+                
+                    yield [$data->current(), $meta];
+                }
+            }
+        };
+        
+        return $generator($data);
+    }
+
+    /**
+     * Create generator for iterating for(;;) loop.
+     *
+     * @param   int         $start              Start position.
+     * @param   int         $end                End position.
+     * @param   int         $stap               Iterator steps.
+     * @return  array|\Generator
+     */
+    protected function createFor($start, $end, $step) {
+        if ($start == $end) {
+            $ret = [];
+        } else {
+            $ret = (function($start, $end, $step) {
+                $step = abs($step == 0 ? 1 : $step);
+                $i = $start;
+    
+                if ($start < $end) {
+                    $a =& $i; $b = $end;
+                } else {
+                    $a = $end; $b =& $i; $step = -$step;
+                }
+
+                $cnt = floor($b - $a) / abs($step));
+                $pos = 0;
+    
+                for (; $a < $b; $i += $step) {
+                    $meta = [
+                        'is_first' => ($pos == 0),
+                        'is_last' => (($pos + 1) == $cnt),
+                        'count' => $cnt,
+                        'pos' => $pos++,
+                        'key' => $i
+                    ];
+
+                    yield [$i, $meta];
+                }
+            })($start, $end, $step);
+        }
+    
+        return $ret;
+    }
+
+    /**
      * Escape a value according to the specified escaping context.
      *
      * @param   string          $val            Value to escape.
