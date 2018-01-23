@@ -31,7 +31,7 @@ class Sandbox
      *
      * @type    array
      */
-    protected $registry = array();
+    protected $registry = [];
 
     /**
      * Extension library.
