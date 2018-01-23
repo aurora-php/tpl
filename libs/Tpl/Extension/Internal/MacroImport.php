@@ -22,25 +22,24 @@ final class MacroImport extends \Octris\Tpl\Extension\Macro {
      * Constructor.
      *
      * @param   string              $name               Name to register extension with.
+     * @param   \Octris\Tpl         $tpl                Instance of template engine.
      * @param   array               $options            Optional options.
      */
-    public function __construct($name, array $options = [])
+    public function __construct($name, \Octris\Tpl $tpl, array $options = [])
     {
-        $code_gen = function($filename) use ($options) {
+        $code_gen = function($filename) use ($tpl) {
             $ret = '';
 
             $c = clone($this->compiler);
 
-            if (($file = $options['tpl']->findFile($filename)) !== false) {
+            if (($file = $tpl->findFile($filename)) !== false) {
                 $ret = $c->process($file, $this->escape);
             } else {
-                throw new \Exception(sprintf('Unable to locate file "%s" in "%s"', $filename, implode(':', $options['tpl']->getSearchPath())));
+                throw new \Exception(sprintf('Unable to locate file "%s" in "%s"', $filename, implode(':', $tpl->getSearchPath())));
             }
 
             return $ret;
         };
-
-        unset($options['tpl']);
 
         parent::__construct($name, $code_gen, [ 'env' => true, 'final' => true ] + $options);
     }
