@@ -40,7 +40,6 @@ class Std extends AbstractBundle
             new Fun\Cycle('cycle'),
             new Fun\Trigger('trigger'),
             new Fun\OnChange('onchange'),
-            new Fun\Escape('escape'),
 
             new Fun('if', [$this, 'funcIf']),
             new Fun('ifset', [$this, 'funcIfset']),
