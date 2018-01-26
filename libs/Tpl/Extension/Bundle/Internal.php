@@ -48,14 +48,14 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
     public function getExtensions()
     {
         return [
-            new Tpl\Extension\Internal\BlockFor('for'),
-            new Tpl\Extension\Internal\BlockForeach('foreach'),
-            new Tpl\Extension\Internal\BlockIf('if'),
+            new Extension\Internal\BlockFor('for'),
+            new Extension\Internal\BlockForeach('foreach'),
+            new Extension\Internal\BlockIf('if'),
 
-            new Tpl\Extension\Internal\FunEscape('escape'),
-            new Tpl\Extension\Internal\FunLet('let'),
+            new Extension\Internal\FunEscape('escape'),
+            new Extension\Internal\FunLet('let'),
 
-            new Tpl\Extension\Internal\MacroImport('import', $this->tpl),
+            new Extension\Internal\MacroImport('import', $this->tpl),
         ];
     }
 }
