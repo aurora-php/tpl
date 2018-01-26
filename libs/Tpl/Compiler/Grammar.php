@@ -65,8 +65,8 @@ class Grammar extends \Octris\Parser\Grammar
     const T_WHITESPACE           = '" "';
 
     const T_IF_OPEN              = '"#if"';
-    const T_FOREACH_OPEN         = '"#foreach"'
-    const T_FOR_OPEN             = '"#for"'
+    const T_FOREACH_OPEN         = '"#foreach"';
+    const T_FOR_OPEN             = '"#for"';
     const T_IF_ELSE              = '"#else"';
     const T_BLOCK_CLOSE          = '"#end"';
     const T_BLOCK_OPEN           = '"#[a-z][a-z-0-9_]*"';

@@ -247,7 +247,7 @@ class Sandbox
                     $a = $end; $b =& $i; $step = -$step;
                 }
 
-                $cnt = floor($b - $a) / abs($step));
+                $cnt = floor($b - $a) / abs($step);
                 $pos = 0;
 
                 for (; $a < $b; $i += $step) {
