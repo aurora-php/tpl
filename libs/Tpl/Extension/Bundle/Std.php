@@ -82,6 +82,7 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
             new Extension\Fun('lpad', [$this, 'funcLpad']),
             new Extension\Fun('rpad', [$this, 'funcRpad']),
             new Extension\Fun('concat', [$this, 'funcConcat']),
+            new Extension\Fun('length', 'strlen'),
             new Extension\Fun('repeat', [$this, 'funcRepeat']),
             new Extension\Fun('jsonencode', [$this, 'funcJsonencode']),
             new Extension\Fun('jsondecode', [$this, 'funcJsondecode']),
