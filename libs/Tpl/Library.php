@@ -67,11 +67,11 @@ final class Library
      */
     public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension)
     {
-        if ($extension instanceof Octris\Tpl\Extension\Block) {
+        if ($extension instanceof \Octris\Tpl\Extension\Block) {
             $type = 'block';
-        } elseif ($extension instanceof Octris\Tpl\Extension\Fun) {
+        } elseif ($extension instanceof \Octris\Tpl\Extension\Fun) {
             $type = 'function';
-        } elseif ($extension instanceof Octris\Tpl\Extension\Macro) {
+        } elseif ($extension instanceof \Octris\Tpl\Extension\Macro) {
             $type = 'macro';
         } else {
             throw new \InvalidArgumentException('Unknown extension type for "' . get_class($extension) . '"');
