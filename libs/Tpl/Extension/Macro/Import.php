@@ -41,6 +41,6 @@ final class Import extends \Octris\Tpl\Extension\Macro {
             return $ret;
         };
 
-        parent::__construct($name, $code_gen, [ 'env' => true, 'final' => true ] + $options);
+        parent::__construct($name, $code_gen, [ 'env' => true ] + $options);
     }
 }
