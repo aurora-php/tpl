@@ -59,7 +59,7 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
             new Extension\Fun('not', [$this, 'funcNot']),
             new Extension\Fun('lt', [$this, 'funcLt']),
             new Extension\Fun('gt', [$this, 'funcGt']),
-            new Extension\un('eq', [$this, 'funcEq']),
+            new Extension\Fun('eq', [$this, 'funcEq']),
             new Extension\Fun('le', [$this, 'funcLe']),
             new Extension\Fun('ge', [$this, 'funcGe']),
             new Extension\Fun('ne', [$this, 'funcNe']),
@@ -161,17 +161,17 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
     }
 
     /** math functions **/
-    public function funNeg($value)
+    public function funcNeg($value)
     {
         return '(-' . $value . ')';
     }
 
-    public function funMul($factor1, $factor2, ...$factorN)
+    public function funcMul($factor1, $factor2, ...$factorN)
     {
-        return '(' . implode(' * ', array_merge([$factor1, $facto2], $factorN) . ')';
+        return '(' . implode(' * ', array_merge([$factor1, $facto2], $factorN)) . ')';
     }
 
-    public function funDiv($dividend, $divisor1, ...$divisorN)
+    public function funcDiv($dividend, $divisor1, ...$divisorN)
     {
         return '(' . implode(' / ', array_merge([$dividend, $divisor1], $divisorN)) . ')';
     }
@@ -320,12 +320,12 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
     /** string functions **/
     public function funcLpad($input, $pad_length, $pad_string = ' ')
     {
-        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string] . ', STR_PAD_LEFT))';
+        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string]) . ', STR_PAD_LEFT))';
     }
 
     public function funcRpad($input, $pad_length, $pad_string = ' ')
     {
-        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string] . ', STR_PAD_RIGHT))';
+        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string]) . ', STR_PAD_RIGHT))';
     }
 
     public function funcConcat($str1, $str2, ...$strN)
