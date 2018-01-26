@@ -41,6 +41,13 @@ abstract class AbstractExtension
     private $options = [];
 
     /**
+     * Number of parameters.
+     * 
+     * @type    array|null
+     */
+    private $pnumber = null;
+
+    /**
      * Constructor.
      *
      * @param   string              $name               Name to register extension with.
@@ -71,13 +78,11 @@ abstract class AbstractExtension
      */
     final public function getNumberOfParameters()
     {
-        static $ret = null;
-
-        if (is_null($ret)) {
-            $ret = \Octris\Tpl\Extension::getNumberOfParameters($this->fn);
+        if (is_null($this->pnumber)) {
+            $this->pnumber = \Octris\Tpl\Extension::getNumberOfParameters($this->fn);
         }
 
-        return $ret;
+        return $this->pnumber;
     }
 
     /**
