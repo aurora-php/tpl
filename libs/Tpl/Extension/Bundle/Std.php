@@ -29,9 +29,9 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
     public function getExtensions()
     {
         return [
-            new Extension\Block\Benchmark('benchmark'),
-            new Extension\Block\Copy('copy'),
-            new Extension\Block\Cut('cut'),
+            // new Extension\Block\Benchmark('benchmark'),
+            // new Extension\Block\Copy('copy'),
+            // new Extension\Block\Cut('cut'),
 
             new Extension\Macro('uniqid', [$this, 'macroUniqId']),
             new Extension\Macro('date', [$this, 'macroDate']),
