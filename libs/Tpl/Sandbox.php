@@ -29,9 +29,9 @@ class Sandbox
     /**
      * Function registry.
      *
-     * @type    array
+     * @type    \ArrayObject
      */
-    protected $registry = [];
+    protected $registry;
 
     /**
      * Extension library.
@@ -79,6 +79,16 @@ class Sandbox
         $this->data = $data;
 
         $this->escaper = new \Zend\Escaper\Escaper($this->encoding);
+        
+        $this->registry = new class() extends \ArrayObject {
+            public function offsetGet($offs) {
+                if (!$this->offsetIsset($offs)) {
+                    throw new \Exception('Undefined template function "' . $offs . '"');
+                }
+                
+                return parent::offsetGet($offs);
+            }
+        };
     }
 
     /**
