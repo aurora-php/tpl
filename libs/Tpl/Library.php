@@ -74,7 +74,7 @@ final class Library
         } elseif ($extension instanceof Octris\Tpl\Extension\Macro) {
             $type = 'macro';
         } else {
-            throw new \InvalidArgumentException('Unknown extension type');
+            throw new \InvalidArgumentException('Unknown extension type for "' . get_class($extension) . '"');
         }
 
         $name = $extension->getName();
