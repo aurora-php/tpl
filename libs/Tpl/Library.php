@@ -129,7 +129,7 @@ final class Library
                 throw new \Exception('Unknown ' . $type . ' "' . $name . '"');
             } else {
                 // function may be undefined at compile time
-                $ret = '($this->registry[\'' . $name . '\'](' . implode(', ', $args) . '))';
+                $ret[0] = '($this->registry[\'' . $name . '\'](' . implode(', ', $args) . '))';
             }
         } else {
             $extension = $this->extensions[$type][$name];
