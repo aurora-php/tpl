@@ -48,14 +48,49 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
     public function getExtensions()
     {
         return [
-            new Extension\Internal\BlockFor('for'),
-            new Extension\Internal\BlockForeach('foreach'),
-            new Extension\Internal\BlockIf('if'),
+            new Extension\Block('for', [$this, 'blockFor'], [ 'final' => true ]),
+            new Extension\Block('foreach', [$this, 'blockForeach'], [ 'final' => true ]),
+            new Extension\Block('forif', [$this, 'blockIf'], [ 'final' => true ]),
 
-            new Extension\Internal\FunEscape('escape'),
-            new Extension\Internal\FunLet('let'),
+            new Extension\Fun('escape', [$this, 'funcEscape'], [ 'final' => true ]),
+            new Extension\Fun('let', [$this, 'funcLet'], [ 'final' => true ]),
 
             new Extension\Internal\MacroImport('import', $this->tpl),
         ];
+    }
+
+    public function blockFor($start, $end, $step, $value, $meta = null)
+    {
+        return [
+            (is_null($meta)
+                ? sprintf('foreach ($this->createFor(%s, %s, %s) as list(%s, )) {', $start, $end, $step, $value)
+                : sprintf('foreach ($this->createFor(%s, %s, %s) as list(%s, %s)) {', $start, $end, $step, $value, $meta)),
+            '}'
+        ];
+    }
+
+    public function blockForeach($data, $value, $meta = null)
+    {
+        return [
+            (is_null($meta)
+                ? sprintf('foreach ($this->createForeach(%s) as list(%s, )) {', $data, $value)
+                : sprintf('foreach ($this->createForeach(%s) as list(%s, %s)) {', $data, $value, $meta)),
+            '}'
+        ];
+    }
+
+    public function blockIf($condition)
+    {
+        return ['if (' . $condition . ') {', '}'];
+    }
+
+    public function funcEscape($value, $escape)
+    {
+        return '$this->escape(' . $value . ', ' . $escape . ')';
+    }
+
+    public function funcLet($name, $value)
+    {
+        return '(' . $name . ' = ' . $value . ')';
     }
 }
