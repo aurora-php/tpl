@@ -19,7 +19,7 @@ use \Octris\Tpl\Extension;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-class Std extends AbstractBundle
+class Std extends \Octris\Tpl\Extension\AbstractBundle
 {
     /**
      * Return extensions from bundle.

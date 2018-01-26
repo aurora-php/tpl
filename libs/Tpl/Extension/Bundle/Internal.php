@@ -19,7 +19,7 @@ use \Octris\Tpl\Extension;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class Internal extends AbstractBundle
+final class Internal extends \Octris\Tpl\Extension\AbstractBundle
 {
     /**
      * Instance of template engine.
