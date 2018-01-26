@@ -172,7 +172,8 @@ class Compiler
                     $value = strtolower($value);
 
                     try {
-                        list($code, ) = $this->library->getCode('function', $value, array_reverse($code), $env);
+                        list($tmp, ) = $this->library->getCode('function', $value, array_reverse($code), $env);
+                        $code = [ $tmp ];
                     } catch(\Exception $e) {
                         $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
                     }
