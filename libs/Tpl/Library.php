@@ -79,7 +79,7 @@ final class Library
 
         $name = $extension->getName();
 
-        if (in_array($this->reserved[$type])) {
+        if (in_array($type, $this->reserved)) {
             throw new \InvalidArgumentException('The name "' . $name . '" is a reserved word for type ' . $type);
         } elseif (!isset($this->extensions[$type][$name]) || !$this->extensions[$type][$name]->isFinal()) {
             $this->extensions[$type][$name] = $extension;
