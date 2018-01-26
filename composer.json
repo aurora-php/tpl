@@ -14,7 +14,7 @@
     "require": {
         "php": ">=5.6.0",
         "octris/parser": "^0.1.0",
-        "zendframework/zend-escaper": "^2.5",
+        "zendframework/zend-escaper": "^2.5"
     },
 
     "autoload": {
