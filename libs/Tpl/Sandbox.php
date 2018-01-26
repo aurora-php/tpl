@@ -354,9 +354,7 @@ class Sandbox
     /**
      * Render a template and save output to a file.
      *
-     * @param   string      $filename       Filename of template to render.
      * @param   string      $savename       Filename to save output to.
-     * @param   string      $escape         Optional escaping to use.
      * @param   bool|int                    Returns number of bytes written or false in case of an error.
      */
     public function save($savename)
