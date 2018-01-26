@@ -126,7 +126,7 @@ final class Library
 
         if (!isset($this->extensions[$type][$name])) {
             if ($type != 'function') {
-                throw new \Exception('Unknown ' . $type . ' "' . $name . '"')
+                throw new \Exception('Unknown ' . $type . ' "' . $name . '"');
             } else {
                 // function may be undefined at compile time
                 $ret = '($this->registry[\'' . $name . '\'](' . implode(', ', $args) . '))';
