@@ -141,7 +141,7 @@ final class Library
             } elseif (count($args) < $min) {
                 throw new \Exception('Not enough arguments "' . $name . '"');
             } else {
-                $ret = $extension($args, $env);
+                $ret = $extension->getCode($args, $env);
             }
         }
 
