@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Tpl\Extension\Fun;
+namespace Octris\Tpl\Extension\Internal;
 
 /**
  * Escape a value according to the specified escaping context.
