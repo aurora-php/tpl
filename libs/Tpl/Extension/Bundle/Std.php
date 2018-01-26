@@ -71,6 +71,11 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
             new Extension\Fun('round', [$this, 'funcRound']),
             new Extension\Fun('count', [$this, 'funcCount']),
 
+            new Extension\Fun('bool', [$this, 'funcBool']),
+            new Extension\Fun('int', [$this, 'funcInt']),
+            new Extension\Fun('float', [$this, 'funcFloat']),
+            new Extension\Fun('string', [$this, 'funcString']),
+
             new Extension\Fun('now', [$this, 'funcNow']),
             new Extension\Fun('uniqid', [$this, 'funcUniqid']),
 
@@ -278,6 +283,27 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
     public function funcMax($term1, $term2, ...$termN)
     {
         return '(max(' . implode(', ', array_merge([$term1, $term2], $termN)) . '))';
+    }
+
+    /** type casting **/
+    public function funcBool($term)
+    {
+        return '((bool)' . $term . ')';
+    }
+
+    public function funcInt($term)
+    {
+        return '((int)' . $term . ')';
+    }
+
+    public function funcFloat($term)
+    {
+        return '((float)' . $term . ')';
+    }
+
+    public function funcString($term)
+    {
+        return '((string)' . $term . ')';
     }
 
     /** misc **/
