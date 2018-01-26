@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Octris\Tpl\Extension\Internal;
+namespace Octris\Tpl\Extension\Macro;
 
 /**
  * Macro for importing sub-template.
@@ -17,7 +17,7 @@ namespace Octris\Tpl\Extension\Internal;
  * @copyright   copyright (c) 2018 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
-final class MacroImport extends \Octris\Tpl\Extension\Macro {
+final class Import extends \Octris\Tpl\Extension\Macro {
     /**
      * Constructor.
      *
