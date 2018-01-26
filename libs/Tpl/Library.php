@@ -132,7 +132,8 @@ final class Library
                 $ret = '($this->registry[\'' . $name . '\'](' . implode(', ', $args) . '))';
             }
         } else {
-            $extension = $this->extensions[$type][$name]
+            $extension = $this->extensions[$type][$name];
+
             list($min, $max) = $extension->getNumberOfParameters();
 
             if ($max > 0 && count($args) > $max) {
