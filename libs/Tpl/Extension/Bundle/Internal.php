@@ -55,7 +55,7 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
             new Extension\Fun('escape', [$this, 'funcEscape'], [ 'final' => true ]),
             new Extension\Fun('let', [$this, 'funcLet'], [ 'final' => true ]),
 
-            new Extension\Internal\MacroImport('import', $this->tpl),
+            new Extension\Macro\Import('import', $this->tpl, [ 'final' => true ]),
         ];
     }
 
