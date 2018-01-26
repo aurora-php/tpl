@@ -55,6 +55,11 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
             new Extension\Fun('escape', [$this, 'funcEscape'], [ 'final' => true ]),
             new Extension\Fun('let', [$this, 'funcLet'], [ 'final' => true ]),
 
+            new Extension\Fun('bool', [$this, 'funcBool'], [ 'final' => true ]),
+            new Extension\Fun('int', [$this, 'funcInt'], [ 'final' => true ]),
+            new Extension\Fun('float', [$this, 'funcFloat'], [ 'final' => true ]),
+            new Extension\Fun('string', [$this, 'funcString'], [ 'final' => true ]),
+
             new Extension\Macro\Import('import', $this->tpl, [ 'final' => true ]),
         ];
     }
@@ -92,5 +97,25 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
     public function funcLet($name, $value)
     {
         return '(' . $name . ' = ' . $value . ')';
+    }
+    
+    public function funcBool($term)
+    {
+        return '((bool)' . $term . ')';
+    }
+
+    public function funcInt($term)
+    {
+        return '((int)' . $term . ')';
+    }
+
+    public function funcFloat($term)
+    {
+        return '((float)' . $term . ')';
+    }
+
+    public function funcString($term)
+    {
+        return '((string)' . $term . ')';
     }
 }
