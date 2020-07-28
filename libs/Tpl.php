@@ -12,6 +12,7 @@
 namespace Octris;
 
 use \Octris\Tpl\Compiler as compiler;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Main class of template engine.
@@ -44,7 +45,7 @@ class Tpl
     /**
      * Configured caching backend.
      *
-     * @type    \Octris\Tpl\CacheInterface
+     * @type    \Psr\SimpleCache\CacheInterface
      */
     protected $tpl_cache;
 
@@ -90,9 +91,9 @@ class Tpl
     /**
      * Set caching backend.
      *
-     * @param   \Octris\Tpl\Cache      $cache      Instance of caching backend.
+     * @param   \Psr\SimpleCache\CacheInterface     $cache      Instance of caching backend.
      */
-    public function setCache(\Octris\Tpl\CacheInterface $cache)
+    public function setCache(CacheInterface $cache)
     {
         $this->tpl_cache = $cache;
     }
