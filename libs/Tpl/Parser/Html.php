@@ -46,7 +46,7 @@ class Html extends \Octris\Tpl\Parser
     /**
      * Parser patterns
      *
-     * @type    array
+     * @var     array
      */
     protected static $patterns = [
         self::T_COMMENT_OPEN    => '/<!--/',
@@ -73,7 +73,7 @@ class Html extends \Octris\Tpl\Parser
     /**
      * Parser rules.
      *
-     * @type    array
+     * @var     array
      */
     protected static $rules = [
         self::T_DATA => [
@@ -136,7 +136,7 @@ class Html extends \Octris\Tpl\Parser
     /**
      * Attributes and their relevant context information.
      *
-     * @type    array
+     * @var     array
      */
     protected static $attributes = [
         'js' => [
@@ -154,21 +154,21 @@ class Html extends \Octris\Tpl\Parser
     /**
      * Current state of parser in document.
      *
-     * @type    int
+     * @var     int
      */
     protected $state = self::T_DATA;
 
     /**
      * Stack for escaping modes.
      *
-     * @type    array
+     * @var     array
      */
     protected $escape = [\Octris\Tpl::ESC_HTML];
 
     /**
      * Array for storing normalized template commands.
      *
-     * @type    array
+     * @var     array
      */
     protected $commands = [];
 

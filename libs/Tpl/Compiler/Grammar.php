@@ -24,7 +24,7 @@ class Grammar extends \Octris\Parser\Grammar
     /**
      * Known tokens.
      *
-     * @type    string
+     * @var     string
      */
     const T_START                = '<syntax>';
 

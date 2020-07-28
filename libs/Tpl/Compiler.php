@@ -24,21 +24,21 @@ class Compiler
     /**
      * Instance of parser class.
      *
-     * @type    \Octris\Parser|null
+     * @var     \Octris\Parser|null
      */
     protected static $parser = null;
 
     /**
      * Name of file currently compiled.
      *
-     * @type    string
+     * @var     string
      */
     protected $filename = '';
 
     /**
      * Stores pathes to look into when searching for template to load.
      *
-     * @type    array
+     * @var     array
      */
     protected $searchpath = [];
 

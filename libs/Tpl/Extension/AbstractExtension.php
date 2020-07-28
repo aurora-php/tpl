@@ -22,28 +22,28 @@ abstract class AbstractExtension
     /**
      * Name of extension.
      *
-     * @type    string
+     * @var     string
      */
     private $name = '';
 
     /**
      * Callback implementing code generator.
      *
-     * @type    callable
+     * @var     callable
      */
     private $fn = null;
 
     /**
      * Extension options.
      *
-     * @type    array
+     * @var     array
      */
     private $options = [];
 
     /**
      * Number of parameters.
      * 
-     * @type    array|null
+     * @var     array|null
      */
     private $pnumber = null;
 

@@ -22,14 +22,14 @@ final class Library
     /**
      * Defined constants.
      *
-     * @type    array
+     * @var     array
      */
     protected $constants = [];
 
     /**
      * Defined extensions.
      *
-     * @type    array
+     * @var     array
      */
     protected $extensions = [
         'block' => [],
@@ -40,7 +40,7 @@ final class Library
     /**
      * Reserved names.
      *
-     * @type    array
+     * @var     array
      */
     protected $reserved = [
         'block' => [ 'else', 'end' ],

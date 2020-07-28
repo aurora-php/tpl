@@ -22,7 +22,7 @@ abstract class Postprocess
     /**
      * Path mappings.
      *
-     * @type    array
+     * @var     array
      */
     protected $mappings = [];
 

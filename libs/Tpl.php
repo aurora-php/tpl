@@ -38,42 +38,42 @@ class Tpl
     /**
      * Global template data.
      *
-     * @type    array
+     * @var     array
      */
     protected $data = [];
 
     /**
      * Configured caching backend.
      *
-     * @type    \Psr\SimpleCache\CacheInterface
+     * @var     \Psr\SimpleCache\CacheInterface
      */
     protected $tpl_cache;
 
     /**
      * Stores pathes to look into when searching for template to load.
      *
-     * @type    array
+     * @var     array
      */
     protected $searchpath = [];
 
     /**
      * Postprocessors.
      *
-     * @type    array
+     * @var     array
      */
     protected $postprocessors = [];
 
     /**
      * Extension library.
      *
-     * @type    \Octris\Tpl\Library
+     * @var     \Octris\Tpl\Library
      */
     protected $library;
 
     /**
      * Character encoding of template.
      *
-     * @type    string
+     * @var     string
      */
     protected $encoding;
 

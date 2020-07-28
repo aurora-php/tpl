@@ -22,7 +22,7 @@ class Lint extends \Octris\Tpl\Compiler
     /**
      * Number of errors occured.
      *
-     * @type    int
+     * @var     int
      */
     protected $errors = 0;
 

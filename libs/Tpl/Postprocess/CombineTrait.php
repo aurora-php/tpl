@@ -11,6 +11,8 @@
 
 namespace Octris\Tpl\Postprocess;
 
+use Octris\Streamfilter\Hashfilter;
+
 /**
  * Combine multiple source files into a single file.
  *
@@ -22,28 +24,28 @@ trait CombineTrait
     /**
      * File extension of created file.
      *
-     * @type    string
+     * @var     string
      */
     protected $ext;
 
     /**
      * Pattern to match.
      *
-     * @type    string
+     * @var     string
      */
     protected $pattern;
 
     /**
      * Snippet to replace pattern with.
      *
-     * @type    string
+     * @var     string
      */
     protected $snippet;
 
     /**
      * Destination directory for created files.
      *
-     * @type    string
+     * @var     string
      */
     protected $dst;
 
@@ -55,24 +57,27 @@ trait CombineTrait
      */
     public function processFiles(array $files)
     {
-        $files = array_map(function ($file) {
-            return escapeshellarg($file);
-        }, $files);
-
         $tmp = tempnam('/tmp', 'oct');
 
-        $cmd = sprintf(
-            'cat %s > %s 2>&1',
-            implode(' ', $files),
-            $tmp
-        );
+        if (!($out = @fopen($tmp, 'w'))) {
+            // @todo: throw exception
+        }
 
-        $ret = [];
-        $ret_val = 0;
-        exec($cmd, $ret, $ret_val);
+        $params = (object)[ 'algo' => 'md5' ];
 
-        $md5  = md5_file($tmp);
-        $name = $md5 . '.' . $this->ext;
+        Hashfilter::appendFilter($out, $params);
+
+        foreach ($files as $file) {
+            if (!($in = @fopen($file, 'r'))) {
+                continue;
+            }
+
+            stream_copy_to_stream($in, $out);
+
+            fclose($in);
+        }
+
+        $name = $params->hash . '.' . $this->ext;
         rename($tmp, $this->dst . '/' . $name);
 
         return $name;

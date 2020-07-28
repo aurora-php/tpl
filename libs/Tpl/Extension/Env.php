@@ -22,7 +22,7 @@ abstract class Env
     /**
      * Environment data.
      *
-     * @type    array
+     * @var     array
      */
     private $env;
 

@@ -22,42 +22,42 @@ class Sandbox
     /**
      * Template data.
      *
-     * @type    array
+     * @var     array
      */
     protected $data;
 
     /**
      * Function registry.
      *
-     * @type    \ArrayObject
+     * @var     \ArrayObject
      */
     protected $registry;
 
     /**
      * Extension library.
      *
-     * @type    \Octris\Tpl\Library
+     * @var     \Octris\Tpl\Library
      */
     protected $library;
 
     /**
      * Character encoding of template.
      *
-     * @type    string
+     * @var     string
      */
     protected $encoding;
 
     /**
      * Name of file that is rendered by the sandbox instance.
      *
-     * @type    string
+     * @var     string
      */
     protected $filename;
 
     /**
      * Template content.
      *
-     * @type    string
+     * @var     string
      */
     protected $content;
 

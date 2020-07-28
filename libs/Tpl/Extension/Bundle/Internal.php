@@ -24,7 +24,7 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
     /**
      * Instance of template engine.
      *
-     * @type    \Octris\Tpl
+     * @var     \Octris\Tpl
      */
     protected $tpl;
 
