@@ -16,7 +16,7 @@ namespace Octris\Tpl\Extension\Fun;
  * inside a block of type '#loop' or '#foreach'. An internal counter will be increased
  * for each loop cycle. The trigger will return 'true' for every $steps steps.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 final class Trigger extends \Octris\Tpl\Extension\Fun {

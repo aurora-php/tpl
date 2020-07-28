@@ -14,7 +14,7 @@ namespace Octris\Tpl\Extension\Block;
 /**
  * Copy block into a buffer.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 final class Copy extends \Octris\Tpl\Extension\Block {

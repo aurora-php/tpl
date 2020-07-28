@@ -14,7 +14,7 @@ namespace Octris\Tpl;
 /**
  * Extemsion related functionality.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Extension {

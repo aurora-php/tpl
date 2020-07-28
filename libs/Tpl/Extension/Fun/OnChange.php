@@ -15,7 +15,7 @@ namespace Octris\Tpl\Extension\Fun;
  * Tracks changes of a provided value and returns true if change was detected,
  * otherwise false.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 final class OnChange extends \Octris\Tpl\Extension\Fun {

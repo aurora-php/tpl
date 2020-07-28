@@ -16,7 +16,7 @@ use \Octris\Tpl\Compiler as c;
 /**
  * Class for defining a template parser grammar.
  *
- * @copyright   copyright (c) 2014-2018 by Harald Lapp
+ * @copyright   copyright (c) 2014-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Grammar extends \Octris\Parser\Grammar

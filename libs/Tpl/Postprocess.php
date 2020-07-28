@@ -14,7 +14,7 @@ namespace Octris\Tpl;
 /**
  * Abstract class for implementing post processors.
  *
- * @copyright   copyright (c) 2016-2018 by Harald Lapp
+ * @copyright   copyright (c) 2016-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 abstract class Postprocess

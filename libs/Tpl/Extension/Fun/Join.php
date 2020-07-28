@@ -14,7 +14,7 @@ namespace Octris\Tpl\Extension\Fun;
 /**
  * Join array elements with a string.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 final class Join extends \Octris\Tpl\Extension\Fun {

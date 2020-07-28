@@ -14,7 +14,7 @@ namespace Octris\Tpl;
 /**
  * Lint for templates.
  *
- * @copyright   copyright (c) 2010-2018 by Harald Lapp
+ * @copyright   copyright (c) 2010-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Lint extends \Octris\Tpl\Compiler

@@ -14,7 +14,7 @@ namespace Octris\Tpl\Parser;
 /**
  * HTML Parser for auto-escaping functionality.
  *
- * @copyright   copyright (c) 2012-2018 by Harald Lapp
+ * @copyright   copyright (c) 2012-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Html extends \Octris\Tpl\Parser

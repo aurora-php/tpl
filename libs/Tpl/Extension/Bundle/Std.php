@@ -16,7 +16,7 @@ use \Octris\Tpl\Extension;
 /**
  * Standard extension bundle for template engine.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Std extends \Octris\Tpl\Extension\AbstractBundle

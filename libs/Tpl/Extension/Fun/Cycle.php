@@ -16,7 +16,7 @@ namespace Octris\Tpl\Extension\Fun;
  * internal counter will be increased for each loop cycle. Cycle will return an element of a specified list
  * according to the internal pointer position.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 final class Cycle extends \Octris\Tpl\Extension\Fun {

@@ -14,7 +14,7 @@ namespace Octris\Tpl\Extension;
 /**
  * Class for building block extensions.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Block extends \Octris\Tpl\Extension\AbstractExtension {

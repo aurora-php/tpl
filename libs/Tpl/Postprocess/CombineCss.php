@@ -14,7 +14,7 @@ namespace Octris\Tpl\Postprocess;
 /**
  * Combine multiple css source files into a single file.
  *
- * @copyright   copyright (c) 2010-2018 by Harald Lapp
+ * @copyright   copyright (c) 2010-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class CombineCss extends \Octris\Tpl\Postprocess

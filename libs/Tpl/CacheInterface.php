@@ -14,7 +14,7 @@ namespace Octris\Tpl;
 /**
  * Interface for building caching backends for the template engine.
  *
- * @copyright   copyright (c) 2016-2018 by Harald Lapp
+ * @copyright   copyright (c) 2016-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 interface CacheInterface

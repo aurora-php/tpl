@@ -14,7 +14,7 @@ namespace Octris\Tpl\Cache;
 /**
  * Filesystem cache storage.
  *
- * @copyright   copyright (c) 2016-2018 by Harald Lapp
+ * @copyright   copyright (c) 2016-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class File implements \Octris\Tpl\CacheInterface

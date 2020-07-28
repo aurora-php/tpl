@@ -14,7 +14,7 @@ namespace Octris\Tpl\Extension\Block;
 /**
  * Block benchmark.
  *
- * @copyright   copyright (c) 2018 by Harald Lapp
+ * @copyright   copyright (c) 2018-present by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 final class Benchmark extends \Octris\Tpl\Extension\Block {
