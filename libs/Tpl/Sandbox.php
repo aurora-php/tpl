@@ -11,6 +11,8 @@
 
 namespace Octris\Tpl;
 
+use Octris\Tpl\Library;
+
 /**
  * Sandbox to execute templates in.
  *
@@ -24,42 +26,42 @@ class Sandbox
      *
      * @var     array
      */
-    protected $data;
+    protected array $data;
 
     /**
      * Function registry.
      *
      * @var     \ArrayObject
      */
-    protected $registry;
+    protected \ArrayObject $registry;
 
     /**
      * Extension library.
      *
      * @var     \Octris\Tpl\Library
      */
-    protected $library;
+    protected Library $library;
 
     /**
      * Character encoding of template.
      *
      * @var     string
      */
-    protected $encoding;
+    protected string $encoding;
 
     /**
      * Name of file that is rendered by the sandbox instance.
      *
      * @var     string
      */
-    protected $filename;
+    protected string $filename;
 
     /**
      * Template content.
      *
      * @var     string
      */
-    protected $content;
+    protected string $content;
 
     /**
      * Constructor
@@ -70,7 +72,7 @@ class Sandbox
      * @param   string              $content        Template contents to render.
      * @param   array               $data           Initial template data.
      */
-    public function __construct(\Octris\Tpl\Library $library, $encoding, $filename, $content, array $data)
+    public function __construct(Library $library, string $encoding, string $filename, string $content, array $data)
     {
         $this->encoding = $encoding;
         $this->library = $library;
@@ -96,7 +98,7 @@ class Sandbox
      *
      * @return  int                     Determined line number.
      */
-    public function getErrorLineNumber()
+    public function getErrorLineNumber(): int
     {
         $trace = debug_backtrace();
 
@@ -110,7 +112,7 @@ class Sandbox
      * @param   array       $args       Function arguments.
      * @return  mixed                   Return value of called function.
      */
-    public function __call($name, array $args)
+    public function __call(string $name, array $args)
     {
         if (!isset($this->registry[$name])) {
             $this->error(sprintf('"%s" -- unknown function', $name), $this->getErrorLineNumber(), __LINE__);
@@ -134,7 +136,7 @@ class Sandbox
      * @param   string      $filename   Optional filename.
      * @param   string      $trace      Optional trace.
      */
-    protected function error($msg, $line = 0, $cline = __LINE__, $filename = null, $trace = null)
+    protected function error(string $msg, int $line = 0, int $cline = __LINE__, ?string $filename = null, ?string $trace = null)
     {
         \Octris\Debug::getInstance()->error(
             'sandbox',
@@ -166,7 +168,7 @@ class Sandbox
      * @param   string      $name       Name of template variable to set value of.
      * @param   mixed       $value      Value to set for template variable.
      */
-    public function setValue($name, $value)
+    public function setValue(string $name, mixed $value)
     {
         $this->data[$name] = $value;
     }
@@ -177,7 +179,7 @@ class Sandbox
      * @param   string      $name       Name of template function to register.
      * @param   callable    $fn         Callback to map to template function.
      */
-    public function registerFunction($name, callable $fn)
+    public function registerFunction(string $name, callable $fn)
     {
         $this->registry[strtolower($name)] = [
             'callback' => $fn,
@@ -191,7 +193,7 @@ class Sandbox
      * @param   iterable    $data       Iterable data.
      * @return  \Generator              A generator instance.
      */
-    protected function createForeach(iterable $data)
+    protected function createForeach(iterable $data): \Generator
     {
         $generator = function(iterable $data) {
             if (is_array($data) || $data instanceof \Countable) {
@@ -243,7 +245,7 @@ class Sandbox
      * @param   int         $stap               Iterator steps.
      * @return  array|\Generator
      */
-    protected function createFor($start, $end, $step) {
+    protected function createFor(int $start, int $end, int $step): array|\Generator {
         if ($start == $end) {
             $ret = [];
         } else {
@@ -282,8 +284,9 @@ class Sandbox
      *
      * @param   string          $val            Value to escape.
      * @param   string          $escape         Escaping to use.
+     * @return  mixed
      */
-    protected function escape($val, $escape)
+    protected function escape(mixed $val, string $escape): mixed
     {
         if (is_null($val)) {
             return '';
@@ -345,7 +348,7 @@ class Sandbox
      *
      * @return  string                      Rendered template.
      */
-    public function fetch()
+    public function fetch(): string
     {
         try {
             ob_start();
@@ -367,7 +370,7 @@ class Sandbox
      * @param   string      $savename       Filename to save output to.
      * @param   bool|int                    Returns number of bytes written or false in case of an error.
      */
-    public function save($savename)
+    public function save(string $savename): int|bool
     {
         return file_put_contents($savename, $this->fetch());
     }
