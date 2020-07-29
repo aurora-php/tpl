@@ -50,7 +50,7 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
         return [
             new Extension\Block('for', [$this, 'blockFor'], [ 'final' => true ]),
             new Extension\Block('foreach', [$this, 'blockForeach'], [ 'final' => true ]),
-            new Extension\Block('forif', [$this, 'blockIf'], [ 'final' => true ]),
+            new Extension\Block('if', [$this, 'blockIf'], [ 'final' => true ]),
 
             new Extension\Fun('escape', [$this, 'funcEscape'], [ 'final' => true ]),
             new Extension\Fun('let', [$this, 'funcLet'], [ 'final' => true ]),
