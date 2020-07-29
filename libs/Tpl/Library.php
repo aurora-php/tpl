@@ -134,7 +134,7 @@ final class Library
         } else {
             $extension = $this->extensions[$type][$name];
 
-            list($min, $max) = $extension->getNumberOfParameters();
+            [$min, $max] = $extension->getNumberOfParameters();
 
             if ($max > 0 && count($args) > $max) {
                 throw new \Exception('Too many arguments "' . $name . '"');

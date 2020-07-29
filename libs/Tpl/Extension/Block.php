@@ -27,7 +27,7 @@ class Block extends \Octris\Tpl\Extension\AbstractExtension {
      */
     final public function getCode(array $args, array $env)
     {
-        list($head, $foot) = $this->getFn($env)(...$args);
+        [$head, $foot] = $this->getFn($env)(...$args);
         
         if (__CLASS__ != static::class) {
             $head = '$this->library[static::class]->head(' . $head . ')';

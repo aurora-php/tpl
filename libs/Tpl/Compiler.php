@@ -129,7 +129,7 @@ class Compiler
                     $value = strtolower($value);
 
                     try {
-                        list($_start, $_end) = $this->library->getCode('block', $value, array_reverse($code), $env);
+                        [$_start, $_end] = $this->library->getCode('block', $value, array_reverse($code), $env);
                     } catch(\Exception $e) {
                         $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
                     }
@@ -172,7 +172,7 @@ class Compiler
                     $value = strtolower($value);
 
                     try {
-                        list($tmp, ) = $this->library->getCode('function', $value, array_reverse($code), $env);
+                        [$tmp, ] = $this->library->getCode('function', $value, array_reverse($code), $env);
                         $code = [ $tmp ];
                     } catch(\Exception $e) {
                         $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
@@ -206,7 +206,7 @@ class Compiler
                     });
 
                     try {
-                        list($code, ) = $this->library->getCode('macro', $value, array_reverse($code), $env);
+                        [$code, ] = $this->library->getCode('macro', $value, array_reverse($code), $env);
                     } catch(\Exception $e) {
                         $this->error(__FILE__, __LINE__, $line, $token, $e->getMessage());
                     }

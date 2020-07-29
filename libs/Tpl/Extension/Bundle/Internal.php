@@ -63,8 +63,8 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
     {
         return [
             (is_null($meta)
-                ? sprintf('foreach ($this->createFor(%s, %s, %s) as list(%s, )) {', $start, $end, $step, $value)
-                : sprintf('foreach ($this->createFor(%s, %s, %s) as list(%s, %s)) {', $start, $end, $step, $value, $meta)),
+                ? sprintf('foreach ($this->createFor(%s, %s, %s) as [%s, ]) {', $start, $end, $step, $value)
+                : sprintf('foreach ($this->createFor(%s, %s, %s) as [%s, %s]) {', $start, $end, $step, $value, $meta)),
             '}'
         ];
     }
@@ -73,8 +73,8 @@ final class Internal extends \Octris\Tpl\Extension\AbstractBundle
     {
         return [
             (is_null($meta)
-                ? sprintf('foreach ($this->createForeach(%s) as list(%s, )) {', $data, $value)
-                : sprintf('foreach ($this->createForeach(%s) as list(%s, %s)) {', $data, $value, $meta)),
+                ? sprintf('foreach ($this->createForeach(%s) as [%s, ]) {', $data, $value)
+                : sprintf('foreach ($this->createForeach(%s) as [%s, %s]) {', $data, $value, $meta)),
             '}'
         ];
     }
