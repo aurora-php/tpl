@@ -321,12 +321,12 @@ class Std extends \Octris\Tpl\Extension\AbstractBundle
     /** string functions **/
     public function funcLpad($input, $pad_length, $pad_string = ' ')
     {
-        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string]) . ', STR_PAD_LEFT))';
+        return '(str_pad(' . implode(', ', [$input, $pad_length, $pad_string]) . ', STR_PAD_LEFT))';
     }
 
     public function funcRpad($input, $pad_length, $pad_string = ' ')
     {
-        return '(str_pad(' . implode(', ', [$input, $path_length, $pad_string]) . ', STR_PAD_RIGHT))';
+        return '(str_pad(' . implode(', ', [$input, $pad_length, $pad_string]) . ', STR_PAD_RIGHT))';
     }
 
     public function funcConcat($str1, $str2, ...$strN)
