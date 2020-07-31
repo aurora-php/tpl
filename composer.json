@@ -18,11 +18,12 @@
 
     "require": {
         "php": "^8.0",
-        "octris/parser": "^0.1.0",
-        "octris/debug": "^0.1.0",
         "laminas/laminas-escaper": "^2.5",
-        "psr/simple-cache": "^1.0",
-        "octris/hashfilter": "^0.1.0"
+        "octris/cachekey": "dev-master",
+        "octris/debug": "^0.1.0",
+        "octris/hashfilter": "^0.1.0",
+        "octris/parser": "^0.1.0",
+        "psr/simple-cache": "^1.0"
     },
 
     "autoload": {
