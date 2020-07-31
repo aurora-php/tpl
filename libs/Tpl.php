@@ -88,12 +88,13 @@ class Tpl
     /**
      * Constructor.
      *
+     * @param   \Octris\Tpl\Library     $library
      * @param   string                  $encoding   Character encoding.
      */
-    public function __construct(string $encoding = 'utf-8')
+    public function __construct(Tpl\Library $library, string $encoding = 'utf-8')
     {
         $this->tpl_cache = new Tpl\Cache\Transient();
-        $this->library = new Tpl\Library(new Tpl\Extension\Bundle\Internal($this));
+        $this->library = $library;
     }
 
     /**
@@ -127,26 +128,6 @@ class Tpl
     public function setValue(string $name, mixed $value): void
     {
         $this->data[$name] = $value;
-    }
-
-    /**
-     * Add a single extension.
-     *
-     * @param   \Octris\Tpl\Extension\AbstractExtension $extension          A single extension to add.
-     */
-    public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension): void
-    {
-        $this->library->addExtension($extension);
-    }
-
-    /**
-     * Add an extension bundle.
-     *
-     * @param   \Octris\Tpl\Extension\AbstractBundle    $bundle             Extension bundle to add.
-     */
-    public function addExtensionBundle(\Octris\Tpl\Extension\AbstractBundle $bundle): void
-    {
-        $this->library->addExtensionBundle($bundle);
     }
 
     /**
