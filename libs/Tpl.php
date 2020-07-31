@@ -223,9 +223,9 @@ class Tpl
      */
     protected function process(string $tplname, string $escape, bool $force = false): string
     {
-        $uri = $this->tpl_cache->getURI($tplname);
+        $key = $this->cache_key->getCacheKey($tplname);
 
-        if ($force || ($tpl = $this->tpl_cache->getContents($uri)) === false) {
+        if ($force || is_null($tpl = $this->tpl_cache->get($key))) {
             $c = new Tpl\Compiler($this->library);
 
             if (($filename = $this->findFile($tplname)) !== false) {
@@ -235,7 +235,7 @@ class Tpl
                     $tpl = $processor->postProcess($tpl);
                 }
 
-                $this->tpl_cache->putContents($uri, $tpl);
+                $this->tpl_cache->put($key, $tpl);
             } else {
                 die(sprintf(
                     'unable to locate file "%s" in "%s"',
