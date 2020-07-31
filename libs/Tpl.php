@@ -11,7 +11,8 @@
 
 namespace Octris;
 
-use \Octris\Tpl\Compiler as compiler;
+use Octris\Tpl\Compiler;
+use Octris\CacheKey\CacheKeyInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -40,49 +41,56 @@ class Tpl
      *
      * @var     array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Configured caching backend.
      *
      * @var     \Psr\SimpleCache\CacheInterface
      */
-    protected $tpl_cache;
+    protected CacheInterface $tpl_cache;
+
+    /**
+     * Instance of cache key provider.
+     *
+     * @var     \Octris\CacheKey\CacheKeyInterface
+     */
+    protected CacheKeyInterface $cache_key;
 
     /**
      * Stores pathes to look into when searching for template to load.
      *
      * @var     array
      */
-    protected $searchpath = [];
+    protected array $searchpath = [];
 
     /**
      * Postprocessors.
      *
      * @var     array
      */
-    protected $postprocessors = [];
+    protected array $postprocessors = [];
 
     /**
      * Extension library.
      *
      * @var     \Octris\Tpl\Library
      */
-    protected $library;
+    protected array $library;
 
     /**
      * Character encoding of template.
      *
      * @var     string
      */
-    protected $encoding;
+    protected string $encoding;
 
     /**
      * Constructor.
      *
      * @param   string                  $encoding   Character encoding.
      */
-    public function __construct($encoding = 'utf-8')
+    public function __construct(string $encoding = 'utf-8')
     {
         $this->tpl_cache = new Tpl\Cache\Transient();
         $this->library = new Tpl\Library(new Tpl\Extension\Bundle\Internal($this));
@@ -93,7 +101,7 @@ class Tpl
      *
      * @param   \Psr\SimpleCache\CacheInterface     $cache      Instance of caching backend.
      */
-    public function setCache(CacheInterface $cache)
+    public function setCache(CacheInterface $cache): void
     {
         $this->tpl_cache = $cache;
     }
@@ -103,7 +111,7 @@ class Tpl
      *
      * @param   iterable        $array      Key/value array with values.
      */
-    public function setValues(iterable $array)
+    public function setValues(iterable $array): void
     {
         foreach ($array as $k => $v) {
             $this->setValue($k, $v);
@@ -116,7 +124,7 @@ class Tpl
      * @param   string      $name       Name of template variable to set value of.
      * @param   mixed       $value      Value to set for template variable.
      */
-    public function setValue($name, $value)
+    public function setValue(string $name, mixed $value): void
     {
         $this->data[$name] = $value;
     }
@@ -126,7 +134,7 @@ class Tpl
      *
      * @param   \Octris\Tpl\Extension\AbstractExtension $extension          A single extension to add.
      */
-    public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension)
+    public function addExtension(\Octris\Tpl\Extension\AbstractExtension $extension): void
     {
         $this->library->addExtension($extension);
     }
@@ -136,7 +144,7 @@ class Tpl
      *
      * @param   \Octris\Tpl\Extension\AbstractBundle    $bundle             Extension bundle to add.
      */
-    public function addExtensionBundle(\Octris\Tpl\Extension\AbstractBundle $bundle)
+    public function addExtensionBundle(\Octris\Tpl\Extension\AbstractBundle $bundle): void
     {
         $this->library->addExtensionBundle($bundle);
     }
@@ -146,7 +154,7 @@ class Tpl
      *
      * @param   \Octris\Tpl\PostprocessInterface       $processor          Instance of class for postprocessing.
      */
-    public function addPostprocessor($processor)
+    public function addPostprocessor(\Octris\Tpl\PostprocessInterface $processor): void
     {
         $this->postprocessors[] = $processor;
     }
@@ -156,7 +164,7 @@ class Tpl
      *
      * @param   string|array        $pathname       Name(s) of path to register.
      */
-    public function addSearchPath($pathname)
+    public function addSearchPath(string|array $pathname): void
     {
         foreach ((array)$pathname as $path) {
             if (!in_array($path, $this->searchpath)) {
@@ -170,7 +178,7 @@ class Tpl
      *
      * @return  array                       Search pathes.
      */
-    public function getSearchPath()
+    public function getSearchPath(): array
     {
         return $this->searchpath;
     }
@@ -179,8 +187,9 @@ class Tpl
      * Lookup a template file in the configured searchpathes.
      *
      * @param   string      $filename       Name of file to lookup.
+     * @return  bool|string                 Path of file or false.
      */
-    public function findFile($filename)
+    public function findFile(string $filename): bool|string
     {
         $return = false;
 
@@ -231,7 +240,7 @@ class Tpl
      * @param   bool        $force      Force compilation, do not fetch from cache.
      * @return  string                  Processed template.
      */
-    protected function process($tplname, $escape, $force = false)
+    protected function process(string $tplname, string $escape, bool $force = false): string
     {
         $uri = $this->tpl_cache->getURI($tplname);
 
@@ -264,7 +273,7 @@ class Tpl
      * @param   string      $filename       Name of template file to compile.
      * @param   string      $escape         Optional escaping to use.
      */
-    public function lint($filename, $escape = self::ESC_HTML)
+    public function lint(string $filename, string $escape = self::ESC_HTML)
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
@@ -287,7 +296,7 @@ class Tpl
      * @param   string      $filename       Name of template file to compile.
      * @param   string      $escape         Optional escaping to use.
      */
-    public function compile($filename, $escape = self::ESC_HTML)
+    public function compile(string $filename, string $escape = self::ESC_HTML)
     {
         $this->process($filename, $escape, true);
     }
@@ -298,7 +307,7 @@ class Tpl
      * @param   string      $filename       Filename of template to check.
      * @return  bool                        Returns true if template exists.
      */
-    public function templateExists($filename)
+    public function templateExists(string $filename): bool
     {
         $inp = ltrim(preg_replace('/\/\/+/', '/', preg_replace('/\.\.?\//', '/', $filename)), '/');
 
@@ -312,7 +321,7 @@ class Tpl
      * @param   string      $escape         Optional escaping to use.
      * @return  \Octris\Tpl\Sandbox
      */
-    public function getSandbox($filename, $escape = self::ESC_HTML)
+    public function getSandbox(string $filename, string $escape = self::ESC_HTML): \Octris\Tpl\Sandbox
     {
         $tpl = $this->process($filename, $escape);
 
